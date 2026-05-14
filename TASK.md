@@ -104,18 +104,18 @@ npm run lint    # ESLint チェック
 
 ## Phase 4: 画面実装
 
-- [ ] 4-1. ステージ選択画面（`src/app/page.tsx`）
+- [x] 4-1. ステージ選択画面（`src/app/page.tsx`）
   - ドズル社ロゴ +「OFFICIAL FAN GAME」サブロゴ
   - キャラクター選択（5人）
   - ステージカード一覧
   - Minecraft スタイル背景
-- [ ] 4-2. ゲーム画面（`src/app/game/[stage]/page.tsx`）
+- [x] 4-2. ゲーム画面（`src/app/game/[stage]/page.tsx`）
   - HUD 配置
   - キャラクター表示・アニメーション
   - TypingArea 配置
   - `useTypingGame` フック接続
   - ステージクリア → リザルト画面への遷移
-- [ ] 4-3. リザルト画面（`src/app/result/page.tsx`）
+- [x] 4-3. リザルト画面（`src/app/result/page.tsx`）
   - STAGE CLEAR バッジ
   - キャラお祝いアニメーション + メッセージ
   - 獲得スター（3段階）
@@ -123,7 +123,7 @@ npm run lint    # ESLint チェック
   - NEW BEST SCORE 表示（更新時のみ）
   - 「ステージへ戻る」「もう一度！」ボタン
   - ローカルストレージへの保存処理
-- [ ] **Phase 4 完了チェック：build / dev / lint → コミット → プッシュ**
+- [x] **Phase 4 完了チェック：build / dev / lint → コミット → プッシュ**
 
 ---
 
