@@ -38,25 +38,25 @@ npm run lint    # ESLint チェック
 
 ## Phase 1: データ定義・ロジック層
 
-- [ ] 1-1. 型定義ファイル作成（`src/types/index.ts`）
+- [x] 1-1. 型定義ファイル作成（`src/types/index.ts`）
   - `CharacterKey`, `Difficulty`, `Stage`, `StageConfig`, `GameState`, `WordEntry`
-- [ ] 1-2. ワードデータ作成（`src/lib/words.ts`）
+- [x] 1-2. ワードデータ作成（`src/lib/words.ts`）
   - EASY：草原・村人ステージ（ひらがな・日常単語）
   - EASY：ドズル社チートステージ（ドズル社関連の簡単な単語）
   - NORMAL：マイクラ・ドズル社ステージ（Minecraft用語・メンバー関連）
   - HARD：ドズル社鬼畜ステージ（ドズル社の有名なセリフ・長文）
-- [ ] 1-3. ローマ字変換ロジック実装（`src/lib/romanizer.ts`）
+- [x] 1-3. ローマ字変換ロジック実装（`src/lib/romanizer.ts`）
   - 清音・濁音・半濁音・拗音すべてカバー
   - 複数パターン許容（`si` / `shi` など）
   - 「ん」→ `n` / `nn` 両対応
   - 「っ」→ 次子音を重ねる（例：`tta`）
-- [ ] 1-4. ローカルストレージ操作実装（`src/lib/storage.ts`）
+- [x] 1-4. ローカルストレージ操作実装（`src/lib/storage.ts`）
   - ベストスコア / クリア済みステージ / 獲得スター数の読み書き
-- [ ] 1-5. Zustand ストア定義（`src/store/game-store.ts`）
+- [x] 1-5. Zustand ストア定義（`src/store/game-store.ts`）
   - `selectedCharacter`, `currentStage`, `score`, `missCount`, `currentWordIndex`
   - `bestScores`, `clearedStages`, `starRecords`
   - ローカルストレージとの同期
-- [ ] **Phase 1 完了チェック：build / dev / lint → コミット → プッシュ**
+- [x] **Phase 1 完了チェック：build / dev / lint → コミット → プッシュ**
 
 ---
 
