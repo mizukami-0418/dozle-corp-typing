@@ -76,29 +76,29 @@ npm run lint    # ESLint チェック
 
 ## Phase 3: 共通コンポーネント
 
-- [ ] 3-1. `Character` コンポーネント（`src/components/Character/`）
+- [x] 3-1. `Character` コンポーネント（`src/components/Character/`）
   - アイドルアニメーション（y軸上下 / Framer Motion）
   - クリア時アニメーション（scale + rotate）
   - 応援メッセージ表示
   - キャラクターごとの画像・カラー対応
-- [ ] 3-2. `StageCard` コンポーネント（`src/components/StageCard/`）
+- [x] 3-2. `StageCard` コンポーネント（`src/components/StageCard/`）
   - 難易度カラー表示
   - 鍵マーク（未解放ステージ）
   - ベストスコア表示
   - クリック選択
-- [ ] 3-3. `TypingArea` コンポーネント（`src/components/TypingArea/`）
+- [x] 3-3. `TypingArea` コンポーネント（`src/components/TypingArea/`）
   - ひらがな表示
   - 英語ヒント表示
   - ローマ字入力欄（打ち済み / 現在 / 未入力を色分け）
   - 次のワードプレビュー
   - 正確率表示
-- [ ] 3-4. `HUD` コンポーネント（`src/components/HUD/`）
+- [x] 3-4. `HUD` コンポーネント（`src/components/HUD/`）
   - スコア表示
   - ステージ進捗バー
   - ミス数表示
-- [ ] 3-5. Minecraft スタイル背景コンポーネント（`src/components/MinecraftBg/`）
+- [x] 3-5. Minecraft スタイル背景コンポーネント（`src/components/MinecraftBg/`）
   - 空 / 草 / 土のブロック背景
-- [ ] **Phase 3 完了チェック：build / dev / lint → コミット → プッシュ**
+- [x] **Phase 3 完了チェック：build / dev / lint → コミット → プッシュ**
 
 ---
 

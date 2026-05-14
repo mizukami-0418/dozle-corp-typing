@@ -70,6 +70,8 @@ export interface CharacterConfig {
   color: string;
   catchphrase: string;
   friend: string;
+  /** 仮プレースホルダー絵文字（実画像差し替え前） */
+  emoji: string;
   messages: {
     idle: string[];
     correct: string[];
