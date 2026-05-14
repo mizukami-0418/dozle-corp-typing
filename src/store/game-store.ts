@@ -4,16 +4,18 @@
  */
 
 import { create } from "zustand";
-import type { CharacterKey, GameState, StageId } from "@/types";
+import type { CharacterKey, GameState, ResultData, StageId } from "@/types";
 import {
   loadBestScores,
   loadClearedStages,
   loadStarRecords,
   loadSelectedCharacter,
+  loadSoundEnabled,
   saveBestScore,
   markStageCleared,
   saveStarRecord,
   saveSelectedCharacter,
+  saveSoundEnabled,
 } from "@/lib/storage";
 
 interface GameStore {
@@ -31,6 +33,18 @@ interface GameStore {
   resetGameState: (stageId: StageId) => void;
 
   // ──────────────────────────────────────────
+  // リザルトデータ（クリア時にセット → リザルト画面で参照）
+  // ──────────────────────────────────────────
+  resultData: ResultData | undefined;
+  setResultData: (data: ResultData) => void;
+
+  // ──────────────────────────────────────────
+  // サウンド設定
+  // ──────────────────────────────────────────
+  soundEnabled: boolean;
+  toggleSound: () => void;
+
+  // ──────────────────────────────────────────
   // ローカルストレージと同期するデータ
   // ──────────────────────────────────────────
   bestScores: Record<string, number>;
@@ -42,10 +56,17 @@ interface GameStore {
 
   /**
    * ステージクリア時の一括保存。
-   * ベストスコア・クリア記録・スター数を更新する。
+   * ベストスコア・クリア記録・スター数を更新し、resultData をセットする。
    * @returns isNewBest — ベストスコア更新フラグ
    */
-  saveResult: (stageId: StageId, score: number, stars: number) => boolean;
+  saveResult: (
+    stageId: StageId,
+    score: number,
+    stars: number,
+    accuracy: number,
+    missCount: number,
+    elapsedMs: number
+  ) => boolean;
 }
 
 const INITIAL_GAME_STATE: GameState = {
@@ -61,6 +82,8 @@ const INITIAL_GAME_STATE: GameState = {
 export const useGameStore = create<GameStore>((set, get) => ({
   selectedCharacter: loadSelectedCharacter(),
   gameState: INITIAL_GAME_STATE,
+  resultData: undefined,
+  soundEnabled: loadSoundEnabled(),
   bestScores: {},
   clearedStages: [],
   starRecords: {},
@@ -84,6 +107,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
       },
     }),
 
+  setResultData: (data) => set({ resultData: data }),
+
+  toggleSound: () => {
+    const next = !get().soundEnabled;
+    saveSoundEnabled(next);
+    set({ soundEnabled: next });
+  },
+
   loadProgress: () => {
     set({
       bestScores: loadBestScores(),
@@ -92,19 +123,37 @@ export const useGameStore = create<GameStore>((set, get) => ({
     });
   },
 
-  saveResult: (stageId, score, stars) => {
+  saveResult: (stageId, score, stars, accuracy, missCount, elapsedMs) => {
     const isNewBest = saveBestScore(stageId, score);
     markStageCleared(stageId);
     saveStarRecord(stageId, stars);
-    // ストア内のキャッシュも更新
+
     const { bestScores, starRecords, clearedStages } = get();
+    const resultData: ResultData = {
+      stageId,
+      score,
+      stars,
+      accuracy,
+      missCount,
+      elapsedMs,
+      isNewBest,
+    };
+
     set({
-      bestScores: { ...bestScores, [stageId]: Math.max(bestScores[stageId] ?? 0, score) },
-      starRecords: { ...starRecords, [stageId]: Math.max(starRecords[stageId] ?? 0, stars) },
+      resultData,
+      bestScores: {
+        ...bestScores,
+        [stageId]: Math.max(bestScores[stageId] ?? 0, score),
+      },
+      starRecords: {
+        ...starRecords,
+        [stageId]: Math.max(starRecords[stageId] ?? 0, stars),
+      },
       clearedStages: clearedStages.includes(stageId)
         ? clearedStages
         : [...clearedStages, stageId],
     });
+
     return isNewBest;
   },
 }));

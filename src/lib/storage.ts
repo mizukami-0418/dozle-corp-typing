@@ -10,6 +10,7 @@ const KEYS = {
   CLEARED_STAGES: "dozle-typing:clearedStages",
   STAR_RECORDS: "dozle-typing:starRecords",
   SELECTED_CHARACTER: "dozle-typing:selectedCharacter",
+  SOUND_ENABLED: "dozle-typing:soundEnabled",
 } as const;
 
 const isBrowser = typeof window !== "undefined";
@@ -111,4 +112,17 @@ export const loadSelectedCharacter = (): CharacterKey =>
 /** 選択中のキャラクターを保存する */
 export const saveSelectedCharacter = (key: CharacterKey): void => {
   writeJson(KEYS.SELECTED_CHARACTER, key);
+};
+
+// ──────────────────────────────────────────
+// サウンド設定
+// ──────────────────────────────────────────
+
+/** サウンド有効フラグを読み込む（デフォルト: true） */
+export const loadSoundEnabled = (): boolean =>
+  readJson<boolean>(KEYS.SOUND_ENABLED, true);
+
+/** サウンド有効フラグを保存する */
+export const saveSoundEnabled = (enabled: boolean): void => {
+  writeJson(KEYS.SOUND_ENABLED, enabled);
 };

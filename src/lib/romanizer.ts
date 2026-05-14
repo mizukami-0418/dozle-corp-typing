@@ -174,30 +174,24 @@ const tokenize = (kana: string): string[][] => {
       continue;
     }
 
-    // 「っ」の特殊処理：次の子音を重ねる
+    // 「っ」の特殊処理：次音節の先頭子音のみを push（次音節は通常通り処理させる）
+    // 例: "っか" → ["k"] を push し、続けて "か" → ["ka"] を push → 結合で "kka"
     if (ch === "っ") {
       const next2 = kana.slice(i + 1, i + 3);
       const next1 = kana[i + 1];
 
-      // 次が2文字拗音なら、その全パターンの先頭子音を重ねる
       if (next2 && TWO_CHAR_KEYS.has(next2)) {
         const nextPatterns = KANA_MAP[next2] ?? [];
-        const doubled = nextPatterns.map((p) => p[0] + p);
-        tokens.push(doubled.length > 0 ? doubled : ["ltu", "xtu"]);
-        i++;
-        continue;
-      }
-
-      // 次が1文字ひらがななら先頭子音を重ねる
-      if (next1 && KANA_MAP[next1]) {
+        const firstConsonants = [...new Set(nextPatterns.map((p) => p[0]))];
+        tokens.push(firstConsonants.length > 0 ? firstConsonants : ["l", "x"]);
+      } else if (next1 && KANA_MAP[next1]) {
         const nextPatterns = KANA_MAP[next1];
-        const doubled = nextPatterns.map((p) => p[0] + p);
-        tokens.push(doubled.length > 0 ? doubled : ["ltu", "xtu"]);
-        i++;
-        continue;
+        const firstConsonants = [...new Set(nextPatterns.map((p) => p[0]))];
+        tokens.push(firstConsonants.length > 0 ? firstConsonants : ["l", "x"]);
+      } else {
+        // 後続音なし（語末の「っ」など）
+        tokens.push(["ltu", "xtu"]);
       }
-
-      tokens.push(["ltu", "xtu"]);
       i++;
       continue;
     }

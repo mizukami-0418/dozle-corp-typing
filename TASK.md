@@ -62,7 +62,7 @@ npm run lint    # ESLint チェック
 
 ## Phase 2: カスタムフック
 
-- [ ] 2-1. `useTypingGame` フック実装（`src/hooks/useTypingGame.ts`）
+- [x] 2-1. `useTypingGame` フック実装（`src/hooks/useTypingGame.ts`）
   - キーボード入力のキャプチャ
   - 正解／ミス判定
   - ワード進行管理（次のワードへの遷移）
@@ -70,7 +70,7 @@ npm run lint    # ESLint チェック
   - ステージクリア検知
   - 正確率（accuracy）計算
   - WPM 計算
-- [ ] **Phase 2 完了チェック：build / dev / lint → コミット → プッシュ**
+- [x] **Phase 2 完了チェック：build / dev / lint → コミット → プッシュ**
 
 ---
 
