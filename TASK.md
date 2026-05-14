@@ -20,19 +20,19 @@ npm run lint    # ESLint チェック
 
 ## Phase 0: プロジェクトセットアップ
 
-- [ ] 0-1. Next.js プロジェクト作成（App Router / TypeScript）
-- [ ] 0-2. 依存パッケージのインストール
+- [x] 0-1. Next.js プロジェクト作成（App Router / TypeScript）
+- [x] 0-2. 依存パッケージのインストール
   - `tailwindcss` / `shadcn/ui`
   - `framer-motion`
   - `zustand`
-- [ ] 0-3. Google Fonts（Zen Maru Gothic）設定（`layout.tsx`）
-- [ ] 0-4. Tailwind のカラーパレット・フォント設定（`tailwind.config.ts`）
-- [ ] 0-5. グローバルスタイル整備（`globals.css`）
-- [ ] 0-6. ディレクトリ構成の作成（`src/` 以下の骨格）
-- [ ] 0-7. GitHub リポジトリ作成・初回プッシュ
-- [ ] 0-8. Vercel プロジェクト作成・GitHub リポジトリ連携
-- [ ] 0-9. `main` ブランチへの push で自動デプロイされることを確認
-- [ ] **Phase 0 完了チェック：build / dev / lint → コミット → プッシュ**
+- [x] 0-3. Google Fonts（Zen Maru Gothic）設定（`layout.tsx`）
+- [x] 0-4. Tailwind のカラーパレット・フォント設定（`globals.css` に @theme で定義）
+- [x] 0-5. グローバルスタイル整備（`globals.css`）
+- [x] 0-6. ディレクトリ構成の作成（`src/` 以下の骨格）
+- [x] 0-7. GitHub リポジトリ作成・初回プッシュ
+- [x] 0-8. Vercel プロジェクト作成・GitHub リポジトリ連携
+- [x] 0-9. `main` ブランチへの push で自動デプロイされることを確認
+- [x] **Phase 0 完了チェック：build / dev / lint → コミット → プッシュ**
 
 ---
 
