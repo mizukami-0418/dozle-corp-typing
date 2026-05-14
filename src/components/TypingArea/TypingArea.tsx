@@ -5,6 +5,7 @@
  * ひらがな表示・英語ヒント・ローマ字入力欄（打ち済み/現在/未入力を色分け）を表示する。
  */
 
+import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { WordEntry } from "@/types";
 
@@ -16,6 +17,22 @@ interface TypingAreaProps {
   accuracy: number;
   isStarted: boolean;
 }
+
+/** ローマ字の文字数に応じたフォントサイズ・文字間隔を返す */
+const getRomajiStyle = (len: number): React.CSSProperties => {
+  if (len <= 10) return { fontSize: "1.5rem", letterSpacing: "0.18em" };
+  if (len <= 18) return { fontSize: "1.25rem", letterSpacing: "0.1em" };
+  if (len <= 28) return { fontSize: "1rem", letterSpacing: "0.04em" };
+  return { fontSize: "0.85rem", letterSpacing: "0.02em" };
+};
+
+/** ひらがな表示の文字数に応じた Tailwind クラスを返す */
+const getKanaClass = (len: number): string => {
+  if (len <= 8) return "text-4xl";
+  if (len <= 14) return "text-3xl";
+  if (len <= 20) return "text-2xl";
+  return "text-xl";
+};
 
 export const TypingArea = ({
   currentWord,
@@ -30,6 +47,9 @@ export const TypingArea = ({
   const typedPart = displayPattern.slice(0, typedBuffer.length);
   const currentChar = displayPattern[typedBuffer.length] ?? "";
   const remainingPart = displayPattern.slice(typedBuffer.length + 1);
+
+  const romajiStyle = getRomajiStyle(displayPattern.length);
+  const kanaClass = getKanaClass(currentWord.display.length);
 
   return (
     <div className="w-full max-w-2xl mx-auto px-4">
@@ -47,7 +67,7 @@ export const TypingArea = ({
             className="text-center mb-2"
           >
             <span
-              className="text-4xl font-bold"
+              className={`${kanaClass} font-bold leading-tight`}
               style={{ fontFamily: "var(--font-zen-maru-gothic)", color: "var(--color-brand-gold)" }}
             >
               {currentWord.display}
@@ -63,13 +83,14 @@ export const TypingArea = ({
         )}
 
         {/* ローマ字入力欄 */}
-        <div className="bg-black/50 rounded-xl p-4 font-mono text-2xl tracking-widest text-center border border-white/10">
+        <div
+          className="bg-black/50 rounded-xl p-4 font-mono text-center border border-white/10 break-all"
+          style={romajiStyle}
+        >
           {/* 打ち済み */}
           <span className="text-green-400">{typedPart}</span>
           {/* 現在入力すべき文字（カーソル） */}
-          <span
-            className="relative text-white"
-          >
+          <span className="relative text-white">
             <span className="relative z-10">{currentChar}</span>
             <motion.span
               className="absolute inset-0 rounded"
