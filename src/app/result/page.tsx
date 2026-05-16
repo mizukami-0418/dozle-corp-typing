@@ -37,7 +37,7 @@ export default function ResultPage() {
   };
 
   const handleBack = () => {
-    router.push("/");
+    router.push("/stages");
   };
 
   return (

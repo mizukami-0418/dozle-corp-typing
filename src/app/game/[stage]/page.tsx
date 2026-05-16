@@ -84,7 +84,7 @@ export default function GamePage() {
         <div className="min-h-screen flex items-center justify-center flex-col gap-4">
           <p className="text-white text-xl font-bold">ステージが見つかりません</p>
           <button
-            onClick={() => router.push("/")}
+            onClick={() => router.push("/stages")}
             className="px-6 py-2 rounded-xl bg-white/20 text-white font-bold hover:bg-white/30 transition"
           >
             ホームへ戻る
