@@ -7,9 +7,11 @@ import { MinecraftBg } from "@/components/MinecraftBg";
 import { HUD } from "@/components/HUD";
 import { Character } from "@/components/Character";
 import { TypingArea } from "@/components/TypingArea";
+import { ParticleEffect, CelebrationEffect } from "@/components/effects";
 import { useTypingGame } from "@/hooks/useTypingGame";
 import { getStageById } from "@/lib/words";
 import { useGameStore } from "@/store/game-store";
+import { CHARACTER_CONFIGS } from "@/lib/characters";
 import type { StageId } from "@/types";
 
 type CharAnimState = "idle" | "correct" | "cleared";
@@ -39,17 +41,25 @@ export default function GamePage() {
 
   // キャラクターのアニメーション状態管理
   const [charAnimState, setCharAnimState] = useState<CharAnimState>("idle");
+  // ワード正解ごとにインクリメント → ParticleEffect が発火する
+  const [correctCount, setCorrectCount] = useState(0);
   const prevWordIdxRef = useRef(wordIndex);
 
   useEffect(() => {
     if (isCleared) {
-      const t = setTimeout(() => setCharAnimState("cleared"), 0);
+      const t = setTimeout(() => {
+        setCharAnimState("cleared");
+        setCorrectCount((n) => n + 1); // 最終ワード完了のパーティクル
+      }, 0);
       return () => clearTimeout(t);
     }
     const prev = prevWordIdxRef.current;
     prevWordIdxRef.current = wordIndex;
     if (wordIndex > prev) {
-      const t1 = setTimeout(() => setCharAnimState("correct"), 0);
+      const t1 = setTimeout(() => {
+        setCharAnimState("correct");
+        setCorrectCount((n) => n + 1);
+      }, 0);
       const t2 = setTimeout(() => setCharAnimState("idle"), 600);
       return () => {
         clearTimeout(t1);
@@ -57,6 +67,8 @@ export default function GamePage() {
       };
     }
   }, [wordIndex, isCleared]);
+
+  const accentColor = CHARACTER_CONFIGS[selectedCharacter].color;
 
   // クリア後2秒でリザルト画面へ遷移
   useEffect(() => {
@@ -84,6 +96,12 @@ export default function GamePage() {
 
   return (
     <MinecraftBg>
+      {/* ワード正解パーティクル */}
+      <ParticleEffect trigger={correctCount} accentColor={accentColor} />
+
+      {/* ステージクリアコンフェッティ */}
+      <CelebrationEffect active={isCleared} />
+
       <div className="min-h-screen flex flex-col">
         {/* HUD */}
         <HUD
@@ -137,14 +155,35 @@ export default function GamePage() {
                 transition={{ type: "spring", stiffness: 200, damping: 15 }}
                 className="text-center"
               >
-                <div
-                  className="text-5xl font-black mb-2"
+                <motion.div
+                  animate={{ rotate: [-3, 3, -3] }}
+                  transition={{ duration: 0.5, repeat: Infinity, ease: "easeInOut" }}
+                  className="text-5xl font-black mb-3"
                   style={{
                     color: "var(--color-brand-gold)",
-                    textShadow: "2px 2px 0 #000",
+                    textShadow: "2px 2px 0 #000, 0 0 20px rgba(255,215,0,0.6)",
                   }}
                 >
                   STAGE CLEAR!
+                </motion.div>
+                {/* スター演出 */}
+                <div className="flex justify-center gap-2 mb-3">
+                  {[0, 1, 2].map((i) => (
+                    <motion.span
+                      key={i}
+                      className="text-3xl"
+                      initial={{ scale: 0, rotate: -30 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{
+                        delay: 0.3 + i * 0.15,
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 12,
+                      }}
+                    >
+                      ⭐
+                    </motion.span>
+                  ))}
                 </div>
                 <div className="text-white/70 text-sm animate-pulse">
                   リザルト画面へ移動中…

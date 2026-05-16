@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Zen_Maru_Gothic } from "next/font/google";
 import "./globals.css";
+import { PageTransition } from "@/components/PageTransition";
 
 const zenMaruGothic = Zen_Maru_Gothic({
   variable: "--font-zen-maru-gothic",
@@ -20,7 +21,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja" className={`${zenMaruGothic.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <PageTransition>{children}</PageTransition>
+      </body>
     </html>
   );
 }
