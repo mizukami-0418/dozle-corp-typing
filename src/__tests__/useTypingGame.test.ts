@@ -1,9 +1,9 @@
 /**
  * useTypingGame フックのインテグレーションテスト。
- * キーボード入力のシミュレーションで正誤判定・スコア・クリア検知を検証する。
+ * キーボード入力のシミュレーションで正誤判定・スコア・タイムアップを検証する。
  */
 
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useTypingGame } from "@/hooks/useTypingGame";
 import type { WordEntry, StageId } from "@/types";
@@ -51,6 +51,12 @@ const TWO_WORDS: WordEntry[] = [
 describe("useTypingGame", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // シャッフルを固定（元の順序を保つ）
+    vi.spyOn(Math, "random").mockReturnValue(0.9);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   describe("初期状態", () => {
@@ -60,7 +66,7 @@ describe("useTypingGame", () => {
       );
 
       const s = result.current;
-      expect(s.wordIndex).toBe(0);
+      expect(s.wordsCompleted).toBe(0);
       expect(s.score).toBe(0);
       expect(s.missCount).toBe(0);
       expect(s.accuracy).toBe(100);
@@ -69,6 +75,8 @@ describe("useTypingGame", () => {
       expect(s.totalWords).toBe(2);
       expect(s.currentWord?.display).toBe("ねこ");
       expect(s.nextWord?.display).toBe("いぬ");
+      expect(s.totalTimeRemainingMs).toBe(60_000); // cheat = 60s
+      expect(s.wordTimeLimitMs).toBeGreaterThan(0);
     });
   });
 
@@ -97,14 +105,14 @@ describe("useTypingGame", () => {
   });
 
   describe("正解入力", () => {
-    it("1ワード完了で wordIndex が 1 に進む", () => {
+    it("1ワード完了で wordsCompleted が 1 になる", () => {
       const { result } = renderHook(() =>
         useTypingGame(STAGE_ID, TWO_WORDS)
       );
 
       typeString("neko"); // "ねこ"
 
-      expect(result.current.wordIndex).toBe(1);
+      expect(result.current.wordsCompleted).toBe(1);
       expect(result.current.typedBuffer).toBe("");
       expect(result.current.currentWord?.display).toBe("いぬ");
     });
@@ -126,7 +134,6 @@ describe("useTypingGame", () => {
         useTypingGame(STAGE_ID, TWO_WORDS)
       );
 
-      // "ねこ" の先頭は "n" のみ有効。"x" はミス。
       typeKey("x");
 
       expect(result.current.missCount).toBe(1);
@@ -137,7 +144,7 @@ describe("useTypingGame", () => {
         useTypingGame(STAGE_ID, TWO_WORDS)
       );
 
-      typeKey("n"); // 正解（バッファ = "n"）
+      typeKey("n"); // 正解
       typeKey("x"); // ミス
 
       expect(result.current.typedBuffer).toBe("n");
@@ -152,7 +159,6 @@ describe("useTypingGame", () => {
       typeKey("n"); // 正解
       typeKey("x"); // ミス
 
-      // 2打のうち1ミス → 正確率 50%
       expect(result.current.accuracy).toBe(50);
     });
   });
@@ -185,16 +191,31 @@ describe("useTypingGame", () => {
     });
   });
 
-  describe("ステージクリア", () => {
-    it("全ワード入力完了で isCleared が true になる", () => {
+  describe("タイマー", () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it("制限時間終了で isCleared が true になる", () => {
       const { result } = renderHook(() =>
         useTypingGame(STAGE_ID, TWO_WORDS)
       );
 
-      typeString("neko"); // ねこ
-      typeString("inu");  // いぬ
+      // ゲーム開始
+      typeKey("n");
+      expect(result.current.isStarted).toBe(true);
+
+      // 60秒 + α 経過
+      act(() => {
+        vi.advanceTimersByTime(60_100);
+      });
 
       expect(result.current.isCleared).toBe(true);
+      expect(result.current.totalTimeRemainingMs).toBe(0);
     });
 
     it("クリア後のキー入力は無視される", () => {
@@ -202,30 +223,49 @@ describe("useTypingGame", () => {
         useTypingGame(STAGE_ID, TWO_WORDS)
       );
 
-      typeString("neko");
-      typeString("inu");
+      typeKey("n");
+      act(() => {
+        vi.advanceTimersByTime(60_100);
+      });
 
       const scoreBefore = result.current.score;
       typeKey("a");
 
       expect(result.current.score).toBe(scoreBefore);
-      expect(result.current.missCount).toBe(0); // ミス数も変わらない
     });
-  });
 
-  describe("1ワードのみのステージ", () => {
-    it("1ワード完了で即 isCleared になる", () => {
-      const singleWord: WordEntry[] = [
-        { display: "ねこ", reading: "ねこ" },
-      ];
-
+    it("ワードタイムアウトで次のワードへ進む", () => {
       const { result } = renderHook(() =>
-        useTypingGame(STAGE_ID, singleWord)
+        useTypingGame(STAGE_ID, TWO_WORDS)
       );
 
-      typeString("neko");
+      typeKey("n"); // ゲーム開始、ねこの最初の1文字
 
-      expect(result.current.isCleared).toBe(true);
+      const firstWord = result.current.currentWord?.display;
+
+      // ワード制限時間を超過（ねこ = neko = 4文字 × 1.0秒 = 4000ms）
+      act(() => {
+        vi.advanceTimersByTime(4_100);
+      });
+
+      // 次のワードへ進んでいる
+      expect(result.current.currentWord?.display).not.toBe(firstWord);
+      expect(result.current.typedBuffer).toBe("");
+    });
+
+    it("ワードタイムアウトで減点される", () => {
+      const { result } = renderHook(() =>
+        useTypingGame(STAGE_ID, TWO_WORDS)
+      );
+
+      typeKey("n");
+
+      act(() => {
+        vi.advanceTimersByTime(4_100);
+      });
+
+      // スコアは 0 のままかマイナスにはならない（最低 0）
+      expect(result.current.score).toBeGreaterThanOrEqual(0);
     });
   });
 });

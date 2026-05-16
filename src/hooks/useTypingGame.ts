@@ -2,41 +2,52 @@
 
 /**
  * タイピングゲームのコアロジックを管理するカスタムフック。
- * キー入力・正誤判定・スコア計算・ステージクリア検知を担う。
+ * 時間制スコアアタック型：総制限時間内にできるだけ多くのワードを入力する。
+ *
+ * - ワードは難易度ごとにシャッフルされ、制限時間まで繰り返し出題される
+ * - ワード別タイムアウト（ローマ字文字数 × 係数）を超えると自動で次へ進む
+ * - タイムアウト時は減点のみ（スコア加算なし）
+ * - 総制限時間ゼロで isCleared = true → リザルト画面へ遷移
  */
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import type { WordEntry, StageId } from "@/types";
-import { toRomaji, isPartialMatch, isExactMatch } from "@/lib/romanizer";
+import { toRomaji, isPartialMatch, isExactMatch, countRomajiLength } from "@/lib/romanizer";
 import { playBlockPlace, playMiss, playClear } from "@/lib/sound";
 import { useGameStore } from "@/store/game-store";
+import { DIFFICULTY_CONFIG, TIMEOUT_PENALTY } from "@/lib/difficulty";
 
 export interface UseTypingGameReturn {
-  /** 現在入力中のワード */
   currentWord: WordEntry | undefined;
-  /** 次のワード（プレビュー用） */
   nextWord: WordEntry | undefined;
-  /** ユーザーが入力済みのローマ字バッファ */
   typedBuffer: string;
-  /** 表示用ローマ字パターン（最初の一致パターン） */
   displayPattern: string;
   score: number;
   missCount: number;
-  /** 正確率（0–100） */
   accuracy: number;
-  /** WPM（1分あたりのワード数） */
   wpm: number;
-  /** 経過ミリ秒 */
-  elapsedMs: number;
-  /** 現在のワードインデックス（0始まり） */
-  wordIndex: number;
-  /** ステージの総ワード数 */
+  wordsCompleted: number;
   totalWords: number;
-  /** 最初のキーを押した後 true */
+  totalTimeRemainingMs: number;
+  wordTimeRemainingMs: number;
+  wordTimeLimitMs: number;
   isStarted: boolean;
-  /** 全ワードタイプ完了後 true */
   isCleared: boolean;
 }
+
+/** Fisher-Yates シャッフル */
+const fisherYates = (arr: WordEntry[]): WordEntry[] => {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
+
+/** ワードのスコアを算出する（ミスが多いほど減点、最低 10 点） */
+const calcWordScore = (wordMiss: number): number =>
+  Math.max(10, 100 - wordMiss * 10);
 
 /** スター数を算出する（3 / 2 / 1） */
 const calcStars = (accuracy: number, missCount: number): number => {
@@ -45,36 +56,63 @@ const calcStars = (accuracy: number, missCount: number): number => {
   return 1;
 };
 
-/** ワードのスコアを算出する（ミスが多いほど減点） */
-const calcWordScore = (wordMiss: number): number =>
-  Math.max(10, 100 - wordMiss * 10);
-
 export const useTypingGame = (
   stageId: StageId,
   words: WordEntry[]
 ): UseTypingGameReturn => {
   const { soundEnabled, saveResult } = useGameStore();
+  const config = DIFFICULTY_CONFIG[stageId];
+  const totalTimeLimitMs = config.totalSec * 1000;
 
-  const [wordIndex, setWordIndex] = useState(0);
+  // 初期シャッフル済みキューを state で保持（lazy initializer は初回レンダーのみ実行）
+  const [initialQueue] = useState<WordEntry[]>(() =>
+    words.length > 0 ? fisherYates([...words]) : []
+  );
+
+  // シャッフル済みワードキュー（ref — effects/callbacks 内でのみアクセス）
+  const shuffledRef = useRef<WordEntry[]>(initialQueue);
+
+  // 初期ワードのタイムリミット（ms）— state 由来の値を使うため ref アクセスなし
+  const initialLimit = initialQueue[0]
+    ? Math.round(countRomajiLength(initialQueue[0].reading) * config.secPerRomaji * 1000)
+    : 0;
+
   const [typedBuffer, setTypedBuffer] = useState("");
   const [score, setScore] = useState(0);
   const [missCount, setMissCount] = useState(0);
   const [totalKeystrokes, setTotalKeystrokes] = useState(0);
+  const [wordsCompleted, setWordsCompleted] = useState(0);
   const [startTime, setStartTime] = useState<number | undefined>();
-  const [elapsedMs, setElapsedMs] = useState(0);
+  const [totalTimeRemainingMs, setTotalTimeRemainingMs] = useState(totalTimeLimitMs);
+  const [wordTimeLimitMs, setWordTimeLimitMs] = useState(initialLimit);
+  const [wordTimeRemainingMs, setWordTimeRemainingMs] = useState(initialLimit);
   const [isCleared, setIsCleared] = useState(false);
 
+  // レンダーに必要な現在・次ワードを state として管理（ref の render-time 読み取りを回避）
+  const [currentWord, setCurrentWord] = useState<WordEntry | undefined>(initialQueue[0]);
+  const [nextWord, setNextWord] = useState<WordEntry | undefined>(initialQueue[1]);
+
   /**
-   * イベントハンドラ内で最新の状態を読むための ref。
-   * useCallback の deps を空にして listener の付け外しを1回に抑える。
-   * ref の同期はレンダー後の useEffect で行う（ESLint: react-hooks/refs 対応）。
+   * 絶対時刻ベースのタイマー管理 ref。
+   * vi.advanceTimersByTime() で複数コールバックが同期的に発火しても
+   * Date.now() が正しく進むため、累積 setState に依存せず動作する。
+   * queuePosRef は位置の primary source（re-render 不要なため state ではなく ref）。
+   */
+  const gameStartTimeRef = useRef<number>(0);
+  const wordStartTimeRef = useRef<number>(0);
+  const wordTimeLimitRef = useRef<number>(initialLimit);
+  const queuePosRef = useRef<number>(0);
+
+  /**
+   * イベントハンドラ・インターバル内で最新の状態を読むための ref。
+   * useCallback / setInterval の deps を空にして再登録を防ぐ。
    */
   const stateRef = useRef({
-    wordIndex,
     typedBuffer,
     score,
     missCount,
     totalKeystrokes,
+    wordsCompleted,
     startTime,
     isCleared,
     soundEnabled,
@@ -82,42 +120,109 @@ export const useTypingGame = (
     words,
     stageId,
     saveResult,
+    config,
   });
 
-  // レンダー後に ref を同期（イベントハンドラ内で最新値を読むため）
   useEffect(() => {
-    stateRef.current.wordIndex = wordIndex;
     stateRef.current.typedBuffer = typedBuffer;
     stateRef.current.score = score;
     stateRef.current.missCount = missCount;
     stateRef.current.totalKeystrokes = totalKeystrokes;
+    stateRef.current.wordsCompleted = wordsCompleted;
     stateRef.current.startTime = startTime;
     stateRef.current.isCleared = isCleared;
     stateRef.current.soundEnabled = soundEnabled;
     stateRef.current.words = words;
-    stateRef.current.stageId = stageId;
     stateRef.current.saveResult = saveResult;
+    stateRef.current.config = config;
   });
 
-  // 経過時間タイマー（200ms ごとに更新）
+  /**
+   * 次のワードへ進む（完了・タイムアウト共通）。
+   * shuffledRef と位置・タイマー ref を直接更新し、新しいワード情報を返す。
+   */
+  const computeAdvance = (pos: number, allWords: WordEntry[], now: number): {
+    nextPos: number;
+    nextLimit: number;
+    newCurrent: WordEntry | undefined;
+    newNext: WordEntry | undefined;
+  } => {
+    let nextPos = pos + 1;
+    if (nextPos >= shuffledRef.current.length) {
+      shuffledRef.current = fisherYates([...allWords]);
+      nextPos = 0;
+    }
+    const newCurrent = shuffledRef.current[nextPos];
+    const newNext = shuffledRef.current[nextPos + 1];
+    const nextLimit = newCurrent
+      ? Math.round(countRomajiLength(newCurrent.reading) * stateRef.current.config.secPerRomaji * 1000)
+      : 0;
+    queuePosRef.current = nextPos;
+    wordStartTimeRef.current = now;
+    wordTimeLimitRef.current = nextLimit;
+    return { nextPos, nextLimit, newCurrent, newNext };
+  };
+
+  // ゲームタイマー（100ms ごと）— 初回キー入力後に開始、クリアで停止
   useEffect(() => {
     if (!startTime || isCleared) return;
-    const id = setInterval(() => {
-      setElapsedMs(Date.now() - startTime);
-    }, 200);
-    return () => clearInterval(id);
-  }, [startTime, isCleared]);
 
+    const id = setInterval(() => {
+      const r = stateRef.current;
+      if (r.isCleared) return;
+
+      const now = Date.now();
+      // Date.now() ベースで計算することで fake timers でも正確に動作する
+      const newTotal = Math.max(0, totalTimeLimitMs - (now - gameStartTimeRef.current));
+      const newWordRemaining = Math.max(0, wordTimeLimitRef.current - (now - wordStartTimeRef.current));
+
+      if (newTotal <= 0) {
+        // 総制限時間切れ → ゲーム終了
+        const finalAccuracy =
+          r.totalKeystrokes === 0
+            ? 100
+            : Math.round(((r.totalKeystrokes - r.missCount) / r.totalKeystrokes) * 100);
+        const stars = calcStars(finalAccuracy, r.missCount);
+        r.saveResult(r.stageId, r.score, stars, finalAccuracy, r.missCount, totalTimeLimitMs, r.wordsCompleted);
+        if (r.soundEnabled) playClear();
+        setTotalTimeRemainingMs(0);
+        setIsCleared(true);
+        return;
+      }
+
+      setTotalTimeRemainingMs(newTotal);
+
+      if (newWordRemaining <= 0) {
+        // ワードタイムアウト → 減点して次のワードへ
+        const newScore = Math.max(0, r.score - TIMEOUT_PENALTY);
+        const { nextLimit, newCurrent, newNext } = computeAdvance(queuePosRef.current, r.words, now);
+        stateRef.current.wordMissCount = 0;
+        if (r.soundEnabled) playMiss();
+        setScore(newScore);
+        setTypedBuffer("");
+        setWordTimeLimitMs(nextLimit);
+        setWordTimeRemainingMs(nextLimit);
+        setCurrentWord(newCurrent);
+        setNextWord(newNext);
+      } else {
+        setWordTimeRemainingMs(newWordRemaining);
+      }
+    }, 100);
+
+    return () => clearInterval(id);
+  }, [startTime, isCleared, totalTimeLimitMs]);
+
+  // キーボードイベントハンドラ
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    // 修飾キー・特殊キーは無視
     if (e.ctrlKey || e.altKey || e.metaKey) return;
     if (e.key.length !== 1) return;
 
     const r = stateRef.current;
     if (r.isCleared) return;
 
-    const currentWord = r.words[r.wordIndex];
-    if (!currentWord) return;
+    // effects/callbacks 内での shuffledRef アクセスはルール上問題なし
+    const word = shuffledRef.current[queuePosRef.current];
+    if (!word) return;
 
     e.preventDefault();
 
@@ -127,51 +232,30 @@ export const useTypingGame = (
     // 初回キーでタイマー開始
     if (!r.startTime) {
       const now = Date.now();
-      stateRef.current.startTime = now; // 同一フレーム内の再入防止
+      gameStartTimeRef.current = now;
+      wordStartTimeRef.current = now;
+      stateRef.current.startTime = now;
       setStartTime(now);
     }
 
-    if (isPartialMatch(newBuffer, currentWord.reading)) {
+    if (isPartialMatch(newBuffer, word.reading)) {
       setTotalKeystrokes((t) => t + 1);
-
       if (r.soundEnabled) playBlockPlace();
 
-      if (isExactMatch(newBuffer, currentWord.reading)) {
+      if (isExactMatch(newBuffer, word.reading)) {
         // ワード完了
         const wordScore = calcWordScore(stateRef.current.wordMissCount);
         stateRef.current.wordMissCount = 0;
 
-        const newScore = r.score + wordScore;
-        const newTotal = r.totalKeystrokes + 1;
-        const nextIndex = r.wordIndex + 1;
-
-        setScore(newScore);
+        const now = Date.now();
+        const { nextLimit, newCurrent, newNext } = computeAdvance(queuePosRef.current, r.words, now);
+        setScore(r.score + wordScore);
+        setWordsCompleted(r.wordsCompleted + 1);
         setTypedBuffer("");
-
-        if (nextIndex >= r.words.length) {
-          // ステージクリア — 最終結果を確定して保存
-          const finalElapsed = r.startTime ? Date.now() - r.startTime : 0;
-          const finalAccuracy =
-            newTotal === 0
-              ? 100
-              : Math.round(((newTotal - r.missCount) / newTotal) * 100);
-          const stars = calcStars(finalAccuracy, r.missCount);
-
-          r.saveResult(
-            r.stageId,
-            newScore,
-            stars,
-            finalAccuracy,
-            r.missCount,
-            finalElapsed
-          );
-
-          setElapsedMs(finalElapsed);
-          if (r.soundEnabled) playClear();
-          setIsCleared(true);
-        } else {
-          setWordIndex(nextIndex);
-        }
+        setWordTimeLimitMs(nextLimit);
+        setWordTimeRemainingMs(nextLimit);
+        setCurrentWord(newCurrent);
+        setNextWord(newNext);
       } else {
         setTypedBuffer(newBuffer);
       }
@@ -182,7 +266,7 @@ export const useTypingGame = (
       stateRef.current.wordMissCount += 1;
       if (r.soundEnabled) playMiss();
     }
-  }, []); // 安定したハンドラ：状態はすべて stateRef 経由で読む
+  }, []); // 安定したハンドラ：状態はすべて ref 経由で読む
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
@@ -190,23 +274,21 @@ export const useTypingGame = (
   }, [handleKeyDown]);
 
   // ── 派生値 ──────────────────────────────────
-  const currentWord = words[wordIndex];
-  const nextWord = words[wordIndex + 1];
-
-  const currentPatterns = currentWord ? toRomaji(currentWord.reading) : [];
-  const displayPattern =
-    currentPatterns.find((p) => p.startsWith(typedBuffer)) ??
-    currentPatterns[0] ??
-    "";
+  const displayPattern = currentWord
+    ? (toRomaji(currentWord.reading).find((p) => p.startsWith(typedBuffer)) ??
+       toRomaji(currentWord.reading)[0] ??
+       "")
+    : "";
 
   const accuracy =
     totalKeystrokes === 0
       ? 100
       : Math.round(((totalKeystrokes - missCount) / totalKeystrokes) * 100);
 
+  const elapsedMs = totalTimeLimitMs - totalTimeRemainingMs;
   const wpm =
-    startTime !== undefined && elapsedMs > 0
-      ? Math.round(wordIndex / (elapsedMs / 60000))
+    elapsedMs > 0 && wordsCompleted > 0
+      ? Math.round(wordsCompleted / (elapsedMs / 60000))
       : 0;
 
   return {
@@ -218,9 +300,11 @@ export const useTypingGame = (
     missCount,
     accuracy,
     wpm,
-    elapsedMs,
-    wordIndex,
+    wordsCompleted,
     totalWords: words.length,
+    totalTimeRemainingMs,
+    wordTimeRemainingMs,
+    wordTimeLimitMs,
     isStarted: startTime !== undefined,
     isCleared,
   };

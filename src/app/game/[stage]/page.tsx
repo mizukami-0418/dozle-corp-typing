@@ -32,9 +32,10 @@ export default function GamePage() {
     score,
     missCount,
     accuracy,
-    wpm,
-    wordIndex,
-    totalWords,
+    wordsCompleted,
+    totalTimeRemainingMs,
+    wordTimeRemainingMs,
+    wordTimeLimitMs,
     isStarted,
     isCleared,
   } = useTypingGame(stageId, stage?.words ?? []);
@@ -43,19 +44,19 @@ export default function GamePage() {
   const [charAnimState, setCharAnimState] = useState<CharAnimState>("idle");
   // ワード正解ごとにインクリメント → ParticleEffect が発火する
   const [correctCount, setCorrectCount] = useState(0);
-  const prevWordIdxRef = useRef(wordIndex);
+  const prevWordsCompletedRef = useRef(wordsCompleted);
 
   useEffect(() => {
     if (isCleared) {
-      const t = setTimeout(() => {
+      setTimeout(() => {
         setCharAnimState("cleared");
-        setCorrectCount((n) => n + 1); // 最終ワード完了のパーティクル
+        setCorrectCount((n) => n + 1);
       }, 0);
-      return () => clearTimeout(t);
+      return;
     }
-    const prev = prevWordIdxRef.current;
-    prevWordIdxRef.current = wordIndex;
-    if (wordIndex > prev) {
+    const prev = prevWordsCompletedRef.current;
+    prevWordsCompletedRef.current = wordsCompleted;
+    if (wordsCompleted > prev) {
       const t1 = setTimeout(() => {
         setCharAnimState("correct");
         setCorrectCount((n) => n + 1);
@@ -66,18 +67,17 @@ export default function GamePage() {
         clearTimeout(t2);
       };
     }
-  }, [wordIndex, isCleared]);
+  }, [wordsCompleted, isCleared]);
 
   const accentColor = CHARACTER_CONFIGS[selectedCharacter].color;
 
-  // クリア後2秒でリザルト画面へ遷移
+  // タイムアップ後 2 秒でリザルト画面へ遷移
   useEffect(() => {
     if (!isCleared) return;
     const t = setTimeout(() => router.push("/result"), 2000);
     return () => clearTimeout(t);
   }, [isCleared, router]);
 
-  // 存在しないステージへのアクセス
   if (!stage) {
     return (
       <MinecraftBg>
@@ -87,7 +87,7 @@ export default function GamePage() {
             onClick={() => router.push("/stages")}
             className="px-6 py-2 rounded-xl bg-white/20 text-white font-bold hover:bg-white/30 transition"
           >
-            ホームへ戻る
+            ステージへ戻る
           </button>
         </div>
       </MinecraftBg>
@@ -99,18 +99,18 @@ export default function GamePage() {
       {/* ワード正解パーティクル */}
       <ParticleEffect trigger={correctCount} accentColor={accentColor} />
 
-      {/* ステージクリアコンフェッティ */}
+      {/* タイムアップコンフェッティ */}
       <CelebrationEffect active={isCleared} />
 
       <div className="min-h-screen flex flex-col">
         {/* HUD */}
         <HUD
           score={score}
-          wordIndex={wordIndex}
-          totalWords={totalWords}
+          totalTimeRemainingMs={totalTimeRemainingMs}
+          wordTimeRemainingMs={wordTimeRemainingMs}
+          wordTimeLimitMs={wordTimeLimitMs}
           missCount={missCount}
           accuracy={accuracy}
-          wpm={wpm}
         />
 
         {/* メインコンテンツ */}
@@ -136,12 +136,12 @@ export default function GamePage() {
           </div>
         </div>
 
-        {/* ステージ名表示 */}
+        {/* ステージ名 */}
         <div className="text-center text-white/50 text-xs pb-4">
           {stage.name}
         </div>
 
-        {/* クリアオーバーレイ */}
+        {/* タイムアップオーバーレイ */}
         <AnimatePresence>
           {isCleared && (
             <motion.div
@@ -158,15 +158,17 @@ export default function GamePage() {
                 <motion.div
                   animate={{ rotate: [-3, 3, -3] }}
                   transition={{ duration: 0.5, repeat: Infinity, ease: "easeInOut" }}
-                  className="text-5xl font-black mb-3"
+                  className="text-5xl font-black mb-2"
                   style={{
                     color: "var(--color-brand-gold)",
                     textShadow: "2px 2px 0 #000, 0 0 20px rgba(255,215,0,0.6)",
                   }}
                 >
-                  STAGE CLEAR!
+                  TIME UP!
                 </motion.div>
-                {/* スター演出 */}
+                <div className="text-white/80 text-lg font-bold mb-3">
+                  {wordsCompleted} ワード クリア！
+                </div>
                 <div className="flex justify-center gap-2 mb-3">
                   {[0, 1, 2].map((i) => (
                     <motion.span

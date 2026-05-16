@@ -43,7 +43,7 @@ export default function ResultPage() {
   return (
     <MinecraftBg>
       <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8 gap-6">
-        {/* STAGE CLEAR バッジ */}
+        {/* TIME UP バッジ */}
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -57,7 +57,7 @@ export default function ResultPage() {
               textShadow: "2px 2px 0 #000, 4px 4px 0 rgba(0,0,0,0.3)",
             }}
           >
-            STAGE CLEAR!
+            TIME UP!
           </div>
           {stage && (
             <div className="text-white/70 text-sm mt-1">{stage.name}</div>
@@ -131,7 +131,7 @@ export default function ResultPage() {
           <div className="h-px bg-white/10" />
 
           {/* 詳細 */}
-          <div className="grid grid-cols-3 gap-2 text-center">
+          <div className="grid grid-cols-2 gap-2 text-center">
             <div>
               <div className="text-white/50 text-xs">正確率</div>
               <div
@@ -146,6 +146,12 @@ export default function ResultPage() {
                 }}
               >
                 {resultData.accuracy}%
+              </div>
+            </div>
+            <div>
+              <div className="text-white/50 text-xs">WORDS</div>
+              <div className="text-lg font-bold" style={{ color: "var(--color-brand-gold)" }}>
+                {resultData.wordsCompleted}
               </div>
             </div>
             <div>

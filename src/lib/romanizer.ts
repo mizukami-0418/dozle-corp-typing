@@ -289,3 +289,16 @@ export const isExactMatch = (typed: string, kana: string): boolean => {
   const patterns = toRomaji(kana);
   return patterns.some((p) => p === typed);
 };
+
+/**
+ * reading のローマ字換算文字数（最短パターン）を返す。
+ * ワード別タイムアウト計算に使用する。
+ *
+ * @param reading - ひらがな・ASCII 混在文字列
+ * @returns 最短ローマ字パターンの文字数
+ */
+export const countRomajiLength = (reading: string): number => {
+  const patterns = toRomaji(reading);
+  if (patterns.length === 0) return reading.length;
+  return Math.min(...patterns.map((p) => p.length));
+};

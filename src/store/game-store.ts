@@ -65,7 +65,8 @@ interface GameStore {
     stars: number,
     accuracy: number,
     missCount: number,
-    elapsedMs: number
+    elapsedMs: number,
+    wordsCompleted: number
   ) => boolean;
 }
 
@@ -123,7 +124,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     });
   },
 
-  saveResult: (stageId, score, stars, accuracy, missCount, elapsedMs) => {
+  saveResult: (stageId, score, stars, accuracy, missCount, elapsedMs, wordsCompleted) => {
     const isNewBest = saveBestScore(stageId, score);
     markStageCleared(stageId);
     saveStarRecord(stageId, stars);
@@ -137,6 +138,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       missCount,
       elapsedMs,
       isNewBest,
+      wordsCompleted,
     };
 
     set({

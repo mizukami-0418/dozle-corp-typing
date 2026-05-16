@@ -59,6 +59,7 @@ export interface ResultData {
   elapsedMs: number;
   stars: number;
   isNewBest: boolean;
+  wordsCompleted: number;
 }
 
 /** キャラクター情報 */
