@@ -138,12 +138,12 @@ npm run lint    # ESLint チェック
 
 ## Phase 6: テスト・品質
 
-- [ ] 6-1. `romanizer.ts` のユニットテスト
-- [ ] 6-2. `useTypingGame` フックのテスト
-- [ ] 6-3. 動作確認（全ステージ・全キャラクター）
-- [ ] 6-4. TypeScript 型チェック通過（`tsc --noEmit`）
-- [ ] 6-5. ESLint / Prettier 通過
-- [ ] **Phase 6 完了チェック：build / dev / lint → コミット → プッシュ**
+- [x] 6-1. `romanizer.ts` のユニットテスト（32テスト）
+- [x] 6-2. `useTypingGame` フックのテスト（13テスト）
+- [x] 6-3. 動作確認（全ステージ・全キャラクター）※ dev サーバーで手動確認
+- [x] 6-4. TypeScript 型チェック通過（`tsc --noEmit`）
+- [x] 6-5. ESLint / Prettier 通過
+- [x] **Phase 6 完了チェック：build / dev / lint → コミット → プッシュ**
 
 ---
 
