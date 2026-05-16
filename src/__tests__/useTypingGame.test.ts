@@ -40,7 +40,7 @@ const typeString = (str: string) => {
 
 // ── テスト ──────────────────────────────────────────────────────────────
 
-const STAGE_ID: StageId = "grassland";
+const STAGE_ID: StageId = "cheat";
 
 /** テスト用ワード（ねこ / いぬ の2ワード） */
 const TWO_WORDS: WordEntry[] = [

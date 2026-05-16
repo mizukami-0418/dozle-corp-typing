@@ -8,35 +8,12 @@ import { StageCard } from "@/components/StageCard";
 import { CHARACTER_KEYS, CHARACTER_CONFIGS } from "@/lib/characters";
 import { STAGES } from "@/lib/words";
 import { useGameStore } from "@/store/game-store";
-import type { StageId } from "@/types";
 
-/** ステージが解放済みか判定する */
-const isUnlocked = (
-  unlockReq: StageId | undefined,
-  cleared: StageId[]
-): boolean => {
-  if (!unlockReq) return true;
-  return cleared.includes(unlockReq);
-};
-
-const DIFFICULTY_LABELS = {
-  easy: "EASY",
-  normal: "NORMAL",
-  hard: "HARD",
-} as const;
-
-const DIFFICULTY_COLORS = {
-  easy: "#FDD835",
-  normal: "#0097A7",
-  hard: "#E53935",
-} as const;
-
-export default function HomePage() {
+export default function StagesPage() {
   const router = useRouter();
-  const { selectedCharacter, setCharacter, clearedStages, bestScores, loadProgress } =
+  const { selectedCharacter, setCharacter, bestScores, loadProgress } =
     useGameStore();
 
-  // ローカルストレージから進捗を読み込む
   useEffect(() => {
     loadProgress();
   }, [loadProgress]);
@@ -44,12 +21,6 @@ export default function HomePage() {
   const handleStageSelect = (stageId: string) => {
     router.push(`/game/${stageId}`);
   };
-
-  const groupedStages = {
-    easy: STAGES.filter((s) => s.difficulty === "easy"),
-    normal: STAGES.filter((s) => s.difficulty === "normal"),
-    hard: STAGES.filter((s) => s.difficulty === "hard"),
-  } as const;
 
   return (
     <MinecraftBg>
@@ -123,38 +94,21 @@ export default function HomePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.4 }}
-          className="w-full max-w-2xl flex flex-col gap-6 pb-16"
+          className="w-full max-w-2xl pb-16"
         >
-          {(["easy", "normal", "hard"] as const).map((diff) => (
-            <div key={diff}>
-              {/* 難易度ヘッダー */}
-              <div className="flex items-center gap-2 mb-3">
-                <div
-                  className="px-3 py-1 rounded font-black text-sm text-black"
-                  style={{ backgroundColor: DIFFICULTY_COLORS[diff] }}
-                >
-                  {DIFFICULTY_LABELS[diff]}
-                </div>
-                <div className="flex-1 h-px bg-white/20" />
-              </div>
-
-              {/* ステージカード */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {groupedStages[diff].map((stage) => {
-                  const locked = !isUnlocked(stage.unlockRequirement, clearedStages);
-                  return (
-                    <StageCard
-                      key={stage.id}
-                      stage={stage}
-                      isLocked={locked}
-                      bestScore={bestScores[stage.id]}
-                      onSelect={handleStageSelect}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-          ))}
+          <p className="text-white/80 text-sm font-bold text-center mb-4">
+            ステージを選んでね！
+          </p>
+          <div className="grid grid-cols-2 gap-4">
+            {STAGES.map((stage) => (
+              <StageCard
+                key={stage.id}
+                stage={stage}
+                bestScore={bestScores[stage.id]}
+                onSelect={handleStageSelect}
+              />
+            ))}
+          </div>
         </motion.div>
       </div>
     </MinecraftBg>

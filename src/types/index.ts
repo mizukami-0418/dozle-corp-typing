@@ -10,17 +10,11 @@ export type CharacterKey =
   | "OrafKun"
   | "ooharaMEN";
 
-/** 難易度 */
-export type Difficulty = "easy" | "normal" | "hard";
+/** 難易度（= ステージ識別子と一対一対応） */
+export type Difficulty = "cheat" | "normal" | "hard" | "kichiku";
 
 /** ステージ識別子 */
-export type StageId =
-  | "grassland"
-  | "villager"
-  | "dozle-cheat"
-  | "minecraft"
-  | "dozle-normal"
-  | "dozle-hard";
+export type StageId = "cheat" | "normal" | "hard" | "kichiku";
 
 /**
  * タイピング対象の1ワード。
@@ -40,7 +34,6 @@ export interface StageConfig {
   name: string;
   difficulty: Difficulty;
   words: WordEntry[];
-  unlockRequirement?: StageId;
 }
 
 /**
