@@ -44,27 +44,29 @@
 
 ### 3-3. ステージ構成
 
-難易度別に3段階。前のステージをクリアすることで次が解放される。
+難易度別に4段階。ステージロックなし・全難易度最初から選択可能。
 
-| 難易度 | カラー | ステージ例                         | ワード傾向                                   |
-| ------ | ------ | ---------------------------------- | -------------------------------------------- |
-| EASY   | 黄色   | 草原・村人・ドズル社チートステージ | ひらがな・日常単語・ドズル社関連の簡単な単語 |
-| NORMAL | 水色   | マイクラ・ドズル社ステージ         | Minecraft用語・メンバー関連                  |
-| HARD   | 赤     | ドズル社鬼畜ステージ               | ドズル社の有名なセリフ・長文                 |
+| 難易度 | StageId    | カラー | ワード傾向                                       |
+| ------ | ---------- | ------ | ------------------------------------------------ |
+| CHEAT  | `cheat`    | 黄色   | ひらがな・日常単語・ドズル社関連の簡単な単語（44ワード）|
+| NORMAL | `normal`   | 水色   | Minecraft用語・メンバー関連（29ワード）             |
+| HARD   | `hard`     | 赤     | ドズル社の有名なセリフ・長文（10ワード）             |
+| 鬼畜   | `kichiku`  | 紫     | 超難問（ワード追加予定）                            |
 
 ### 3-4. タイピングコンテンツ（ワード）テーマ
 
 - Minecraft用語（例：クリーパー、エンダードラゴン、ダイヤモンド）
 - ドズル社メンバー関連（名前・キャッチフレーズ・おともだち）
-- 日常単語（Easy向け）
-- ドズル社関連の簡単な単語（Easy / ドズル社チートステージ向け）
-- ドズル社の有名なセリフ・長文（Hard / ドズル社鬼畜ステージ向け）
+- 日常単語（CHEAT向け）
+- ドズル社関連の簡単な単語（CHEAT向け）
+- ドズル社の有名なセリフ・長文（HARD向け）
 
 ### 3-5. アニメーション演出
 
-- タイピング正解時：キャラクターが喜ぶアニメーション
-- ステージクリア時：お祝いエフェクト
-- キャラクターは常時アイドルアニメーション（上下に揺れる）
+- タイピング正解時：`ParticleEffect`（12粒パーティクル、キャラカラー混合）
+- ステージクリア時：`CelebrationEffect`（40粒コンフェッティ）＋クリアオーバーレイ（テキスト揺れ・スター順次ポップイン）
+- キャラクターは常時アイドルアニメーション（y軸上下 Framer Motion）
+- 画面遷移：`PageTransition`（opacity + y フェードイン、layout.tsx でラップ）
 
 ### 3-6. スコア・進捗保存
 
@@ -115,7 +117,7 @@
 
 - ドズル社ロゴ + 「OFFICIAL FAN GAME」サブロゴ
 - キャラクター選択（5人・メンバーカラーで表示）
-- ステージカード一覧（難易度ごとに色分け・鍵マークで未解放表示）
+- ステージカード一覧（2×2グリッド・難易度ごとに色分け・ロックなし）
 - ベストスコア表示
 - 背景：Minecraftスタイル（空・草・土）
 
@@ -233,9 +235,10 @@ type GameStore = {
 | 背景：空                             | `#87CEEB` |
 | 背景：草                             | `#5a8a3c` |
 | 背景：土                             | `#7a5c38` |
-| EASY                                 | `#FDD835` |
+| CHEAT                                | `#FDD835` |
 | NORMAL                               | `#0097A7` |
 | HARD                                 | `#E53935` |
+| 鬼畜（KICHIKU）                      | `#7B1FA2` |
 
 ### フォント
 
@@ -302,7 +305,7 @@ interface Stage {
 }
 
 // ユニオン型・関数型は type
-type Difficulty = "easy" | "normal" | "hard";
+type Difficulty = "cheat" | "normal" | "hard" | "kichiku";
 type RomajiConverter = (kana: string) => string;
 ```
 
@@ -312,16 +315,16 @@ type RomajiConverter = (kana: string) => string;
 
 ```ts
 // ❌
-const StageCard = ({ stage, isLocked }: { stage: Stage; isLocked: boolean }) => { ... };
+const StageCard = ({ stage }: { stage: Stage }) => { ... };
 
 // ✅
 interface StageCardProps {
   stage: Stage;
-  isLocked: boolean;
+  bestScore?: number;
   onSelect: (id: string) => void;
 }
 
-export const StageCard = ({ stage, isLocked, onSelect }: StageCardProps) => { ... };
+export const StageCard = ({ stage, bestScore, onSelect }: StageCardProps) => { ... };
 ```
 
 ### ⑤ `export default` より named export を使う
@@ -374,9 +377,28 @@ export const toRomaji = (kana: string): string[] => { ... };
 
 ---
 
-## 12. 今後の拡張候補（現時点では対象外）
+## 12. 実装済み機能まとめ
+
+| フェーズ | 内容                                                   | 状態 |
+| -------- | ------------------------------------------------------ | ---- |
+| Phase 1  | 型定義・ワードデータ・romanizer・storage・Zustand      | 完了 |
+| Phase 2  | `useTypingGame` フック                                 | 完了 |
+| Phase 3  | 共通コンポーネント（Character / StageCard / TypingArea / HUD / MinecraftBg） | 完了 |
+| Phase 4  | 3画面実装（ステージ選択 / ゲーム / リザルト）          | 完了 |
+| Phase 5  | アニメーション・エフェクト（ParticleEffect / CelebrationEffect / PageTransition） | 完了 |
+| Phase 6  | テスト・品質（romanizer 32件 / useTypingGame 13件）    | 完了 |
+| Phase 7  | トップメニュー画面・難易度構成変更・追加画面スタブ     | 完了 |
+
+## 13. 今後の実装予定
+
+- **鬼畜ステージ**：ワード内容の追加（現在空配列）
+- **遊び方ページ** (`/how-to-play`)：コンテンツ実装
+- **設定ページ** (`/settings`)：コンテンツ実装
+- **ドズル社とは？ページ** (`/about`)：コンテンツ実装
+- **キャラクター画像**：仮絵文字から実画像へ差し替え
+
+## 14. 今後の拡張候補（現時点では対象外）
 
 - オンラインランキング（DB連携が必要）
 - タイムアタックモード
-- サウンドエフェクト
 - モバイル対応キーボード最適化
