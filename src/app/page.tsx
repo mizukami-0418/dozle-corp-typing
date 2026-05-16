@@ -30,6 +30,12 @@ const MENU_BUTTONS: MenuButton[] = [
     href: "/settings",
     color: "#7B1FA2",
   },
+  {
+    label: "ドズル社とは？",
+    emoji: "🦍",
+    href: "/about",
+    color: "#E53935",
+  },
 ];
 
 export default function TopPage() {
