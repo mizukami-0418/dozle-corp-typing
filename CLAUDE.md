@@ -76,7 +76,7 @@
 ### 3-5. アニメーション演出
 
 - タイピング正解時：`ParticleEffect`（12粒パーティクル、キャラカラー混合）
-- ステージクリア時：`CelebrationEffect`（40粒コンフェッティ）＋クリアオーバーレイ（テキスト揺れ・スター順次ポップイン）
+- タイムアップ時：`CelebrationEffect`（40粒コンフェッティ）＋ TIME UP オーバーレイ（テキスト揺れ・スター順次ポップイン）
 - キャラクターは常時アイドルアニメーション（y軸上下 Framer Motion）
 - 画面遷移：`PageTransition`（opacity + y フェードイン、layout.tsx でラップ）
 
@@ -135,19 +135,20 @@
 
 ### 5-5. ゲーム画面
 
-- HUD：スコア / ステージ進捗バー / ミス数
-- 選択キャラ表示（アイドルアニメーション + 応援セリフ）
+- HUD：スコア / 総残り時間カウントダウン / ワード別タイマーバー / 正確率 / ミス数
+- 選択キャラ表示（アイドルアニメーション）
 - タイピングエリア：ひらがな表示 / 英語ヒント / ローマ字入力欄（打ち済み・現在・未入力を色分け）
 - 次のワードプレビュー / 正確率表示
+- タイムアップ時オーバーレイ（TIME UP! テキスト・ワード完了数・スター表示）
 - 背景：Minecraftスタイル
 
 ### 5-6. リザルト画面
 
-- STAGE CLEAR バッジ
-- キャラのお祝いアニメーション + メンバーからのメッセージ
+- TIME UP! バッジ
+- キャラのお祝いアニメーション
 - 獲得スター（3段階）
-- スコア / 正確率 / タイム
-- NEW BEST SCORE 表示（更新時のみ）
+- スコア / 正確率 / WORDS（完了ワード数）/ MISS / TIME
+- NEW BEST! 表示（更新時のみ）
 - ボタン：「ステージへ戻る」「もう一度！」
 - 背景：Minecraftスタイル
 
@@ -185,6 +186,7 @@ src/
 ├── lib/
 │   ├── words.ts               # ステージ別ワードデータ
 │   ├── romanizer.ts           # ひらがな → ローマ字変換ロジック
+│   ├── difficulty.ts          # 難易度別定数（制限時間・速度係数・TIMEOUT_PENALTY）
 │   ├── storage.ts             # ローカルストレージ操作
 │   ├── characters.ts          # キャラクター設定データ
 │   └── sound.ts               # Web Audio API サウンド
@@ -196,32 +198,51 @@ src/
 │   └── index.ts               # 共通型定義
 └── __tests__/
     ├── romanizer.test.ts      # romanizer ユニットテスト（32件）
-    └── useTypingGame.test.ts  # フックテスト（13件）
+    └── useTypingGame.test.ts  # フックテスト（14件）
 ```
 
 ---
 
 ## 7. 状態管理（Zustand）
 
-`gameStore.ts` で管理する主な状態：
+`game-store.ts` で管理する主な状態：
 
 ```ts
-type GameStore = {
+interface GameStore {
   // キャラ選択
   selectedCharacter: CharacterKey;
   setCharacter: (key: CharacterKey) => void;
 
-  // ゲーム中
-  currentStage: string;
-  score: number;
-  missCount: number;
-  currentWordIndex: number;
+  // ゲーム中の状態（GameState 型）
+  gameState: GameState;
+  setGameState: (state: Partial<GameState>) => void;
+  resetGameState: (stageId: StageId) => void;
+
+  // リザルトデータ（タイムアップ時にセット → リザルト画面で参照）
+  resultData: ResultData | undefined;
+  setResultData: (data: ResultData) => void;
+
+  // サウンド設定
+  soundEnabled: boolean;
+  toggleSound: () => void;
 
   // ローカルストレージと同期
   bestScores: Record<string, number>;
-  clearedStages: string[];
+  clearedStages: StageId[];
   starRecords: Record<string, number>;
-};
+  loadProgress: () => void;
+
+  // タイムアップ時の一括保存（ベストスコア・スター・resultData を更新）
+  saveResult: (
+    stageId: StageId,
+    score: number,
+    stars: number,
+    accuracy: number,
+    missCount: number,
+    elapsedMs: number,
+    wordsCompleted: number
+  ) => boolean; // isNewBest を返す
+}
 ```
 
 ---
@@ -398,18 +419,18 @@ export const toRomaji = (kana: string): string[] => { ... };
 | Phase 3  | 共通コンポーネント（Character / StageCard / TypingArea / HUD / MinecraftBg） | 完了 |
 | Phase 4  | 3画面実装（ステージ選択 / ゲーム / リザルト）          | 完了 |
 | Phase 5  | アニメーション・エフェクト（ParticleEffect / CelebrationEffect / PageTransition） | 完了 |
-| Phase 6  | テスト・品質（romanizer 32件 / useTypingGame 13件）    | 完了 |
+| Phase 6  | テスト・品質（romanizer 32件 / useTypingGame 14件）    | 完了 |
 | Phase 7  | トップメニュー画面・難易度構成変更・追加画面スタブ     | 完了 |
+| Phase 8  | 時間制ゲームモード（総制限時間・ワードタイムアウト・ループ出題・スコア再設計） | 完了 |
 
 ## 13. 今後の実装予定
 
-- **時間制ゲームモード実装**：制限時間・ワード別タイムアウト・ループ出題の実装
-- **スコア計算の再設計**：時間制に合わせた得点・タイムアウト減点の設計・実装
 - **ハードステージのワード追加**：現在3ワードのみで120秒に不足（9〜12ひらがな文字のワードが必要）
 - **遊び方ページ** (`/how-to-play`)：コンテンツ実装
 - **設定ページ** (`/settings`)：コンテンツ実装
 - **ドズル社とは？ページ** (`/about`)：コンテンツ実装
 - **キャラクター画像**：仮絵文字から実画像へ差し替え
+- **スコア数値調整**：TIMEOUT_PENALTY・ワードスコアはプレイテスト後に要チューニング
 
 ## 14. 今後の拡張候補（現時点では対象外）
 
