@@ -107,7 +107,7 @@ export const saveStarRecord = (stageId: StageId, stars: number): void => {
 
 /** 選択中のキャラクターを読み込む */
 export const loadSelectedCharacter = (): CharacterKey =>
-  readJson<CharacterKey>(KEYS.SELECTED_CHARACTER, "dozle");
+  readJson<CharacterKey>(KEYS.SELECTED_CHARACTER, "Dozle");
 
 /** 選択中のキャラクターを保存する */
 export const saveSelectedCharacter = (key: CharacterKey): void => {

@@ -6,8 +6,8 @@
 import type { CharacterConfig, CharacterKey } from "@/types";
 
 export const CHARACTER_CONFIGS: Record<CharacterKey, CharacterConfig> = {
-  dozle: {
-    key: "dozle",
+  Dozle: {
+    key: "Dozle",
     name: "ドズル",
     color: "#E53935",
     catchphrase: "ロジカルゴリラ社長",
@@ -20,12 +20,7 @@ export const CHARACTER_CONFIGS: Record<CharacterKey, CharacterConfig> = {
         "ゴリラのパワーを信じろ！",
         "集中！集中！",
       ],
-      correct: [
-        "そうだ！",
-        "ナイス！",
-        "完璧だ！",
-        "その調子！",
-      ],
+      correct: ["そうだ！", "ナイス！", "完璧だ！", "その調子！"],
       cleared: [
         "やったぞ！さすがだ！",
         "ロジカルゴリラ、完璧な仕事！",
@@ -33,13 +28,13 @@ export const CHARACTER_CONFIGS: Record<CharacterKey, CharacterConfig> = {
       ],
     },
   },
-  bonjour: {
-    key: "bonjour",
+  Bonjour: {
+    key: "Bonjour",
     name: "ぼんじゅうる",
     color: "#7B1FA2",
     catchphrase: "（心やさしい）卑怯者",
     friend: "グラサンバード",
-    emoji: "🐦",
+    emoji: "🍆",
     messages: {
       idle: [
         "ぼくが応援してあげるよ…",
@@ -47,12 +42,7 @@ export const CHARACTER_CONFIGS: Record<CharacterKey, CharacterConfig> = {
         "心はやさしいから許してね",
         "ちょっと卑怯な手を使っちゃう？",
       ],
-      correct: [
-        "やるじゃん！",
-        "いいね！",
-        "すごいすごい！",
-        "さすが！",
-      ],
+      correct: ["やるじゃん！", "いいね！", "すごいすごい！", "さすが！"],
       cleared: [
         "やったー！ぼくも嬉しい！",
         "グラサンバードが拍手してるよ！",
@@ -60,13 +50,13 @@ export const CHARACTER_CONFIGS: Record<CharacterKey, CharacterConfig> = {
       ],
     },
   },
-  only: {
-    key: "only",
+  Qnly: {
+    key: "Qnly",
     name: "おんりー",
     color: "#FDD835",
     catchphrase: "スピードスター",
-    friend: "いなりー（キツネ）",
-    emoji: "🦊",
+    friend: "いなりー",
+    emoji: "🍌",
     messages: {
       idle: [
         "速さが大事だよ！",
@@ -74,12 +64,7 @@ export const CHARACTER_CONFIGS: Record<CharacterKey, CharacterConfig> = {
         "スピードスターを目指せ！",
         "もっと速く！",
       ],
-      correct: [
-        "速い！",
-        "いい感じ！",
-        "そのスピード！",
-        "完璧！",
-      ],
+      correct: ["速い！", "いい感じ！", "そのスピード！", "完璧！"],
       cleared: [
         "最高のスピードだった！",
         "いなりーが喜んでる！",
@@ -87,13 +72,13 @@ export const CHARACTER_CONFIGS: Record<CharacterKey, CharacterConfig> = {
       ],
     },
   },
-  orafu: {
-    key: "orafu",
+  OrafKun: {
+    key: "OrafKun",
     name: "おらふくん",
     color: "#0097A7",
     catchphrase: "あなたの心を狙い撃ち",
     friend: "雪だるまくん",
-    emoji: "⛄",
+    emoji: "☃️",
     messages: {
       idle: [
         "あなたの心を狙い撃ちするよ！",
@@ -101,12 +86,7 @@ export const CHARACTER_CONFIGS: Record<CharacterKey, CharacterConfig> = {
         "冷静にいこう！",
         "ゆっくり丁寧に！",
       ],
-      correct: [
-        "狙い通り！",
-        "ナイスショット！",
-        "完璧な一撃！",
-        "いい感じ！",
-      ],
+      correct: ["狙い通り！", "ナイスショット！", "完璧な一撃！", "いい感じ！"],
       cleared: [
         "心を狙い撃ち、成功！",
         "雪だるまくんと一緒に喜んでる！",
@@ -114,13 +94,13 @@ export const CHARACTER_CONFIGS: Record<CharacterKey, CharacterConfig> = {
       ],
     },
   },
-  ohara: {
-    key: "ohara",
+  ooharaMEN: {
+    key: "ooharaMEN",
     name: "おおはらMEN",
     color: "#E91E8C",
     catchphrase: "ズボラな匠",
-    friend: "（なし）",
-    emoji: "🔨",
+    friend: "MENフクロウ",
+    emoji: "🐷",
     messages: {
       idle: [
         "まあ、適当にやろっか",
@@ -145,11 +125,11 @@ export const CHARACTER_CONFIGS: Record<CharacterKey, CharacterConfig> = {
 
 /** キャラクターキーの一覧 */
 export const CHARACTER_KEYS: CharacterKey[] = [
-  "dozle",
-  "bonjour",
-  "only",
-  "orafu",
-  "ohara",
+  "Dozle",
+  "Bonjour",
+  "Qnly",
+  "OrafKun",
+  "ooharaMEN",
 ];
 
 /** ランダムなアイドルメッセージを返す */

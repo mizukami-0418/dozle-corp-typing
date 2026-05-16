@@ -3,7 +3,12 @@
  */
 
 /** キャラクター識別子 */
-export type CharacterKey = "dozle" | "bonjour" | "only" | "orafu" | "ohara";
+export type CharacterKey =
+  | "Dozle"
+  | "Bonjour"
+  | "Qnly"
+  | "OrafKun"
+  | "ooharaMEN";
 
 /** 難易度 */
 export type Difficulty = "easy" | "normal" | "hard";
