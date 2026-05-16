@@ -1,16 +1,21 @@
 /**
  * ステージ別ワードデータ。
- * display: 画面表示用ひらがな、reading: ローマ字入力の基準読み、hint: 英語ヒント
+ * display: 画面表示用文字列、reading: ローマ字入力の基準読み、hint: 英語ヒント
  *
- * 難易度は4段階（cheat / normal / hard / kichiku）、各難易度1ステージ。
- * ステージロックなし・全難易度最初から選択可能。
+ * 難易度分類基準：reading のひらがな文字数
+ *   cheat   : 2〜4 文字
+ *   normal  : 5〜8 文字
+ *   hard    : 9〜12 文字
+ *   kichiku : 13 文字以上（カッコ・記号含む全文字が入力対象）
+ *
+ * ワード制限時間は別途ローマ字文字数 × 難易度係数で算出する。
  */
 
 import type { StageConfig } from "@/types";
 
 export const STAGES: StageConfig[] = [
   // ──────────────────────────────────────────
-  // チート
+  // チート（ひらがな 2〜4 文字）
   // ──────────────────────────────────────────
   {
     id: "cheat",
@@ -48,27 +53,26 @@ export const STAGES: StageConfig[] = [
       { display: "りんご", reading: "りんご", hint: "apple" },
       { display: "にく", reading: "にく", hint: "meat" },
       { display: "にんじん", reading: "にんじん", hint: "carrot" },
-      { display: "じゃがいも", reading: "じゃがいも", hint: "potato" },
-      // ドズル社関連（簡単）
+      // Minecraft（短いもの）
+      { display: "ネザー", reading: "ねざー", hint: "Nether" },
+      { display: "ゾンビ", reading: "ぞんび", hint: "zombie" },
+      { display: "ウィザー", reading: "うぃざー", hint: "Wither" },
+      { display: "スポーン", reading: "すぽーん", hint: "spawn" },
+      { display: "焼き肉", reading: "やきにく", hint: "yakiniku" },
+      // ドズル社関連（短いもの）
       { display: "ドズル", reading: "どずる", hint: "Dozle" },
-      { display: "ぼんじゅうる", reading: "ぼんじゅうる", hint: "Bonjour" },
       { display: "おんりー", reading: "おんりー", hint: "Qnly" },
-      { display: "おらふくん", reading: "おらふくん", hint: "Oraf-Kun" },
       { display: "おおはらMEN", reading: "おおはらMEN", hint: "ooharaMEN" },
       { display: "どずるしゃ", reading: "どずるしゃ", hint: "DozleCorp" },
-      { display: "ゆーちゅーぶ", reading: "ゆーちゅーぶ", hint: "YouTube" },
-      { display: "まいんくらふと", reading: "まいんくらふと", hint: "Minecraft" },
       { display: "ゴリラ", reading: "ごりら", hint: "gorilla" },
-      { display: "ビッグボス", reading: "びっぐぼす", hint: "Big Boss" },
       { display: "コラボ", reading: "こらぼ", hint: "collaboration" },
       { display: "いなりー", reading: "いなりー", hint: "Inaly" },
-      { display: "MENフクロウ", reading: "めんふくろう", hint: "MEN Owl" },
       { display: "仲間", reading: "なかま", hint: "friend" },
     ],
   },
 
   // ──────────────────────────────────────────
-  // ノーマル
+  // ノーマル（ひらがな 5〜8 文字）
   // ──────────────────────────────────────────
   {
     id: "normal",
@@ -79,30 +83,28 @@ export const STAGES: StageConfig[] = [
       { display: "クリーパー", reading: "くりーぱー", hint: "creeper" },
       { display: "エンダードラゴン", reading: "えんだーどらごん", hint: "Ender Dragon" },
       { display: "ダイヤモンド", reading: "だいやもんど", hint: "diamond" },
-      { display: "ネザー", reading: "ねざー", hint: "Nether" },
       { display: "エンドポータル", reading: "えんどぽーたる", hint: "End Portal" },
       { display: "スケルトン", reading: "すけるとん", hint: "skeleton" },
-      { display: "ゾンビ", reading: "ぞんび", hint: "zombie" },
       { display: "エンダーマン", reading: "えんだーまん", hint: "Enderman" },
-      { display: "ウィザー", reading: "うぃざー", hint: "Wither" },
       { display: "レッドストーン", reading: "れっどすとーん", hint: "Redstone" },
       { display: "エンチャント", reading: "えんちゃんと", hint: "Enchant" },
-      { display: "スポーン", reading: "すぽーん", hint: "spawn" },
       { display: "バイオーム", reading: "ばいおーむ", hint: "biome" },
       { display: "アドベンチャー", reading: "あどべんちゃー", hint: "adventure" },
       { display: "サバイバル", reading: "さばいばる", hint: "survival" },
-      // ドズル社関連（中級）
-      { display: "ロジカルゴリラ社長", reading: "ろじかるごりらしゃちょう", hint: "Logical boss gorilla" },
+      { display: "じゃがいも", reading: "じゃがいも", hint: "potato" },
+      // ドズル社関連
+      { display: "ぼんじゅうる", reading: "ぼんじゅうる", hint: "Bonjour" },
+      { display: "おらふくん", reading: "おらふくん", hint: "Oraf-Kun" },
+      { display: "ゆーちゅーぶ", reading: "ゆーちゅーぶ", hint: "YouTube" },
+      { display: "まいんくらふと", reading: "まいんくらふと", hint: "Minecraft" },
+      { display: "ビッグボス", reading: "びっぐぼす", hint: "Big Boss" },
+      { display: "MENフクロウ", reading: "めんふくろう", hint: "MEN Owl" },
       { display: "スピードスター", reading: "すぴーどすたー", hint: "Speedstar" },
       { display: "ズボラな匠", reading: "ずぼらなたくみ", hint: "Lazy craftsman" },
-      { display: "(心やさしい)卑怯者", reading: "(こころやさしい)ひきょうもの", hint: "Kindhearted coward" },
-      { display: "あなたの心を狙い撃ち", reading: "あなたのこころをねらいうち", hint: "Heart sniper" },
       { display: "グラサンバード", reading: "ぐらさんばーど", hint: "Sunglasses Bird" },
-      { display: "いなりー", reading: "いなりー", hint: "Inari" },
       { display: "雪だるまくん", reading: "ゆきだるまくん", hint: "Yukidaruma-Kun" },
       { display: "おともだち", reading: "おともだち", hint: "friends" },
       { display: "ゲーミングハウス", reading: "げーみんぐはうす", hint: "Gaming House" },
-      { display: "焼き肉", reading: "やきにく", hint: "yakiniku" },
       { display: "でぃすこーど", reading: "でぃすこーど", hint: "Discord" },
       { display: "あーかいぶ", reading: "あーかいぶ", hint: "archive" },
       { display: "おふぃしゃる", reading: "おふぃしゃる", hint: "official" },
@@ -110,34 +112,38 @@ export const STAGES: StageConfig[] = [
   },
 
   // ──────────────────────────────────────────
-  // ハード
+  // ハード（ひらがな 9〜12 文字）
   // ──────────────────────────────────────────
   {
     id: "hard",
     name: "ハードステージ",
     difficulty: "hard",
     words: [
-      { display: "おまえはもうしんでいる", reading: "おまえはもうしんでいる", hint: "You are already dead" },
-      { display: "これがどずるしゃのちからだ", reading: "これがどずるしゃのちからだ", hint: "This is the power of DozleCorp" },
-      { display: "ぼんじゅうるはひきょうだけどこころはやさしい", reading: "ぼんじゅうるはひきょうだけどこころはやさしい", hint: "Bonjour is cowardly but kind-hearted" },
-      { display: "おんりーのすぴーどはまじやばい", reading: "おんりーのすぴーどはまじやばい", hint: "Only's speed is seriously amazing" },
-      { display: "おらふくんのゆきだるまがかわいすぎる", reading: "おらふくんのゆきだるまがかわいすぎる", hint: "Orafu's snowman is too cute" },
-      { display: "おおはらめんのたくみわざをみよ", reading: "おおはらめんのたくみわざをみよ", hint: "Behold Ohara MEN's craftsmanship" },
-      { display: "どずるしゃのどうがをみてくれ", reading: "どずるしゃのどうがをみてくれ", hint: "Please watch DozleCorp's videos" },
-      { display: "まいんくらふとはじんせいだ", reading: "まいんくらふとはじんせいだ", hint: "Minecraft is life" },
-      { display: "えんだーどらごんをたおせ", reading: "えんだーどらごんをたおせ", hint: "Defeat the Ender Dragon" },
-      { display: "ぜんいんしゅうごうどずるしゃのじかんだ", reading: "ぜんいんしゅうごうどずるしゃのじかんだ", hint: "Everyone gather, it's DozleCorp time" },
+      { display: "ロジカルゴリラ社長", reading: "ろじかるごりらしゃちょう", hint: "Logical boss gorilla" },       // 12
+      { display: "おまえはもうしんでいる", reading: "おまえはもうしんでいる", hint: "You are already dead" },     // 11
+      { display: "えんだーどらごんをたおせ", reading: "えんだーどらごんをたおせ", hint: "Defeat the Ender Dragon" }, // 12
     ],
   },
 
   // ──────────────────────────────────────────
-  // 鬼畜（ワードは後で追加）
+  // 鬼畜（ひらがな 13 文字以上・カッコ等含む全文字入力）
   // ──────────────────────────────────────────
   {
     id: "kichiku",
     name: "鬼畜ステージ",
     difficulty: "kichiku",
-    words: [],
+    words: [
+      { display: "(心やさしい)卑怯者", reading: "(こころやさしい)ひきょうもの", hint: "Kindhearted coward" },                    // 13
+      { display: "あなたの心を狙い撃ち", reading: "あなたのこころをねらいうち", hint: "Heart sniper" },                          // 13
+      { display: "これがどずるしゃのちからだ", reading: "これがどずるしゃのちからだ", hint: "This is the power of DozleCorp" },   // 13
+      { display: "まいんくらふとはじんせいだ", reading: "まいんくらふとはじんせいだ", hint: "Minecraft is life" },               // 13
+      { display: "どずるしゃのどうがをみてくれ", reading: "どずるしゃのどうがをみてくれ", hint: "Please watch DozleCorp's videos" }, // 14
+      { display: "おんりーのすぴーどはまじやばい", reading: "おんりーのすぴーどはまじやばい", hint: "Only's speed is seriously amazing" }, // 15
+      { display: "おおはらめんのたくみわざをみよ", reading: "おおはらめんのたくみわざをみよ", hint: "Behold Ohara MEN's craftsmanship" }, // 15
+      { display: "ぜんいんしゅうごうどずるしゃのじかんだ", reading: "ぜんいんしゅうごうどずるしゃのじかんだ", hint: "Everyone gather, it's DozleCorp time" }, // 19
+      { display: "おらふくんのゆきだるまがかわいすぎる", reading: "おらふくんのゆきだるまがかわいすぎる", hint: "Orafu's snowman is too cute" }, // 18
+      { display: "ぼんじゅうるはひきょうだけどこころはやさしい", reading: "ぼんじゅうるはひきょうだけどこころはやさしい", hint: "Bonjour is cowardly but kind-hearted" }, // 22
+    ],
   },
 ];
 
