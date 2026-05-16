@@ -75,13 +75,6 @@ export const TypingArea = ({
           </motion.div>
         </AnimatePresence>
 
-        {/* 英語ヒント */}
-        {currentWord.hint && (
-          <div className="text-center text-white/50 text-sm mb-4">
-            {currentWord.hint}
-          </div>
-        )}
-
         {/* ローマ字入力欄 */}
         <div
           className="bg-black/50 rounded-xl p-4 font-mono text-center border border-white/10 break-all"
@@ -138,9 +131,6 @@ export const TypingArea = ({
         <div className="mt-3 text-center text-white/40 text-sm">
           <span className="text-white/30">NEXT: </span>
           <span className="text-white/50 font-bold">{nextWord.display}</span>
-          {nextWord.hint && (
-            <span className="text-white/30 ml-2">({nextWord.hint})</span>
-          )}
         </div>
       )}
     </div>

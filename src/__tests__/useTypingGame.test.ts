@@ -44,8 +44,8 @@ const STAGE_ID: StageId = "cheat";
 
 /** テスト用ワード（ねこ / いぬ の2ワード） */
 const TWO_WORDS: WordEntry[] = [
-  { display: "ねこ", reading: "ねこ", hint: "cat" },
-  { display: "いぬ", reading: "いぬ", hint: "dog" },
+  { display: "ねこ", reading: "ねこ" },
+  { display: "いぬ", reading: "いぬ" },
 ];
 
 describe("useTypingGame", () => {

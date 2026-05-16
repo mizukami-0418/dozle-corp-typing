@@ -20,12 +20,10 @@ export type StageId = "cheat" | "normal" | "hard" | "kichiku";
  * タイピング対象の1ワード。
  * display: 画面上部に表示するひらがな（または英語）
  * reading: ローマ字入力の正解文字列（複数パターンを romanizer が生成）
- * hint: 英語表記ヒント（省略可）
  */
 export interface WordEntry {
   display: string;
   reading: string;
-  hint?: string;
 }
 
 /** ステージ設定 */

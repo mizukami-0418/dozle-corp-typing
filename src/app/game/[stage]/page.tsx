@@ -71,6 +71,20 @@ export default function GamePage() {
 
   const accentColor = CHARACTER_CONFIGS[selectedCharacter].color;
 
+  // 終了確認ダイアログの表示状態
+  const [showQuitDialog, setShowQuitDialog] = useState(false);
+
+  // ESC キーで確認ダイアログを開閉する
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !isCleared) {
+        setShowQuitDialog((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isCleared]);
+
   // タイムアップ後 2 秒でリザルト画面へ遷移
   useEffect(() => {
     if (!isCleared) return;
@@ -124,7 +138,7 @@ export default function GamePage() {
           </div>
 
           {/* タイピングエリア */}
-          <div className="flex-1 w-full max-w-xl">
+          <div className="flex-1 w-full max-w-xl flex flex-col gap-3">
             <TypingArea
               currentWord={currentWord}
               nextWord={nextWord}
@@ -133,6 +147,15 @@ export default function GamePage() {
               accuracy={accuracy}
               isStarted={isStarted}
             />
+            <div className="flex justify-end">
+              <button
+                onClick={() => setShowQuitDialog(true)}
+                className="px-4 py-1.5 rounded-lg bg-black/60 border border-white/30 text-white/80 text-sm font-bold hover:bg-red-900/70 hover:border-red-400/60 hover:text-white transition"
+                aria-label="ゲームを終了する"
+              >
+                ✕ ゲームをやめる
+              </button>
+            </div>
           </div>
         </div>
 
@@ -140,6 +163,43 @@ export default function GamePage() {
         <div className="text-center text-white/50 text-xs pb-4">
           {stage.name}
         </div>
+
+        {/* 終了確認ダイアログ */}
+        <AnimatePresence>
+          {showQuitDialog && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
+            >
+              <motion.div
+                initial={{ scale: 0.85, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.85, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                className="bg-gray-900 border border-white/20 rounded-2xl px-8 py-6 flex flex-col items-center gap-5 min-w-[280px]"
+              >
+                <p className="text-white font-bold text-lg">ゲームを終了しますか？</p>
+                <p className="text-white/50 text-sm">スコアは保存されません</p>
+                <div className="flex gap-3 w-full">
+                  <button
+                    onClick={() => router.push("/stages")}
+                    className="flex-1 py-2 rounded-xl bg-red-700 hover:bg-red-600 text-white font-bold transition"
+                  >
+                    やめる
+                  </button>
+                  <button
+                    onClick={() => setShowQuitDialog(false)}
+                    className="flex-1 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white font-bold transition"
+                  >
+                    続ける
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* タイムアップオーバーレイ */}
         <AnimatePresence>

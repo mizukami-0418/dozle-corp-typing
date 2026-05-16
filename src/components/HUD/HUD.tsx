@@ -91,6 +91,7 @@ export const HUD = ({
         <div className="text-xs text-white/70">MISS</div>
         <div>{missCount}</div>
       </div>
+
     </div>
   );
 };

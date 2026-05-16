@@ -1,6 +1,6 @@
 /**
  * ステージ別ワードデータ。
- * display: 画面表示用文字列、reading: ローマ字入力の基準読み、hint: 英語ヒント
+ * display: 画面表示用文字列、reading: ローマ字入力の基準読み
  *
  * 難易度分類基準：reading のひらがな文字数
  *   cheat   : 2〜4 文字
@@ -23,51 +23,50 @@ export const STAGES: StageConfig[] = [
     difficulty: "cheat",
     words: [
       // 草原・動物系
-      { display: "ねこ", reading: "ねこ", hint: "cat" },
-      { display: "いぬ", reading: "いぬ", hint: "dog" },
-      { display: "そら", reading: "そら", hint: "sky" },
-      { display: "くさ", reading: "くさ", hint: "grass" },
-      { display: "はな", reading: "はな", hint: "flower" },
-      { display: "たいよう", reading: "たいよう", hint: "sun" },
-      { display: "つき", reading: "つき", hint: "moon" },
-      { display: "みず", reading: "みず", hint: "water" },
-      { display: "やま", reading: "やま", hint: "mountain" },
-      { display: "かわ", reading: "かわ", hint: "river" },
-      { display: "もり", reading: "もり", hint: "forest" },
-      { display: "とり", reading: "とり", hint: "bird" },
-      { display: "うま", reading: "うま", hint: "horse" },
-      { display: "ひつじ", reading: "ひつじ", hint: "sheep" },
-      { display: "ぶた", reading: "ぶた", hint: "pig" },
+      { display: "ねこ", reading: "ねこ" },
+      { display: "いぬ", reading: "いぬ" },
+      { display: "そら", reading: "そら" },
+      { display: "くさ", reading: "くさ" },
+      { display: "はな", reading: "はな" },
+      { display: "たいよう", reading: "たいよう" },
+      { display: "つき", reading: "つき" },
+      { display: "みず", reading: "みず" },
+      { display: "やま", reading: "やま" },
+      { display: "かわ", reading: "かわ" },
+      { display: "もり", reading: "もり" },
+      { display: "とり", reading: "とり" },
+      { display: "うま", reading: "うま" },
+      { display: "ひつじ", reading: "ひつじ" },
+      { display: "ぶた", reading: "ぶた" },
       // 村人・アイテム系
-      { display: "むら", reading: "むら", hint: "village" },
-      { display: "いえ", reading: "いえ", hint: "house" },
-      { display: "どあ", reading: "どあ", hint: "door" },
-      { display: "まど", reading: "まど", hint: "window" },
-      { display: "ベッド", reading: "べっど", hint: "bed" },
-      { display: "つるはし", reading: "つるはし", hint: "pickaxe" },
-      { display: "おの", reading: "おの", hint: "axe" },
-      { display: "くわ", reading: "くわ", hint: "hoe" },
-      { display: "たいまつ", reading: "たいまつ", hint: "torch" },
-      { display: "さかな", reading: "さかな", hint: "fish" },
-      { display: "パン", reading: "ぱん", hint: "bread" },
-      { display: "りんご", reading: "りんご", hint: "apple" },
-      { display: "にく", reading: "にく", hint: "meat" },
-      { display: "にんじん", reading: "にんじん", hint: "carrot" },
+      { display: "むら", reading: "むら" },
+      { display: "いえ", reading: "いえ" },
+      { display: "どあ", reading: "どあ" },
+      { display: "まど", reading: "まど" },
+      { display: "ベッド", reading: "べっど" },
+      { display: "つるはし", reading: "つるはし" },
+      { display: "おの", reading: "おの" },
+      { display: "くわ", reading: "くわ" },
+      { display: "たいまつ", reading: "たいまつ" },
+      { display: "さかな", reading: "さかな" },
+      { display: "パン", reading: "ぱん" },
+      { display: "りんご", reading: "りんご" },
+      { display: "にく", reading: "にく" },
+      { display: "にんじん", reading: "にんじん" },
       // Minecraft（短いもの）
-      { display: "ネザー", reading: "ねざー", hint: "Nether" },
-      { display: "ゾンビ", reading: "ぞんび", hint: "zombie" },
-      { display: "ウィザー", reading: "うぃざー", hint: "Wither" },
-      { display: "スポーン", reading: "すぽーん", hint: "spawn" },
-      { display: "焼き肉", reading: "やきにく", hint: "yakiniku" },
+      { display: "ネザー", reading: "ねざー" },
+      { display: "ゾンビ", reading: "ぞんび" },
+      { display: "ウィザー", reading: "うぃざー" },
+      { display: "スポーン", reading: "すぽーん" },
+      { display: "焼き肉", reading: "やきにく" },
       // ドズル社関連（短いもの）
-      { display: "ドズル", reading: "どずる", hint: "Dozle" },
-      { display: "おんりー", reading: "おんりー", hint: "Qnly" },
-      { display: "おおはらMEN", reading: "おおはらMEN", hint: "ooharaMEN" },
-      { display: "どずるしゃ", reading: "どずるしゃ", hint: "DozleCorp" },
-      { display: "ゴリラ", reading: "ごりら", hint: "gorilla" },
-      { display: "コラボ", reading: "こらぼ", hint: "collaboration" },
-      { display: "いなりー", reading: "いなりー", hint: "Inaly" },
-      { display: "仲間", reading: "なかま", hint: "friend" },
+      { display: "ドズル", reading: "どずる" },
+      { display: "おんりー", reading: "おんりー" },
+      { display: "ドズル社", reading: "どずるしゃ" },
+      { display: "ゴリラ", reading: "ごりら" },
+      { display: "コラボ", reading: "こらぼ" },
+      { display: "いなりー", reading: "いなりー" },
+      { display: "仲間", reading: "なかま" },
     ],
   },
 
@@ -80,34 +79,65 @@ export const STAGES: StageConfig[] = [
     difficulty: "normal",
     words: [
       // Minecraft 用語
-      { display: "クリーパー", reading: "くりーぱー", hint: "creeper" },
-      { display: "エンダードラゴン", reading: "えんだーどらごん", hint: "Ender Dragon" },
-      { display: "ダイヤモンド", reading: "だいやもんど", hint: "diamond" },
-      { display: "エンドポータル", reading: "えんどぽーたる", hint: "End Portal" },
-      { display: "スケルトン", reading: "すけるとん", hint: "skeleton" },
-      { display: "エンダーマン", reading: "えんだーまん", hint: "Enderman" },
-      { display: "レッドストーン", reading: "れっどすとーん", hint: "Redstone" },
-      { display: "エンチャント", reading: "えんちゃんと", hint: "Enchant" },
-      { display: "バイオーム", reading: "ばいおーむ", hint: "biome" },
-      { display: "アドベンチャー", reading: "あどべんちゃー", hint: "adventure" },
-      { display: "サバイバル", reading: "さばいばる", hint: "survival" },
-      { display: "じゃがいも", reading: "じゃがいも", hint: "potato" },
+      { display: "クリーパー", reading: "くりーぱー" },
+      {
+        display: "エンダードラゴン",
+        reading: "えんだーどらごん",
+      },
+      { display: "ダイヤモンド", reading: "だいやもんど" },
+      {
+        display: "エンドポータル",
+        reading: "えんどぽーたる",
+      },
+      { display: "スケルトン", reading: "すけるとん" },
+      { display: "エンダーマン", reading: "えんだーまん" },
+      {
+        display: "レッドストーン",
+        reading: "れっどすとーん",
+      },
+      { display: "エンチャント", reading: "えんちゃんと" },
+      { display: "バイオーム", reading: "ばいおーむ" },
+      {
+        display: "アドベンチャー",
+        reading: "あどべんちゃー",
+      },
+      { display: "サバイバル", reading: "さばいばる" },
+      { display: "じゃがいも", reading: "じゃがいも" },
       // ドズル社関連
-      { display: "ぼんじゅうる", reading: "ぼんじゅうる", hint: "Bonjour" },
-      { display: "おらふくん", reading: "おらふくん", hint: "Oraf-Kun" },
-      { display: "ゆーちゅーぶ", reading: "ゆーちゅーぶ", hint: "YouTube" },
-      { display: "まいんくらふと", reading: "まいんくらふと", hint: "Minecraft" },
-      { display: "ビッグボス", reading: "びっぐぼす", hint: "Big Boss" },
-      { display: "MENフクロウ", reading: "めんふくろう", hint: "MEN Owl" },
-      { display: "スピードスター", reading: "すぴーどすたー", hint: "Speedstar" },
-      { display: "ズボラな匠", reading: "ずぼらなたくみ", hint: "Lazy craftsman" },
-      { display: "グラサンバード", reading: "ぐらさんばーど", hint: "Sunglasses Bird" },
-      { display: "雪だるまくん", reading: "ゆきだるまくん", hint: "Yukidaruma-Kun" },
-      { display: "おともだち", reading: "おともだち", hint: "friends" },
-      { display: "ゲーミングハウス", reading: "げーみんぐはうす", hint: "Gaming House" },
-      { display: "でぃすこーど", reading: "でぃすこーど", hint: "Discord" },
-      { display: "あーかいぶ", reading: "あーかいぶ", hint: "archive" },
-      { display: "おふぃしゃる", reading: "おふぃしゃる", hint: "official" },
+      { display: "ぼんじゅうる", reading: "ぼんじゅうる" },
+      { display: "おらふくん", reading: "おらふくん" },
+      { display: "ユーチューブ", reading: "ゆーちゅーぶ" },
+      {
+        display: "マインクラフト",
+        reading: "まいんくらふと",
+      },
+      { display: "ビッグボス", reading: "びっぐぼす" },
+      { display: "MENフクロウ", reading: "めんふくろう" },
+      {
+        display: "スピードスター",
+        reading: "すぴーどすたー",
+      },
+      {
+        display: "ズボラな匠",
+        reading: "ずぼらなたくみ",
+      },
+      {
+        display: "グラサンバード",
+        reading: "ぐらさんばーど",
+      },
+      {
+        display: "雪だるまくん",
+        reading: "ゆきだるまくん",
+      },
+      { display: "おともだち", reading: "おともだち" },
+      {
+        display: "ゲーミングハウス",
+        reading: "げーみんぐはうす",
+      },
+      { display: "ディスコード", reading: "でぃすこーど" },
+      { display: "アーカイブ", reading: "あーかいぶ" },
+      { display: "オフィシャル", reading: "おふぃしゃる" },
+      { display: "おおはらMEN", reading: "おおはらMEN" },
     ],
   },
 
@@ -119,9 +149,18 @@ export const STAGES: StageConfig[] = [
     name: "ハードステージ",
     difficulty: "hard",
     words: [
-      { display: "ロジカルゴリラ社長", reading: "ろじかるごりらしゃちょう", hint: "Logical boss gorilla" },       // 12
-      { display: "おまえはもうしんでいる", reading: "おまえはもうしんでいる", hint: "You are already dead" },     // 11
-      { display: "えんだーどらごんをたおせ", reading: "えんだーどらごんをたおせ", hint: "Defeat the Ender Dragon" }, // 12
+      {
+        display: "ロジカルゴリラ社長",
+        reading: "ろじかるごりらしゃちょう",
+      }, // 12
+      {
+        display: "おまえはもうしんでいる",
+        reading: "おまえはもうしんでいる",
+      }, // 11
+      {
+        display: "エンダードラゴンを倒せ!",
+        reading: "えんだーどらごんをたおせ!",
+      }, // 12
     ],
   },
 
@@ -133,16 +172,46 @@ export const STAGES: StageConfig[] = [
     name: "鬼畜ステージ",
     difficulty: "kichiku",
     words: [
-      { display: "(心やさしい)卑怯者", reading: "(こころやさしい)ひきょうもの", hint: "Kindhearted coward" },                    // 13
-      { display: "あなたの心を狙い撃ち", reading: "あなたのこころをねらいうち", hint: "Heart sniper" },                          // 13
-      { display: "これがどずるしゃのちからだ", reading: "これがどずるしゃのちからだ", hint: "This is the power of DozleCorp" },   // 13
-      { display: "まいんくらふとはじんせいだ", reading: "まいんくらふとはじんせいだ", hint: "Minecraft is life" },               // 13
-      { display: "どずるしゃのどうがをみてくれ", reading: "どずるしゃのどうがをみてくれ", hint: "Please watch DozleCorp's videos" }, // 14
-      { display: "おんりーのすぴーどはまじやばい", reading: "おんりーのすぴーどはまじやばい", hint: "Only's speed is seriously amazing" }, // 15
-      { display: "おおはらめんのたくみわざをみよ", reading: "おおはらめんのたくみわざをみよ", hint: "Behold Ohara MEN's craftsmanship" }, // 15
-      { display: "ぜんいんしゅうごうどずるしゃのじかんだ", reading: "ぜんいんしゅうごうどずるしゃのじかんだ", hint: "Everyone gather, it's DozleCorp time" }, // 19
-      { display: "おらふくんのゆきだるまがかわいすぎる", reading: "おらふくんのゆきだるまがかわいすぎる", hint: "Orafu's snowman is too cute" }, // 18
-      { display: "ぼんじゅうるはひきょうだけどこころはやさしい", reading: "ぼんじゅうるはひきょうだけどこころはやさしい", hint: "Bonjour is cowardly but kind-hearted" }, // 22
+      {
+        display: "(心やさしい)卑怯者",
+        reading: "(こころやさしい)ひきょうもの",
+      }, // 13
+      {
+        display: "あなたの心を狙い撃ち",
+        reading: "あなたのこころをねらいうち",
+      }, // 13
+      {
+        display: "これがドズル社の力だ",
+        reading: "これがどずるしゃのちからだ",
+      }, // 13
+      {
+        display: "マインクラフトは人生だ",
+        reading: "まいんくらふとはじんせいだ",
+      }, // 13
+      {
+        display: "ドズル社の動画をみてくれ",
+        reading: "どずるしゃのどうがをみてくれ",
+      }, // 14
+      {
+        display: "おんりーのスピードはまじやばい",
+        reading: "おんりーのすぴーどはまじやばい",
+      }, // 15
+      {
+        display: "おおはらMENの匠の技をみよ",
+        reading: "おおはらMENのたくみわざをみよ",
+      }, // 15
+      {
+        display: "全員集合!ドズル社の時間だ!",
+        reading: "ぜんいんしゅうごう!どずるしゃのじかんだ!",
+      }, // 19
+      {
+        display: "おらふくんの雪だるまがかわいすぎる",
+        reading: "おらふくんのゆきだるまがかわいすぎる",
+      }, // 18
+      {
+        display: "ぼんじゅうるは卑怯だけど心はやさしい",
+        reading: "ぼんじゅうるはひきょうだけどこころはやさしい",
+      }, // 22
     ],
   },
 ];
