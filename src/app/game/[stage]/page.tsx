@@ -9,6 +9,7 @@ import { Character } from "@/components/Character";
 import { TypingArea } from "@/components/TypingArea";
 import { ParticleEffect, CelebrationEffect } from "@/components/effects";
 import { useTypingGame } from "@/hooks/useTypingGame";
+import { useBgm } from "@/hooks/useBgm";
 import { getStageById } from "@/lib/words";
 import { useGameStore } from "@/store/game-store";
 import { CHARACTER_CONFIGS } from "@/lib/characters";
@@ -19,7 +20,7 @@ type CharAnimState = "idle" | "correct" | "cleared";
 export default function GamePage() {
   const params = useParams<{ stage: string }>();
   const router = useRouter();
-  const { selectedCharacter } = useGameStore();
+  const { selectedCharacter, bgmEnabled } = useGameStore();
 
   const stageId = params.stage as StageId;
   const stage = getStageById(stageId);
@@ -69,7 +70,10 @@ export default function GamePage() {
     }
   }, [wordsCompleted, isCleared]);
 
-  const accentColor = CHARACTER_CONFIGS[selectedCharacter].color;
+  const accentColor = CHARACTER_CONFIGS[selectedCharacter]?.color ?? "#FFD700";
+
+  // ゲーム開始後・クリア前・BGM有効時にBGMを再生
+  useBgm(stageId, isStarted && !isCleared && bgmEnabled);
 
   // 終了確認ダイアログの表示状態
   const [showQuitDialog, setShowQuitDialog] = useState(false);

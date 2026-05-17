@@ -10,7 +10,9 @@ const KEYS = {
   CLEARED_STAGES: "dozle-typing:clearedStages",
   STAR_RECORDS: "dozle-typing:starRecords",
   SELECTED_CHARACTER: "dozle-typing:selectedCharacter",
-  SOUND_ENABLED: "dozle-typing:soundEnabled",
+  // 旧 soundEnabled キーをそのまま SFX 用として継続使用（既存データを維持）
+  SFX_ENABLED: "dozle-typing:soundEnabled",
+  BGM_ENABLED: "dozle-typing:bgmEnabled",
 } as const;
 
 const isBrowser = typeof window !== "undefined";
@@ -105,9 +107,15 @@ export const saveStarRecord = (stageId: StageId, stars: number): void => {
 // 選択キャラクター
 // ──────────────────────────────────────────
 
-/** 選択中のキャラクターを読み込む */
-export const loadSelectedCharacter = (): CharacterKey =>
-  readJson<CharacterKey>(KEYS.SELECTED_CHARACTER, "Dozle");
+const VALID_CHARACTER_KEYS: CharacterKey[] = [
+  "Dozle", "Bonjour", "Qnly", "OrafKun", "ooharaMEN",
+];
+
+/** 選択中のキャラクターを読み込む（不正値は "Dozle" にフォールバック） */
+export const loadSelectedCharacter = (): CharacterKey => {
+  const val = readJson<string>(KEYS.SELECTED_CHARACTER, "Dozle");
+  return (VALID_CHARACTER_KEYS as string[]).includes(val) ? (val as CharacterKey) : "Dozle";
+};
 
 /** 選択中のキャラクターを保存する */
 export const saveSelectedCharacter = (key: CharacterKey): void => {
@@ -118,11 +126,20 @@ export const saveSelectedCharacter = (key: CharacterKey): void => {
 // サウンド設定
 // ──────────────────────────────────────────
 
-/** サウンド有効フラグを読み込む（デフォルト: true） */
-export const loadSoundEnabled = (): boolean =>
-  readJson<boolean>(KEYS.SOUND_ENABLED, true);
+/** タイピング効果音の有効フラグを読み込む（デフォルト: true） */
+export const loadSfxEnabled = (): boolean =>
+  readJson<boolean>(KEYS.SFX_ENABLED, true);
 
-/** サウンド有効フラグを保存する */
-export const saveSoundEnabled = (enabled: boolean): void => {
-  writeJson(KEYS.SOUND_ENABLED, enabled);
+/** タイピング効果音の有効フラグを保存する */
+export const saveSfxEnabled = (enabled: boolean): void => {
+  writeJson(KEYS.SFX_ENABLED, enabled);
+};
+
+/** BGM の有効フラグを読み込む（デフォルト: true） */
+export const loadBgmEnabled = (): boolean =>
+  readJson<boolean>(KEYS.BGM_ENABLED, true);
+
+/** BGM の有効フラグを保存する */
+export const saveBgmEnabled = (enabled: boolean): void => {
+  writeJson(KEYS.BGM_ENABLED, enabled);
 };

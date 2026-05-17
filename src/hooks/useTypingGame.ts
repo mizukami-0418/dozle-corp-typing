@@ -60,7 +60,7 @@ export const useTypingGame = (
   stageId: StageId,
   words: WordEntry[]
 ): UseTypingGameReturn => {
-  const { soundEnabled, saveResult } = useGameStore();
+  const { sfxEnabled, saveResult } = useGameStore();
   const config = DIFFICULTY_CONFIG[stageId];
   const totalTimeLimitMs = config.totalSec * 1000;
 
@@ -115,7 +115,7 @@ export const useTypingGame = (
     wordsCompleted,
     startTime,
     isCleared,
-    soundEnabled,
+    sfxEnabled,
     wordMissCount: 0,
     words,
     stageId,
@@ -131,7 +131,7 @@ export const useTypingGame = (
     stateRef.current.wordsCompleted = wordsCompleted;
     stateRef.current.startTime = startTime;
     stateRef.current.isCleared = isCleared;
-    stateRef.current.soundEnabled = soundEnabled;
+    stateRef.current.sfxEnabled = sfxEnabled;
     stateRef.current.words = words;
     stateRef.current.saveResult = saveResult;
     stateRef.current.config = config;
@@ -184,7 +184,7 @@ export const useTypingGame = (
             : Math.round(((r.totalKeystrokes - r.missCount) / r.totalKeystrokes) * 100);
         const stars = calcStars(finalAccuracy, r.missCount);
         r.saveResult(r.stageId, r.score, stars, finalAccuracy, r.missCount, totalTimeLimitMs, r.wordsCompleted);
-        if (r.soundEnabled) playClear();
+        if (r.sfxEnabled) playClear();
         setTotalTimeRemainingMs(0);
         setIsCleared(true);
         return;
@@ -197,7 +197,7 @@ export const useTypingGame = (
         const newScore = Math.max(0, r.score - TIMEOUT_PENALTY);
         const { nextLimit, newCurrent, newNext } = computeAdvance(queuePosRef.current, r.words, now);
         stateRef.current.wordMissCount = 0;
-        if (r.soundEnabled) playMiss();
+        if (r.sfxEnabled) playMiss();
         setScore(newScore);
         setTypedBuffer("");
         setWordTimeLimitMs(nextLimit);
@@ -240,7 +240,7 @@ export const useTypingGame = (
 
     if (isPartialMatch(newBuffer, word.reading)) {
       setTotalKeystrokes((t) => t + 1);
-      if (r.soundEnabled) playBlockPlace();
+      if (r.sfxEnabled) playBlockPlace();
 
       if (isExactMatch(newBuffer, word.reading)) {
         // ワード完了
@@ -264,7 +264,7 @@ export const useTypingGame = (
       setTotalKeystrokes((t) => t + 1);
       setMissCount((m) => m + 1);
       stateRef.current.wordMissCount += 1;
-      if (r.soundEnabled) playMiss();
+      if (r.sfxEnabled) playMiss();
     }
   }, []); // 安定したハンドラ：状態はすべて ref 経由で読む
 

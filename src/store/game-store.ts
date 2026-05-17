@@ -10,12 +10,14 @@ import {
   loadClearedStages,
   loadStarRecords,
   loadSelectedCharacter,
-  loadSoundEnabled,
+  loadSfxEnabled,
+  loadBgmEnabled,
   saveBestScore,
   markStageCleared,
   saveStarRecord,
   saveSelectedCharacter,
-  saveSoundEnabled,
+  saveSfxEnabled,
+  saveBgmEnabled,
 } from "@/lib/storage";
 
 interface GameStore {
@@ -41,8 +43,10 @@ interface GameStore {
   // ──────────────────────────────────────────
   // サウンド設定
   // ──────────────────────────────────────────
-  soundEnabled: boolean;
-  toggleSound: () => void;
+  sfxEnabled: boolean;
+  toggleSfx: () => void;
+  bgmEnabled: boolean;
+  toggleBgm: () => void;
 
   // ──────────────────────────────────────────
   // ローカルストレージと同期するデータ
@@ -84,7 +88,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
   selectedCharacter: loadSelectedCharacter(),
   gameState: INITIAL_GAME_STATE,
   resultData: undefined,
-  soundEnabled: loadSoundEnabled(),
+  sfxEnabled: loadSfxEnabled(),
+  bgmEnabled: loadBgmEnabled(),
   bestScores: {},
   clearedStages: [],
   starRecords: {},
@@ -110,10 +115,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   setResultData: (data) => set({ resultData: data }),
 
-  toggleSound: () => {
-    const next = !get().soundEnabled;
-    saveSoundEnabled(next);
-    set({ soundEnabled: next });
+  toggleSfx: () => {
+    const next = !get().sfxEnabled;
+    saveSfxEnabled(next);
+    set({ sfxEnabled: next });
+  },
+
+  toggleBgm: () => {
+    const next = !get().bgmEnabled;
+    saveBgmEnabled(next);
+    set({ bgmEnabled: next });
   },
 
   loadProgress: () => {

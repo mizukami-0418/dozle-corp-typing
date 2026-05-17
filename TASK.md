@@ -126,7 +126,7 @@ npm run lint    # ESLint チェック
   - kichiku：13文字以上（10ワード）
 - [x] 7-4. 遊び方・設定・ドズル社とは？のスタブページ実装
   - `/how-to-play`・`/settings`・`/about` に「準備中」プレースホルダー
-- [ ] 7-5. 遊び方（`/how-to-play`）コンテンツ実装
+- [x] 7-5. 遊び方（`/how-to-play`）コンテンツ実装
 - [ ] 7-6. 設定（`/settings`）コンテンツ実装
 - [ ] 7-7. ドズル社とは？（`/about`）コンテンツ実装
 - [ ] **Phase 7 完了チェック：build / dev / lint → コミット → プッシュ**

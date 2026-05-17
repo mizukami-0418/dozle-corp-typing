@@ -17,7 +17,7 @@ vi.mock("@/lib/sound", () => ({
 
 vi.mock("@/store/game-store", () => ({
   useGameStore: vi.fn(() => ({
-    soundEnabled: false,
+    sfxEnabled: false,
     saveResult: vi.fn(() => false),
   })),
 }));
