@@ -249,10 +249,6 @@ export const STAGES: StageConfig[] = [
     difficulty: "hard",
     words: [
       {
-        display: "ロジカルゴリラ社長",
-        reading: "ろじかるごりらしゃちょう",
-      }, // 12
-      {
         display: "おまえはもうしんでいる",
         reading: "おまえはもうしんでいる",
       }, // 11
@@ -264,6 +260,10 @@ export const STAGES: StageConfig[] = [
       { display: "じゃじゃーんすっぞ", reading: "じゃじゃーんすっぞ" }, // 9
       { display: "改造ファンカーゴ", reading: "かいぞうふぁんかーご" }, // 10
       { display: "ベットベットパタパッタ", reading: "べっとべっとぱたぱった" }, // 11
+      {
+        display: "ロジカルゴリラ社長",
+        reading: "ろじかるごりらしゃちょう",
+      }, // 12
       { display: "誰でもできますねぇ", reading: "だれでもできますねぇ" }, // 10
       { display: "ちょいちょいクラロワ", reading: "ちょいちょいくらろわ" }, // 10
       {
@@ -271,7 +271,10 @@ export const STAGES: StageConfig[] = [
         reading: "どずる/ごりら/ごりら/どずる",
       }, // 12
       { display: "高圧洗浄", reading: "こうあつせんじょう" }, // 9
-      { display: "俺じゃなきゃ死んでたぞ", reading: "おれじゃなきゃしんでたぞ" }, // 12
+      {
+        display: "俺じゃなきゃ死んでたぞ",
+        reading: "おれじゃなきゃしんでたぞ",
+      }, // 12
       { display: "無敵のぼんじゅうる", reading: "むてきのぼんじゅうる" }, // 10
       {
         display: "ドズンゲリオン　発進!",
@@ -281,7 +284,10 @@ export const STAGES: StageConfig[] = [
       { display: "こ、この声は神様!", reading: "こ,このこえはかみさま!" }, // 10
       { display: "クッキークリッカー", reading: "くっきーくりっかー" }, // 9
       { display: "おデブに感謝しな", reading: "おでぶにかんしゃしな" }, // 10
-      { display: "ネザー生まれエンド育ち", reading: "ねざーうまれえんどそだち" }, // 12
+      {
+        display: "ネザー生まれエンド育ち",
+        reading: "ねざーうまれえんどそだち",
+      }, // 12
       {
         display: "マイクラバーサス無双MVP",
         reading: "まいくらばーさすむそうMVP",
@@ -299,14 +305,13 @@ export const STAGES: StageConfig[] = [
       { display: "不死的ピョン人形", reading: "ふしてきぴょんにんぎょう" }, // 12
       { display: "ちょろちょろドズル", reading: "ちょろちょろどずる" }, // 9
       { display: "ドズル社スクランブル", reading: "どずるしゃすくらんぶる" }, // 11
-      {
-        display: "おんりー100万人達成",
-        reading: "おんりー100まんにんたっせい",
-      }, // 11
       { display: "自由の中の不自由", reading: "じゆうのなかのふじゆう" }, // 11
       { display: "龍の尻尾みたい!", reading: "りゅうのしっぽみたい!" }, // 10
       { display: "恋愛はパチンコ", reading: "れんあいはぱちんこ" }, // 9
-      { display: "おらふくんは悪くないよ", reading: "おらふくんはわるくないよ" }, // 12
+      {
+        display: "おらふくんは悪くないよ",
+        reading: "おらふくんはわるくないよ",
+      }, // 12
       { display: "ひまわり耐久", reading: "ひまわりたいきゅう" }, // 9
       { display: "ドズル社最高!", reading: "どずるしゃさいこう!" }, // 9
       { display: "全肯定男の子", reading: "ぜんこうていおとこのこ" }, // 11
@@ -371,6 +376,10 @@ export const STAGES: StageConfig[] = [
         reading: "ぼんじゅうるはひきょうだけどこころはやさしい",
       }, // 22
       // ドズル社関連（新規追加）
+      {
+        display: "おんりー100万人達成",
+        reading: "おんりー100まんにんたっせい",
+      }, // 11
       {
         display: "お前牛乳俺ダイヤ",
         reading: "おまえぎゅうにゅうおれだいや",
