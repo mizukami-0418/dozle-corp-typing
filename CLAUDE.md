@@ -110,9 +110,11 @@
 /stages         → ステージ選択画面
 /game/[stage]   → ゲーム画面
 /result         → リザルト画面
-/how-to-play    → 遊び方（実装予定）
-/settings       → 設定（実装予定）
-/about          → ドズル社とは？（実装予定）
+/how-to-play         → 遊び方
+/how-to-play/romaji  → ローマ字対応一覧表
+/settings            → 設定
+/about               → ドズル社とは？
+/about/history       → ドズル社の歴史と変遷（詳細タイムライン）
 ```
 
 ### 5-2. トップメニュー画面
@@ -169,11 +171,15 @@ src/
 │   ├── result/
 │   │   └── page.tsx           # リザルト画面
 │   ├── how-to-play/
-│   │   └── page.tsx           # 遊び方（実装予定）
+│   │   ├── page.tsx           # 遊び方
+│   │   └── romaji/
+│   │       └── page.tsx       # ローマ字対応一覧表
 │   ├── settings/
-│   │   └── page.tsx           # 設定（実装予定）
+│   │   └── page.tsx           # 設定（BGM/SFX トグル・データリセット）
 │   └── about/
-│       └── page.tsx           # ドズル社とは？（実装予定）
+│       ├── page.tsx           # ドズル社とは？（概要・あゆみ・メンバー・公式リンク）
+│       └── history/
+│           └── page.tsx       # ドズル社の歴史と変遷（詳細タイムライン）
 ├── components/
 │   ├── TypingArea/            # タイピング入力エリア
 │   ├── Character/             # キャラクターコンポーネント（アニメーション含む）
@@ -190,9 +196,11 @@ src/
 │   ├── difficulty.ts          # 難易度別定数（制限時間・速度係数・TIMEOUT_PENALTY）
 │   ├── storage.ts             # ローカルストレージ操作
 │   ├── characters.ts          # キャラクター設定データ
-│   └── sound.ts               # Web Audio API サウンド
+│   ├── sound.ts               # Web Audio API タイピング効果音
+│   └── bgm.ts                 # Web Audio API BGM（難易度別メロディ・ループ再生）
 ├── hooks/
-│   └── useTypingGame.ts       # ゲームロジック（カスタムフック）
+│   ├── useTypingGame.ts       # ゲームロジック（カスタムフック）
+│   └── useBgm.ts              # BGM 再生フック（difficulty + active フラグ）
 ├── store/
 │   └── game-store.ts          # Zustand ストア定義
 ├── types/
@@ -223,9 +231,11 @@ interface GameStore {
   resultData: ResultData | undefined;
   setResultData: (data: ResultData) => void;
 
-  // サウンド設定
-  soundEnabled: boolean;
-  toggleSound: () => void;
+  // サウンド設定（BGM と SFX を独立して管理）
+  sfxEnabled: boolean;    // タイピング効果音（旧 soundEnabled キーを継続使用）
+  toggleSfx: () => void;
+  bgmEnabled: boolean;    // ゲーム中 BGM
+  toggleBgm: () => void;
 
   // ローカルストレージと同期
   bestScores: Record<string, number>;
@@ -429,14 +439,22 @@ export const toRomaji = (kana: string): string[] => { ... };
 | Phase 4  | 3画面実装（ステージ選択 / ゲーム / リザルト）          | 完了 |
 | Phase 5  | アニメーション・エフェクト（ParticleEffect / CelebrationEffect / PageTransition） | 完了 |
 | Phase 6  | テスト・品質（romanizer 32件 / useTypingGame 14件）    | 完了 |
-| Phase 7  | トップメニュー画面・難易度構成変更・追加画面スタブ     | 完了 |
+| Phase 7  | トップメニュー画面・難易度構成変更・追加画面（遊び方 / 設定 / ドズル社とは？）実装 | 完了 |
 | Phase 8  | 時間制ゲームモード（総制限時間・ワードタイムアウト・ループ出題・スコア再設計） | 完了 |
+
+### Phase 7 主な実装内容
+
+- `/how-to-play`：4カード構成（基本ルール・入力のコツ・難易度一覧・スコア）+ ローマ字一覧サブページ
+- `/settings`：BGM / SFX 独立トグル・データリセット機能
+  - サウンド設定を `soundEnabled` 単一から `sfxEnabled`（旧キー継承）+ `bgmEnabled` に分離
+  - BGM は `src/lib/bgm.ts` で Web Audio API による難易度別メロディをループ生成、`useBgm` フックで制御
+- `/about`：ドズル社紹介・あゆみ（3時代概要）・メンバー一覧（公式サイトへ外部リンク）・公式 YouTube リンク
+  - メンバーリンク先：`https://www.dozle.jp/members/{slug}/`（新タブで開く）
+  - 「詳しいあゆみ」→ `/about/history` へリンク
+- `/about/history`：3時代の詳細タイムライン（各時代を色分けカード＋縦線で表示）
 
 ## 13. 今後の実装予定
 
-- **遊び方ページ** (`/how-to-play`)：コンテンツ実装
-- **設定ページ** (`/settings`)：コンテンツ実装
-- **ドズル社とは？ページ** (`/about`)：コンテンツ実装
 - **キャラクター画像**：仮絵文字から実画像へ差し替え
 - **スコア数値調整**：TIMEOUT_PENALTY・ワードスコアはプレイテスト後に要チューニング
 
