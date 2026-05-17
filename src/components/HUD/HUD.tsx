@@ -59,23 +59,30 @@ export const HUD = ({
         </div>
       </div>
 
-      {/* ワード別タイマーバー */}
-      <div className="flex-1 flex flex-col gap-1">
-        <div className="flex justify-between text-white/60 text-xs font-bold">
-          <span>WORD TIMER</span>
-          <span>{formatSeconds(wordTimeRemainingMs)}s</span>
+      {/* ワード別タイマーバー（secPerRomaji === 0 のモードでは非表示） */}
+      {wordTimeLimitMs > 0 ? (
+        <div className="flex-1 flex flex-col gap-1">
+          <div className="flex justify-between text-white/60 text-xs font-bold">
+            <span>WORD TIMER</span>
+            <span>{formatSeconds(wordTimeRemainingMs)}s</span>
+          </div>
+          <div className="w-full h-4 bg-black/40 rounded overflow-hidden border border-white/20">
+            <div
+              className="h-full rounded"
+              style={{
+                width: `${wordProgress * 100}%`,
+                backgroundColor: wordBarColor,
+                transition: "width 0.1s linear, background-color 0.3s",
+              }}
+            />
+          </div>
         </div>
-        <div className="w-full h-4 bg-black/40 rounded overflow-hidden border border-white/20">
-          <div
-            className="h-full rounded"
-            style={{
-              width: `${wordProgress * 100}%`,
-              backgroundColor: wordBarColor,
-              transition: "width 0.1s linear, background-color 0.3s",
-            }}
-          />
+      ) : (
+        <div className="flex-1 flex flex-col gap-1">
+          <div className="text-white/60 text-xs font-bold">WORD TIMER</div>
+          <div className="text-[color:var(--color-brand-gold)] font-black text-lg leading-none">∞</div>
         </div>
-      </div>
+      )}
 
       {/* 正確率 */}
       <div className="bg-black/60 rounded px-3 py-1 text-white text-sm font-bold min-w-[80px] text-center">

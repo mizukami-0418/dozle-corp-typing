@@ -11,8 +11,10 @@ import { useGameStore } from "@/store/game-store";
 
 export default function StagesPage() {
   const router = useRouter();
-  const { selectedCharacter, setCharacter, bestScores, loadProgress } =
-    useGameStore();
+  const { selectedCharacter, setCharacter, bestScores, loadProgress } = useGameStore();
+
+  const regularStages = STAGES.filter((s) => s.id !== "dozle");
+  const dozleStage = STAGES.find((s) => s.id === "dozle");
 
   useEffect(() => {
     loadProgress();
@@ -99,8 +101,9 @@ export default function StagesPage() {
           <p className="text-white/80 text-sm font-bold text-center mb-4">
             ステージを選んでね！
           </p>
+          {/* 通常ステージ（2×2 グリッド） */}
           <div className="grid grid-cols-2 gap-4">
-            {STAGES.map((stage) => (
+            {regularStages.map((stage) => (
               <StageCard
                 key={stage.id}
                 stage={stage}
@@ -109,6 +112,17 @@ export default function StagesPage() {
               />
             ))}
           </div>
+
+          {/* ドズル社モード（全幅・特別カード） */}
+          {dozleStage && (
+            <div className="mt-4">
+              <StageCard
+                stage={dozleStage}
+                bestScore={bestScores[dozleStage.id]}
+                onSelect={handleStageSelect}
+              />
+            </div>
+          )}
         </motion.div>
       </div>
     </MinecraftBg>

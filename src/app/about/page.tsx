@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { MinecraftBg } from "@/components/MinecraftBg";
@@ -156,12 +157,12 @@ export default function AboutPage() {
               ))}
             </ol>
             <div className="mt-4 flex justify-end">
-              <a
+              <Link
                 href="/about/history"
                 className="text-sm font-bold text-white/50 hover:text-white/80 transition-colors"
               >
                 詳しいあゆみはこちら →
-              </a>
+              </Link>
             </div>
           </motion.div>
 

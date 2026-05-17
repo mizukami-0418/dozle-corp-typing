@@ -72,8 +72,8 @@ export const useTypingGame = (
   // シャッフル済みワードキュー（ref — effects/callbacks 内でのみアクセス）
   const shuffledRef = useRef<WordEntry[]>(initialQueue);
 
-  // 初期ワードのタイムリミット（ms）— state 由来の値を使うため ref アクセスなし
-  const initialLimit = initialQueue[0]
+  // 初期ワードのタイムリミット（ms）— secPerRomaji === 0 のとき制限なし（0 をセンチネルとして使用）
+  const initialLimit = initialQueue[0] && config.secPerRomaji > 0
     ? Math.round(countRomajiLength(initialQueue[0].reading) * config.secPerRomaji * 1000)
     : 0;
 
@@ -154,7 +154,7 @@ export const useTypingGame = (
     }
     const newCurrent = shuffledRef.current[nextPos];
     const newNext = shuffledRef.current[nextPos + 1];
-    const nextLimit = newCurrent
+    const nextLimit = newCurrent && stateRef.current.config.secPerRomaji > 0
       ? Math.round(countRomajiLength(newCurrent.reading) * stateRef.current.config.secPerRomaji * 1000)
       : 0;
     queuePosRef.current = nextPos;
@@ -192,8 +192,8 @@ export const useTypingGame = (
 
       setTotalTimeRemainingMs(newTotal);
 
-      if (newWordRemaining <= 0) {
-        // ワードタイムアウト → 減点して次のワードへ
+      if (wordTimeLimitRef.current > 0 && newWordRemaining <= 0) {
+        // ワードタイムアウト → 減点して次のワードへ（secPerRomaji === 0 のモードはスキップ）
         const newScore = Math.max(0, r.score - TIMEOUT_PENALTY);
         const { nextLimit, newCurrent, newNext } = computeAdvance(queuePosRef.current, r.words, now);
         stateRef.current.wordMissCount = 0;

@@ -11,10 +11,10 @@ export type CharacterKey =
   | "ooharaMEN";
 
 /** 難易度（= ステージ識別子と一対一対応） */
-export type Difficulty = "cheat" | "normal" | "hard" | "kichiku";
+export type Difficulty = "cheat" | "normal" | "hard" | "kichiku" | "dozle";
 
 /** ステージ識別子 */
-export type StageId = "cheat" | "normal" | "hard" | "kichiku";
+export type StageId = "cheat" | "normal" | "hard" | "kichiku" | "dozle";
 
 /**
  * タイピング対象の1ワード。

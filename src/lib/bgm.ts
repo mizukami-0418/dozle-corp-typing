@@ -105,6 +105,20 @@ const TRACKS: Record<Difficulty, BgmTrack> = {
     silenceRatio: 0.06,
     wave: "square",
   },
+
+  /**
+   * ドズル社モード — 95 BPM / 8分音符 0.316s
+   * 明るく楽しいお祭り風ループ（G メジャーペンタトニック）
+   */
+  dozle: {
+    notes: [
+      N.G4, N.C5, N.E5, N.G5, N.E5, N.C5, N.E5, N._,
+      N.A4, N.C5, N.E5, N.G5, N.C5, N.E5, N.C5, N._,
+    ],
+    noteDur: 0.316,
+    silenceRatio: 0.11,
+    wave: "triangle",
+  },
 };
 
 // ──────────────────────────────────────────────────

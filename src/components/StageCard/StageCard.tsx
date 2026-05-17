@@ -19,6 +19,7 @@ const DIFFICULTY_COLORS: Record<string, string> = {
   normal: "#0097A7",
   hard: "#E53935",
   kichiku: "#7B1FA2",
+  dozle: "#FFD700",
 };
 
 const DIFFICULTY_LABELS: Record<string, string> = {
@@ -26,6 +27,7 @@ const DIFFICULTY_LABELS: Record<string, string> = {
   normal: "NORMAL",
   hard: "HARD",
   kichiku: "鬼畜",
+  dozle: "ドズル社",
 };
 
 export const StageCard = ({

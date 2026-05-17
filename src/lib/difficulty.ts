@@ -19,6 +19,8 @@ export const DIFFICULTY_CONFIG: Record<Difficulty, DifficultyConfig> = {
   normal:  { totalSec: 90,  secPerRomaji: 0.65 },
   hard:    { totalSec: 120, secPerRomaji: 0.4  },
   kichiku: { totalSec: 150, secPerRomaji: 0.25 },
+  // secPerRomaji: 0 はワード制限時間なしを示すセンチネル値
+  dozle:   { totalSec: 180, secPerRomaji: 0    },
 };
 
 /** タイムアウト時の減点（スコアの下限は 0） */
