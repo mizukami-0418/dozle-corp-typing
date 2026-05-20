@@ -1,6 +1,7 @@
 # TASK.md — ドズル社タイピング 実装タスク一覧
 
 ## 進捗凡例
+
 - `[ ]` 未着手
 - `[~]` 作業中
 - `[x]` 完了
@@ -152,9 +153,22 @@ npm run lint    # ESLint チェック
 
 ---
 
+## Phase 9: ドズル社モード実装
+
+- [x] 9-1. `Difficulty` / `StageId` に `"dozle"` を追加（`src/types/index.ts`）
+- [x] 9-2. `DOZLE_WORDS`（197ワード）を `words.ts` に独立エクスポート・`STAGES` に `dozle` ステージ追加
+- [x] 9-3. `difficulty.ts` に `dozle: { totalSec: 180, secPerRomaji: 0 }` を追加
+  - `secPerRomaji: 0` をワード制限時間なしのセンチネル値として使用
+- [x] 9-4. `useTypingGame`：`wordTimeLimitRef.current > 0` のときのみタイムアウト処理を実行
+- [x] 9-5. `HUD`：`wordTimeLimitMs === 0` のとき WORD TIMER バーを非表示・∞ 表示に切替
+- [x] 9-6. `bgm.ts`：`dozle` 用トラック追加（95 BPM・G メジャーペンタトニック・明るいお祭り風）
+- [x] 9-7. ステージ選択画面：通常4ステージを2×2グリッド、ドズル社モードを全幅の特別カードとして下部に表示
+- [x] **Phase 9 完了チェック：build / dev / lint → コミット → プッシュ**
+
+---
+
 ## メモ
 
-- **ハードのワード不足**：現在3ワードのみ。120秒の制限時間に対して大幅に不足するため追加が必要（9〜12ひらがな文字のワード）
 - **スコア調整**：TIMEOUT_PENALTY=30・ワードスコア最大100点の数値はプレイテスト後に調整予定
 - **キャラクター画像**：素材が揃い次第差し替え（仮絵文字でまず実装済み）
 - **CI/CD**：`main` ブランチへの push → Vercel が自動でビルド・デプロイ
