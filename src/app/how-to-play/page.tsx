@@ -13,6 +13,7 @@ const DIFFICULTIES = [
   { name: "NORMAL", time: "90秒", chars: "5〜8文字", color: "#0097A7" },
   { name: "HARD", time: "120秒", chars: "9〜12文字", color: "#E53935" },
   { name: "鬼畜", time: "150秒", chars: "13文字以上", color: "#7B1FA2" },
+  { name: "ドズル社", time: "180秒", chars: "制限なし", color: "#FFD700", special: true },
 ];
 
 /**
@@ -158,12 +159,15 @@ export default function HowToPlayPage() {
               </thead>
               <tbody>
                 {DIFFICULTIES.map((d) => (
-                  <tr key={d.name} className="border-b border-white/5 last:border-0">
+                  <tr key={d.name} className={`border-b border-white/5 last:border-0 ${"special" in d && d.special ? "bg-yellow-500/5" : ""}`}>
                     <td
                       className="py-2.5 font-black"
                       style={{ color: d.color }}
                     >
                       {d.name}
+                      {"special" in d && d.special && (
+                        <span className="ml-1.5 text-xs font-bold text-yellow-400/70">★特別</span>
+                      )}
                     </td>
                     <td className="py-2.5 text-center text-white/80">{d.time}</td>
                     <td className="py-2.5 text-right text-white/80">{d.chars}</td>
@@ -171,6 +175,9 @@ export default function HowToPlayPage() {
                 ))}
               </tbody>
             </table>
+            <p className="mt-3 text-white/40 text-xs leading-relaxed">
+              ★ ドズル社ステージはワードごとの制限時間がなく、全難易度のドズル社関連ワード（197語）をループ出題します。
+            </p>
           </motion.div>
 
           {/* Card 4: スコア */}
