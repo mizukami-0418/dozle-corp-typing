@@ -20,9 +20,9 @@ interface TypingAreaProps {
 
 /** ローマ字の文字数に応じたフォントサイズ・文字間隔を返す */
 const getRomajiStyle = (len: number): React.CSSProperties => {
-  if (len <= 10) return { fontSize: "1.5rem", letterSpacing: "0.18em" };
-  if (len <= 18) return { fontSize: "1.25rem", letterSpacing: "0.1em" };
-  if (len <= 28) return { fontSize: "1rem", letterSpacing: "0.04em" };
+  if (len <= 12) return { fontSize: "1.5rem", letterSpacing: "0.18em" };
+  if (len <= 22) return { fontSize: "1.25rem", letterSpacing: "0.1em" };
+  if (len <= 35) return { fontSize: "1rem", letterSpacing: "0.04em" };
   return { fontSize: "0.85rem", letterSpacing: "0.02em" };
 };
 
