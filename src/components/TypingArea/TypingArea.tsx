@@ -20,10 +20,9 @@ interface TypingAreaProps {
 
 /** ローマ字の文字数に応じたフォントサイズ・文字間隔を返す */
 const getRomajiStyle = (len: number): React.CSSProperties => {
-  if (len <= 12) return { fontSize: "1.5rem", letterSpacing: "0.18em" };
-  if (len <= 22) return { fontSize: "1.25rem", letterSpacing: "0.1em" };
-  if (len <= 35) return { fontSize: "1rem", letterSpacing: "0.04em" };
-  return { fontSize: "0.85rem", letterSpacing: "0.02em" };
+  if (len <= 20) return { fontSize: "2.0rem", letterSpacing: "0.18em" };
+  if (len <= 26) return { fontSize: "1.75rem", letterSpacing: "0.1em" };
+  return { fontSize: "1.75rem", letterSpacing: "0.06em" };
 };
 
 /** ひらがな表示の文字数に応じた Tailwind クラスを返す */
@@ -55,7 +54,6 @@ export const TypingArea = ({
     <div className="w-full max-w-2xl mx-auto px-4">
       {/* メインカード */}
       <div className="bg-black/70 rounded-2xl border-2 border-white/20 p-6 shadow-2xl">
-
         {/* ひらがな表示 */}
         <AnimatePresence mode="wait">
           <motion.div
@@ -68,7 +66,10 @@ export const TypingArea = ({
           >
             <span
               className={`${kanaClass} font-bold leading-tight`}
-              style={{ fontFamily: "var(--font-zen-maru-gothic)", color: "var(--color-brand-gold)" }}
+              style={{
+                fontFamily: "var(--font-zen-maru-gothic)",
+                color: "var(--color-brand-gold)",
+              }}
             >
               {currentWord.display}
             </span>
@@ -115,8 +116,8 @@ export const TypingArea = ({
                   accuracy >= 90
                     ? "#4ade80"
                     : accuracy >= 70
-                    ? "var(--color-brand-gold)"
-                    : "var(--color-difficulty-hard)",
+                      ? "var(--color-brand-gold)"
+                      : "var(--color-difficulty-hard)",
               }}
             />
           </div>

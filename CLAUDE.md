@@ -302,6 +302,16 @@ interface GameStore {
 - 日本語：`Zen Maru Gothic`（Google Fonts）
 - ローマ字入力エリア：`monospace`
 
+**ローマ字入力欄のフォントサイズ（`getRomajiStyle` in `TypingArea.tsx`）**
+
+`displayPattern`（実際に入力するローマ字）の文字数で切り替える：
+
+| ローマ字文字数 | フォントサイズ | letterSpacing |
+| -------------- | -------------- | ------------- |
+| ≤ 20           | 2.0rem         | 0.18em        |
+| ≤ 26           | 1.75rem        | 0.1em         |
+| > 26           | 1.75rem        | 0.06em        |
+
 ### アニメーション方針（Framer Motion）
 
 - キャラ：`y` 軸上下でアイドル / クリア時 `scale` + `rotate`
@@ -315,6 +325,12 @@ interface GameStore {
 - **Vercel** にデプロイ
 - GitHub リポジトリと連携し、`git push` で自動デプロイ
 - 無料プランで運用可能（サーバーサイド処理なし）
+
+### 開発環境
+
+- Node.js バージョンを `.nvmrc`（`20`）で固定
+- 作業前に `nvm use` を実行して v20 に切り替えること
+- v21 以降では `next` / `eslint` の内部 `semver` モジュールが非互換でビルド・lint が失敗する
 
 ---
 
