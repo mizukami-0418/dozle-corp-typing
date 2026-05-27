@@ -11,7 +11,8 @@ import { useGameStore } from "@/store/game-store";
 
 export default function StagesPage() {
   const router = useRouter();
-  const { selectedCharacter, setCharacter, bestScores, loadProgress } = useGameStore();
+  const { selectedCharacter, setCharacter, bestScores, loadProgress } =
+    useGameStore();
 
   const regularStages = STAGES.filter((s) => s.id !== "dozle");
   const dozleStage = STAGES.find((s) => s.id === "dozle");
@@ -45,7 +46,7 @@ export default function StagesPage() {
             ドズル社タイピング
           </h1>
           <p className="text-white/70 text-sm font-bold tracking-widest mt-1">
-            OFFICIAL FAN GAME
+            UNOFFICIAL FAN GAME
           </p>
         </motion.div>
 
@@ -73,9 +74,7 @@ export default function StagesPage() {
                     backgroundColor: isSelected
                       ? cfg.color + "33"
                       : "rgba(0,0,0,0.4)",
-                    boxShadow: isSelected
-                      ? `0 0 12px ${cfg.color}88`
-                      : "none",
+                    boxShadow: isSelected ? `0 0 12px ${cfg.color}88` : "none",
                   }}
                 >
                   <span className="text-3xl">{cfg.emoji}</span>
@@ -124,6 +123,17 @@ export default function StagesPage() {
             </div>
           )}
         </motion.div>
+
+        {/* トップへ戻るボタン */}
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+          onClick={() => router.push("/")}
+          className="px-6 py-2.5 rounded-xl bg-white/20 text-white font-bold hover:bg-white/30 active:scale-95 transition-all border border-white/20"
+        >
+          ← トップへ戻る
+        </motion.button>
       </div>
     </MinecraftBg>
   );

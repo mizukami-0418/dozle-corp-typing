@@ -44,7 +44,6 @@ export default function TopPage() {
   return (
     <MinecraftBg>
       <div className="min-h-screen flex flex-col items-center justify-center px-4 gap-10">
-
         {/* タイトル */}
         <motion.div
           initial={{ opacity: 0, y: -24 }}
@@ -63,7 +62,7 @@ export default function TopPage() {
             ドズル社タイピング
           </h1>
           <p className="text-white/70 text-sm font-bold tracking-widest mt-2">
-            OFFICIAL FAN GAME
+            UNOFFICIAL FAN GAME
           </p>
         </motion.div>
 
@@ -107,15 +106,45 @@ export default function TopPage() {
         </motion.div>
 
         {/* バージョン表示 */}
-        <motion.p
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.7 }}
-          className="text-white/30 text-xs"
+          className="flex flex-col items-center gap-3"
         >
-          v1.0.0
-        </motion.p>
+          <p className="text-black/50 text-xs">v1.0.0</p>
 
+          {/* 作者からのメッセージ */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.0, duration: 0.5 }}
+            className="w-full max-w-xs text-center px-6 py-4 rounded-2xl border border-yellow-400/30"
+            style={{ backgroundColor: "rgba(0,0,0,0.45)" }}
+          >
+            {/* ラベル */}
+            <p className="text-yellow-300/80 text-xs font-bold tracking-widest mb-3">
+              ✉ 開発者からのメッセージ(ドズル社応援隊)
+            </p>
+
+            {/* メッセージ本文 */}
+            <p
+              className="text-white text-base font-bold leading-loose"
+              style={{
+                fontFamily: "var(--font-zen-maru-gothic)",
+                textShadow: "0 1px 6px rgba(0,0,0,0.6)",
+              }}
+            >
+              ドズル社を大好きな
+              <br />
+              子供たちが
+              <br />
+              タイピングを
+              <br />
+              楽しめるように 💛
+            </p>
+          </motion.div>
+        </motion.div>
       </div>
     </MinecraftBg>
   );

@@ -72,6 +72,17 @@ export default function GamePage() {
 
   const accentColor = CHARACTER_CONFIGS[selectedCharacter]?.color ?? "#FFD700";
 
+  /** 難易度ごとのテーマカラー */
+  const DIFFICULTY_COLORS: Record<string, string> = {
+    cheat: "#FDD835",
+    normal: "#0097A7",
+    hard: "#E53935",
+    kichiku: "#7B1FA2",
+    dozle: "#FF69B4",
+  };
+  const difficultyColor =
+    stage ? (DIFFICULTY_COLORS[stage.difficulty] ?? "#FFD700") : "#FFD700";
+
   // ゲーム開始後・クリア前・BGM有効時にBGMを再生
   useBgm(stageId, isStarted && !isCleared && bgmEnabled);
 
@@ -100,7 +111,9 @@ export default function GamePage() {
     return (
       <MinecraftBg>
         <div className="min-h-screen flex items-center justify-center flex-col gap-4">
-          <p className="text-white text-xl font-bold">ステージが見つかりません</p>
+          <p className="text-white text-xl font-bold">
+            ステージが見つかりません
+          </p>
           <button
             onClick={() => router.push("/stages")}
             className="px-6 py-2 rounded-xl bg-white/20 text-white font-bold hover:bg-white/30 transition"
@@ -143,6 +156,21 @@ export default function GamePage() {
 
           {/* タイピングエリア */}
           <div className="flex-1 w-full max-w-xl flex flex-col gap-3">
+            {/* ステージ名 */}
+            <div className="text-center pb-1">
+              <span
+                className="inline-block text-sm font-bold px-4 py-1 rounded-full border"
+                style={{
+                  color: difficultyColor,
+                  borderColor: difficultyColor + "80",
+                  backgroundColor: difficultyColor + "18",
+                  fontFamily: "var(--font-zen-maru-gothic)",
+                  textShadow: "0 1px 4px rgba(0,0,0,0.5)",
+                }}
+              >
+                {stage.name}
+              </span>
+            </div>
             <TypingArea
               currentWord={currentWord}
               nextWord={nextWord}
@@ -163,11 +191,6 @@ export default function GamePage() {
           </div>
         </div>
 
-        {/* ステージ名 */}
-        <div className="text-center text-white/50 text-xs pb-4">
-          {stage.name}
-        </div>
-
         {/* 終了確認ダイアログ */}
         <AnimatePresence>
           {showQuitDialog && (
@@ -184,7 +207,9 @@ export default function GamePage() {
                 transition={{ type: "spring", stiffness: 260, damping: 20 }}
                 className="bg-gray-900 border border-white/20 rounded-2xl px-8 py-6 flex flex-col items-center gap-5 min-w-[280px]"
               >
-                <p className="text-white font-bold text-lg">ゲームを終了しますか？</p>
+                <p className="text-white font-bold text-lg">
+                  ゲームを終了しますか？
+                </p>
                 <p className="text-white/50 text-sm">スコアは保存されません</p>
                 <div className="flex gap-3 w-full">
                   <button
@@ -221,7 +246,11 @@ export default function GamePage() {
               >
                 <motion.div
                   animate={{ rotate: [-3, 3, -3] }}
-                  transition={{ duration: 0.5, repeat: Infinity, ease: "easeInOut" }}
+                  transition={{
+                    duration: 0.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
                   className="text-5xl font-black mb-2"
                   style={{
                     color: "var(--color-brand-gold)",

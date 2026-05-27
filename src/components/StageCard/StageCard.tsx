@@ -19,7 +19,7 @@ const DIFFICULTY_COLORS: Record<string, string> = {
   normal: "#0097A7",
   hard: "#E53935",
   kichiku: "#7B1FA2",
-  dozle: "#FFD700",
+  dozle: "#FF69B4",
 };
 
 const DIFFICULTY_LABELS: Record<string, string> = {

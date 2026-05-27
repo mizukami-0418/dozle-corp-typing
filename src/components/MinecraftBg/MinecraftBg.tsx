@@ -13,10 +13,7 @@ export const MinecraftBg = ({ children }: MinecraftBgProps) => {
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
       {/* 空レイヤー */}
-      <div
-        className="absolute inset-0"
-        style={{ backgroundColor: "#87CEEB" }}
-      >
+      <div className="absolute inset-0" style={{ backgroundColor: "#87CEEB" }}>
         {/* 雲（装飾） */}
         <div className="absolute top-8 left-12 opacity-80">
           <CloudBlock />
@@ -35,15 +32,20 @@ export const MinecraftBg = ({ children }: MinecraftBgProps) => {
       {/* 草・土レイヤー（下部） */}
       <div className="absolute bottom-0 left-0 right-0">
         {/* 草ブロック列 */}
+        <div className="h-6 w-full" style={{ backgroundColor: "#5a8a3c" }} />
+        {/* 土ブロック列（フッター） */}
         <div
-          className="h-6 w-full"
-          style={{ backgroundColor: "#5a8a3c" }}
-        />
-        {/* 土ブロック列 */}
-        <div
-          className="h-16 w-full"
+          className="h-16 w-full flex items-center justify-center"
           style={{ backgroundColor: "#7a5c38" }}
-        />
+        >
+          <span
+            className="text-sm text-black/80"
+            style={{ fontFamily: "monospace" }}
+          >
+            &copy; {new Date().getFullYear()} tomo Web Studio . All rights
+            reserved.
+          </span>
+        </div>
       </div>
 
       {/* コンテンツ */}

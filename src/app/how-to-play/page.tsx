@@ -13,7 +13,7 @@ const DIFFICULTIES = [
   { name: "NORMAL", time: "90秒", chars: "5〜8文字", color: "#0097A7" },
   { name: "HARD", time: "120秒", chars: "9〜12文字", color: "#E53935" },
   { name: "鬼畜", time: "150秒", chars: "13文字以上", color: "#7B1FA2" },
-  { name: "ドズル社", time: "180秒", chars: "制限なし", color: "#FFD700", special: true },
+  { name: "ドズル社", time: "180秒", chars: "制限なし", color: "#FF69B4", special: true },
 ];
 
 /**
