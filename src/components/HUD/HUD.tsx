@@ -13,6 +13,12 @@ interface HUDProps {
   accuracy: number;
 }
 
+/**
+ * ミリ秒を秒単位の文字列に変換する（切り上げ・最小値 0）。
+ *
+ * @param ms - ミリ秒
+ * @returns 秒数の文字列（例: "10"）
+ */
 const formatSeconds = (ms: number): string =>
   String(Math.max(0, Math.ceil(ms / 1000)));
 

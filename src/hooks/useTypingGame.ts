@@ -35,7 +35,12 @@ export interface UseTypingGameReturn {
   isCleared: boolean;
 }
 
-/** Fisher-Yates シャッフル */
+/**
+ * Fisher-Yates アルゴリズムで配列をシャッフルする。
+ *
+ * @param arr - シャッフル対象のワード配列
+ * @returns シャッフルされた新しい配列（元配列は変更しない）
+ */
 const fisherYates = (arr: WordEntry[]): WordEntry[] => {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -45,11 +50,23 @@ const fisherYates = (arr: WordEntry[]): WordEntry[] => {
   return a;
 };
 
-/** ワードのスコアを算出する（ミスが多いほど減点、最低 10 点） */
+/**
+ * ワード完了時のスコアを算出する。
+ * ミス数に応じて減点し、最低 10 点を保証する。
+ *
+ * @param wordMiss - そのワードでのミス数
+ * @returns 獲得スコア（10〜100）
+ */
 const calcWordScore = (wordMiss: number): number =>
   Math.max(10, 100 - wordMiss * 10);
 
-/** スター数を算出する（3 / 2 / 1） */
+/**
+ * ゲーム終了時の獲得スター数を算出する。
+ *
+ * @param accuracy - 正確率（0〜100）
+ * @param missCount - 総ミス数
+ * @returns スター数（1〜3）
+ */
 const calcStars = (accuracy: number, missCount: number): number => {
   if (accuracy >= 90 && missCount <= 3) return 3;
   if (accuracy >= 75 && missCount <= 10) return 2;
@@ -138,8 +155,14 @@ export const useTypingGame = (
   });
 
   /**
-   * 次のワードへ進む（完了・タイムアウト共通）。
+   * 次のワードへ進む（ワード完了・タイムアウト共通）。
    * shuffledRef と位置・タイマー ref を直接更新し、新しいワード情報を返す。
+   * キューの末尾に達した場合は再シャッフルして先頭に戻る。
+   *
+   * @param pos - 現在のキュー位置
+   * @param allWords - 元のワードリスト（再シャッフル用）
+   * @param now - 現在のタイムスタンプ（Date.now()）
+   * @returns 次のキュー位置・タイムリミット・現在ワード・次ワード
    */
   const computeAdvance = (pos: number, allWords: WordEntry[], now: number): {
     nextPos: number;
@@ -212,7 +235,13 @@ export const useTypingGame = (
     return () => clearInterval(id);
   }, [startTime, isCleared, totalTimeLimitMs]);
 
-  // キーボードイベントハンドラ
+  /**
+   * キーボード入力を処理するイベントハンドラ。
+   * 修飾キーや非単一文字は無視し、正解・ミス・ワード完了を判定して状態を更新する。
+   * 初回キー入力でゲームタイマーを開始する。
+   *
+   * @param e - KeyboardEvent
+   */
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.ctrlKey || e.altKey || e.metaKey) return;
     if (e.key.length !== 1) return;

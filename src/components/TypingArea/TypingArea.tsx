@@ -18,14 +18,26 @@ interface TypingAreaProps {
   isStarted: boolean;
 }
 
-/** ローマ字の文字数に応じたフォントサイズ・文字間隔を返す */
+/**
+ * ローマ字の文字数に応じたフォントサイズ・文字間隔を返す。
+ * 長いワードでも入力欄に収まるよう段階的に縮小する。
+ *
+ * @param len - 表示するローマ字文字列の長さ
+ * @returns CSSProperties（fontSize・letterSpacing）
+ */
 const getRomajiStyle = (len: number): React.CSSProperties => {
   if (len <= 20) return { fontSize: "2.0rem", letterSpacing: "0.18em" };
   if (len <= 26) return { fontSize: "1.75rem", letterSpacing: "0.1em" };
   return { fontSize: "1.75rem", letterSpacing: "0.06em" };
 };
 
-/** ひらがな表示の文字数に応じた Tailwind クラスを返す */
+/**
+ * ひらがな表示の文字数に応じた Tailwind フォントサイズクラスを返す。
+ * 文字数が多いほど小さいサイズを返し、画面内に収める。
+ *
+ * @param len - 表示するひらがな文字列の長さ
+ * @returns Tailwind のテキストサイズクラス（例: "text-4xl"）
+ */
 const getKanaClass = (len: number): string => {
   if (len <= 8) return "text-4xl";
   if (len <= 14) return "text-3xl";

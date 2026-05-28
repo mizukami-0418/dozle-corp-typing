@@ -17,7 +17,14 @@ const KEYS = {
 
 const isBrowser = typeof window !== "undefined";
 
-/** ローカルストレージから JSON を安全に読み込む */
+/**
+ * ローカルストレージから JSON を安全に読み込む。
+ * SSR 環境またはパースエラー時はフォールバック値を返す。
+ *
+ * @param key - ストレージキー
+ * @param fallback - 読み込み失敗時のデフォルト値
+ * @returns パースされた値、またはフォールバック値
+ */
 const readJson = <T>(key: string, fallback: T): T => {
   if (!isBrowser) return fallback;
   try {
@@ -28,7 +35,13 @@ const readJson = <T>(key: string, fallback: T): T => {
   }
 };
 
-/** ローカルストレージに JSON を書き込む */
+/**
+ * ローカルストレージに JSON を書き込む。
+ * SSR 環境またはストレージ容量超過時は何もしない。
+ *
+ * @param key - ストレージキー
+ * @param value - 書き込む値
+ */
 const writeJson = <T>(key: string, value: T): void => {
   if (!isBrowser) return;
   try {
