@@ -13,8 +13,8 @@ export type CharacterKey =
 /** 難易度（= ステージ識別子と一対一対応） */
 export type Difficulty = "cheat" | "normal" | "hard" | "kichiku" | "dozle";
 
-/** ステージ識別子 */
-export type StageId = "cheat" | "normal" | "hard" | "kichiku" | "dozle";
+/** ステージ識別子（Difficulty と1対1対応） */
+export type StageId = Difficulty;
 
 /**
  * タイピング対象の1ワード。
