@@ -180,6 +180,43 @@ npm run lint    # ESLint チェック
 
 ---
 
+---
+
+## Phase 12: SEO 対策（作業中）
+
+### 実装済み（未コミット）
+
+- [x] `layout.tsx`：OGP・Twitter Card・title テンプレート追加
+- [x] 各ページの `layout.tsx` 新規作成（ページ別タイトル）
+  - `stages/layout.tsx`：ステージ選択
+  - `how-to-play/layout.tsx`：遊び方
+  - `how-to-play/romaji/layout.tsx`：ローマ字一覧
+  - `settings/layout.tsx`：設定
+  - `about/layout.tsx`：ドズル社とは？
+  - `about/history/layout.tsx`：ドズル社の歴史
+- [x] `robots.ts` 作成
+- [x] `sitemap.ts` 作成
+- [x] `public/ogp.png` 配置済み
+
+### 未解決：ビルドが止まる問題
+
+- [~] favicon の配置
+  - `src/app/favicon.ico` に JPEG ファイルを置いたためビルドが止まった
+  - 現在は削除済み（`favicon.ico` なし）
+  - **それでもビルドが止まる** → `robots.ts` / `sitemap.ts` が原因の可能性あり
+  - 次回：`robots.ts` と `sitemap.ts` を一時除外してビルドが通るか確認する
+
+### 残タスク
+
+- [ ] ビルドが止まる原因を特定して解消
+- [ ] favicon の正しい配置
+  - PNG を JPEG としてリネームしても無効（ICO 形式への変換が必要）
+  - 方法①：[realfavicongenerator.net](https://realfavicongenerator.net) で変換 → `src/app/favicon.ico` に配置
+  - 方法②：PNG のまま `src/app/icon.png` として配置（Next.js が自動認識）
+- [ ] **Phase 12 完了チェック：build / dev / lint → コミット → プッシュ**
+
+---
+
 ## メモ
 
 - **スコア調整**：TIMEOUT_PENALTY=30・ワードスコア最大100点の数値はプレイテスト後に調整予定
