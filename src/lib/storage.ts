@@ -92,9 +92,6 @@ export const markStageCleared = (stageId: StageId): void => {
   }
 };
 
-/** ステージがクリア済みか確認する */
-export const isStageCleared = (stageId: StageId): boolean =>
-  loadClearedStages().includes(stageId);
 
 // ──────────────────────────────────────────
 // スター記録

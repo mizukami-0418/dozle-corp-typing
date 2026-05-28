@@ -32,7 +32,6 @@ interface GameStore {
   // ──────────────────────────────────────────
   gameState: GameState;
   setGameState: (state: Partial<GameState>) => void;
-  resetGameState: (stageId: StageId) => void;
 
   // ──────────────────────────────────────────
   // リザルトデータ（クリア時にセット → リザルト画面で参照）
@@ -103,15 +102,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
     set((state) => ({
       gameState: { ...state.gameState, ...partial },
     })),
-
-  resetGameState: (stageId) =>
-    set({
-      gameState: {
-        ...INITIAL_GAME_STATE,
-        currentStage: stageId,
-        startTime: Date.now(),
-      },
-    }),
 
   setResultData: (data) => set({ resultData: data }),
 

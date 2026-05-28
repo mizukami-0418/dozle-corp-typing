@@ -25,7 +25,6 @@ export interface UseTypingGameReturn {
   score: number;
   missCount: number;
   accuracy: number;
-  wpm: number;
   wordsCompleted: number;
   totalWords: number;
   totalTimeRemainingMs: number;
@@ -314,12 +313,6 @@ export const useTypingGame = (
       ? 100
       : Math.round(((totalKeystrokes - missCount) / totalKeystrokes) * 100);
 
-  const elapsedMs = totalTimeLimitMs - totalTimeRemainingMs;
-  const wpm =
-    elapsedMs > 0 && wordsCompleted > 0
-      ? Math.round(wordsCompleted / (elapsedMs / 60000))
-      : 0;
-
   return {
     currentWord,
     nextWord,
@@ -328,7 +321,6 @@ export const useTypingGame = (
     score,
     missCount,
     accuracy,
-    wpm,
     wordsCompleted,
     totalWords: words.length,
     totalTimeRemainingMs,
