@@ -333,6 +333,7 @@ export const STAGES: StageConfig[] = [
     id: "cheat",
     name: "チートステージ",
     difficulty: "cheat",
+    theme: "草原・動物・村人アイテム・短いMinecraft用語・短いドズル社関連",
     words: [
       // 草原・動物系
       { display: "ねこ", reading: "ねこ" },
@@ -410,6 +411,7 @@ export const STAGES: StageConfig[] = [
     id: "normal",
     name: "ノーマルステージ",
     difficulty: "normal",
+    theme: "Minecraft用語・ドズル社メンバー名・関連ワード・名言",
     words: [
       { display: "おともだち", reading: "おともだち" },
       { display: "ユーチューブ", reading: "ゆーちゅーぶ" },
@@ -559,6 +561,7 @@ export const STAGES: StageConfig[] = [
     id: "hard",
     name: "ハードステージ",
     difficulty: "hard",
+    theme: "ドズル社関連の長めのフレーズ・名言・Minecraftネタ",
     words: [
       {
         display: "おまえはもうしんでいる",
@@ -646,6 +649,7 @@ export const STAGES: StageConfig[] = [
     id: "kichiku",
     name: "鬼畜ステージ",
     difficulty: "kichiku",
+    theme: "ドズル社の有名なセリフ・長文・記号付き全文入力",
     words: [
       // ドズル社関連（新規追加）
       {
@@ -822,6 +826,7 @@ export const STAGES: StageConfig[] = [
     id: "dozle",
     name: "ドズル社ステージ",
     difficulty: "dozle",
+    theme: "全難易度横断でドズル社関連ワードを出題",
     words: DOZLE_WORDS,
   },
 ];

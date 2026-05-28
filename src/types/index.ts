@@ -31,6 +31,8 @@ export interface StageConfig {
   id: StageId;
   name: string;
   difficulty: Difficulty;
+  /** ステージに登場するワードのテーマ説明 */
+  theme: string;
   words: WordEntry[];
 }
 

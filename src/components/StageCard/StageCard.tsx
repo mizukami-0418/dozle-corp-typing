@@ -79,6 +79,11 @@ export const StageCard = ({
         {stage.words.length} ワード
       </div>
 
+      {/* テーマ */}
+      <div className="text-white/70 text-xs mb-2 leading-snug">
+        {stage.theme}
+      </div>
+
       {/* ステージ説明 */}
       <div className="flex flex-col gap-0.5 mb-3">
         <div className="text-white/50 text-xs">
