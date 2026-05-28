@@ -3,17 +3,18 @@
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { MinecraftBg } from "@/components/MinecraftBg";
+import { DIFFICULTY_COLORS } from "@/lib/difficulty";
 
 /**
  * 難易度一覧テーブルのデータ。
  * difficulty.ts の DIFFICULTY_CONFIG と同期させること。
  */
 const DIFFICULTIES = [
-  { name: "CHEAT", time: "60秒", chars: "2〜4文字", color: "#FDD835" },
-  { name: "NORMAL", time: "90秒", chars: "5〜8文字", color: "#0097A7" },
-  { name: "HARD", time: "120秒", chars: "9〜12文字", color: "#E53935" },
-  { name: "鬼畜", time: "150秒", chars: "13文字以上", color: "#7B1FA2" },
-  { name: "ドズル社", time: "180秒", chars: "制限なし", color: "#FF69B4", special: true },
+  { name: "CHEAT",   time: "60秒",  chars: "2〜4文字",   color: DIFFICULTY_COLORS.cheat   },
+  { name: "NORMAL",  time: "90秒",  chars: "5〜8文字",   color: DIFFICULTY_COLORS.normal  },
+  { name: "HARD",    time: "120秒", chars: "9〜12文字",  color: DIFFICULTY_COLORS.hard    },
+  { name: "鬼畜",    time: "150秒", chars: "13文字以上", color: DIFFICULTY_COLORS.kichiku },
+  { name: "ドズル社", time: "180秒", chars: "制限なし",  color: DIFFICULTY_COLORS.dozle, special: true },
 ];
 
 /**

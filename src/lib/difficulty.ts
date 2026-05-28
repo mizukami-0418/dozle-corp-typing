@@ -23,5 +23,14 @@ export const DIFFICULTY_CONFIG: Record<Difficulty, DifficultyConfig> = {
   dozle:   { totalSec: 180, secPerRomaji: 0    },
 };
 
+/** 難易度ごとのテーマカラー（全画面共通） */
+export const DIFFICULTY_COLORS: Record<Difficulty, string> = {
+  cheat:   "#FDD835",
+  normal:  "#0097A7",
+  hard:    "#E53935",
+  kichiku: "#7B1FA2",
+  dozle:   "#FF69B4",
+};
+
 /** タイムアウト時の減点（スコアの下限は 0） */
 export const TIMEOUT_PENALTY = 30;

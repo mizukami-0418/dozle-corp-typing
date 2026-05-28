@@ -7,7 +7,7 @@
 
 import { motion } from "framer-motion";
 import type { StageConfig } from "@/types";
-import { DIFFICULTY_CONFIG } from "@/lib/difficulty";
+import { DIFFICULTY_CONFIG, DIFFICULTY_COLORS } from "@/lib/difficulty";
 
 interface StageCardProps {
   stage: StageConfig;
@@ -15,13 +15,6 @@ interface StageCardProps {
   onSelect: (id: string) => void;
 }
 
-const DIFFICULTY_COLORS: Record<string, string> = {
-  cheat: "#FDD835",
-  normal: "#0097A7",
-  hard: "#E53935",
-  kichiku: "#7B1FA2",
-  dozle: "#FF69B4",
-};
 
 const DIFFICULTY_LABELS: Record<string, string> = {
   cheat: "CHEAT",

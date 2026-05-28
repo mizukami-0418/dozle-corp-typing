@@ -11,6 +11,7 @@ import { ParticleEffect, CelebrationEffect } from "@/components/effects";
 import { useTypingGame } from "@/hooks/useTypingGame";
 import { useBgm } from "@/hooks/useBgm";
 import { getStageById } from "@/lib/words";
+import { DIFFICULTY_COLORS } from "@/lib/difficulty";
 import { useGameStore } from "@/store/game-store";
 import { CHARACTER_CONFIGS } from "@/lib/characters";
 import type { StageId } from "@/types";
@@ -72,14 +73,6 @@ export default function GamePage() {
 
   const accentColor = CHARACTER_CONFIGS[selectedCharacter]?.color ?? "#FFD700";
 
-  /** 難易度ごとのテーマカラー */
-  const DIFFICULTY_COLORS: Record<string, string> = {
-    cheat: "#FDD835",
-    normal: "#0097A7",
-    hard: "#E53935",
-    kichiku: "#7B1FA2",
-    dozle: "#FF69B4",
-  };
   const difficultyColor =
     stage ? (DIFFICULTY_COLORS[stage.difficulty] ?? "#FFD700") : "#FFD700";
 
