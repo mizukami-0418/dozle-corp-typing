@@ -7,6 +7,7 @@
 
 import { motion } from "framer-motion";
 import type { StageConfig } from "@/types";
+import { DIFFICULTY_CONFIG } from "@/lib/difficulty";
 
 interface StageCardProps {
   stage: StageConfig;
@@ -30,6 +31,15 @@ const DIFFICULTY_LABELS: Record<string, string> = {
   dozle: "ドズル社",
 };
 
+/** 難易度ごとのひらがな文字数目安ラベル */
+const KANA_RANGE_LABELS: Record<string, string> = {
+  cheat:   "2〜4文字",
+  normal:  "5〜8文字",
+  hard:    "9〜12文字",
+  kichiku: "13文字以上",
+  dozle:   "制限なし",
+};
+
 export const StageCard = ({
   stage,
   bestScore,
@@ -37,6 +47,10 @@ export const StageCard = ({
 }: StageCardProps) => {
   const color = DIFFICULTY_COLORS[stage.difficulty] ?? "#888";
   const label = DIFFICULTY_LABELS[stage.difficulty] ?? stage.difficulty.toUpperCase();
+  const config = DIFFICULTY_CONFIG[stage.difficulty];
+  const kanaRange = KANA_RANGE_LABELS[stage.difficulty] ?? "---";
+  const secPerRomajiLabel =
+    config.secPerRomaji === 0 ? "制限なし" : `${config.secPerRomaji}秒/文字`;
 
   return (
     <motion.button
@@ -61,8 +75,21 @@ export const StageCard = ({
       </div>
 
       {/* ワード数 */}
-      <div className="text-white/60 text-xs mb-3">
+      <div className="text-white/60 text-xs mb-2">
         {stage.words.length} ワード
+      </div>
+
+      {/* ステージ説明 */}
+      <div className="flex flex-col gap-0.5 mb-3">
+        <div className="text-white/50 text-xs">
+          ⏱ 制限時間：{config.totalSec}秒
+        </div>
+        <div className="text-white/50 text-xs">
+          ⌨ 入力速度：{secPerRomajiLabel}
+        </div>
+        <div className="text-white/50 text-xs">
+          あ 文字数目安：{kanaRange}
+        </div>
       </div>
 
       {/* ベストスコア */}
