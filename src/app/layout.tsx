@@ -10,8 +10,30 @@ const zenMaruGothic = Zen_Maru_Gothic({
 });
 
 export const metadata: Metadata = {
-  title: "ドズル社タイピング",
-  description: "ドズル社 × Minecraft をテーマにしたタイピングゲーム",
+  metadataBase: new URL("https://dozle-corp-typing.vercel.app"),
+  title: {
+    default: "ドズル社タイピング",
+    template: "%s | ドズル社タイピング",
+  },
+  description:
+    "ドズル社 × Minecraft をテーマにしたタイピングゲーム。チート・ノーマル・ハード・鬼畜・ドズル社モードの5難易度で遊べるファンゲームです。",
+  openGraph: {
+    title: "ドズル社タイピング",
+    description:
+      "ドズル社 × Minecraft をテーマにしたタイピングゲーム。チート・ノーマル・ハード・鬼畜・ドズル社モードの5難易度で遊べるファンゲームです。",
+    url: "https://dozle-corp-typing.vercel.app",
+    siteName: "ドズル社タイピング",
+    images: [{ url: "/ogp.png", width: 1200, height: 630 }],
+    locale: "ja_JP",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ドズル社タイピング",
+    description:
+      "ドズル社 × Minecraft をテーマにしたタイピングゲーム。チート・ノーマル・ハード・鬼畜・ドズル社モードの5難易度で遊べるファンゲームです。",
+    images: ["/ogp.png"],
+  },
 };
 
 export default function RootLayout({
