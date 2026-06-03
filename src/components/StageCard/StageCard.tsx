@@ -6,7 +6,7 @@
  */
 
 import { motion } from "framer-motion";
-import type { StageConfig } from "@/types";
+import type { Difficulty, StageConfig } from "@/types";
 import { DIFFICULTY_CONFIG, DIFFICULTY_COLORS } from "@/lib/difficulty";
 
 interface StageCardProps {
@@ -16,16 +16,16 @@ interface StageCardProps {
 }
 
 
-const DIFFICULTY_LABELS: Record<string, string> = {
-  cheat: "CHEAT",
-  normal: "NORMAL",
-  hard: "HARD",
+const DIFFICULTY_LABELS: Record<Difficulty, string> = {
+  cheat:   "CHEAT",
+  normal:  "NORMAL",
+  hard:    "HARD",
   kichiku: "鬼畜",
-  dozle: "ドズル社",
+  dozle:   "ドズル社",
 };
 
 /** 難易度ごとのひらがな文字数目安ラベル */
-const KANA_RANGE_LABELS: Record<string, string> = {
+const KANA_RANGE_LABELS: Record<Difficulty, string> = {
   cheat:   "2〜4文字",
   normal:  "5〜8文字",
   hard:    "9〜12文字",
