@@ -22,6 +22,18 @@ interface HUDProps {
 const formatSeconds = (ms: number): string =>
   String(Math.max(0, Math.ceil(ms / 1000)));
 
+/**
+ * ゲーム中の HUD コンポーネント。
+ * スコア・総残り時間・ワード別タイマーバー・正確率・ミス数を横並びで表示する。
+ * ドズル社モード（`wordTimeLimitMs === 0`）ではワードタイマーバーの代わりに ∞ を表示する。
+ *
+ * @param score - 現在のスコア
+ * @param totalTimeRemainingMs - 総残り時間（ミリ秒）
+ * @param wordTimeRemainingMs - 現在ワードの残り時間（ミリ秒）
+ * @param wordTimeLimitMs - 現在ワードの制限時間（ミリ秒）。0 のとき制限なし
+ * @param missCount - 累計ミス数
+ * @param accuracy - 正確率（0〜100）
+ */
 export const HUD = ({
   score,
   totalTimeRemainingMs,

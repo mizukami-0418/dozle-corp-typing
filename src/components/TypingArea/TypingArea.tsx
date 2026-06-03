@@ -45,6 +45,17 @@ const getKanaClass = (len: number): string => {
   return "text-xl";
 };
 
+/**
+ * タイピング入力エリアコンポーネント。
+ * ひらがな・ローマ字入力欄（打ち済み／現在／未入力の色分け）・正確率バー・次ワードプレビューを表示する。
+ *
+ * @param currentWord - 現在入力中のワード
+ * @param nextWord - 次に出題されるワード（プレビュー表示用）
+ * @param typedBuffer - ユーザーが入力済みのローマ字文字列
+ * @param displayPattern - 正解ローマ字パターン（色分け表示の基準）
+ * @param accuracy - 正確率（0〜100）
+ * @param isStarted - ゲーム開始済みフラグ（false のとき「キーを押してスタート」を表示）
+ */
 export const TypingArea = ({
   currentWord,
   nextWord,

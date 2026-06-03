@@ -72,6 +72,13 @@ const calcStars = (accuracy: number, missCount: number): number => {
   return 1;
 };
 
+/**
+ * タイピングゲームのコアロジックを管理するカスタムフック。
+ *
+ * @param stageId - 現在プレイ中のステージID（難易度設定の取得に使用）
+ * @param words - 出題するワードの配列（シャッフルしてループ出題する）
+ * @returns ゲームの表示・状態に必要な値一式（{@link UseTypingGameReturn}）
+ */
 export const useTypingGame = (
   stageId: StageId,
   words: WordEntry[]
