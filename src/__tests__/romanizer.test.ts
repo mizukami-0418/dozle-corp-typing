@@ -110,6 +110,41 @@ describe("toRomaji", () => {
     it("きゅ → kyu", () => {
       expect(toRomaji("きゅ")).toContain("kyu");
     });
+
+    it("ふぁ → fa / fula / fuxa どれも含む", () => {
+      const result = toRomaji("ふぁ");
+      expect(result).toContain("fa");
+      expect(result).toContain("fula");
+      expect(result).toContain("fuxa");
+    });
+
+    it("ふぃ → fi / fuli / fuxi どれも含む", () => {
+      const result = toRomaji("ふぃ");
+      expect(result).toContain("fi");
+      expect(result).toContain("fuli");
+      expect(result).toContain("fuxi");
+    });
+
+    it("ふぇ → fe / fule / fuxe どれも含む", () => {
+      const result = toRomaji("ふぇ");
+      expect(result).toContain("fe");
+      expect(result).toContain("fule");
+      expect(result).toContain("fuxe");
+    });
+
+    it("ふぉ → fo / fulo / fuxo どれも含む", () => {
+      const result = toRomaji("ふぉ");
+      expect(result).toContain("fo");
+      expect(result).toContain("fulo");
+      expect(result).toContain("fuxo");
+    });
+
+    it("ふゅ → fyu / fulyu / fuxyu どれも含む", () => {
+      const result = toRomaji("ふゅ");
+      expect(result).toContain("fyu");
+      expect(result).toContain("fulyu");
+      expect(result).toContain("fuxyu");
+    });
   });
 
   describe("ASCII 混在", () => {

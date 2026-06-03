@@ -124,6 +124,12 @@ const KANA_MAP: Record<string, string[]> = {
   ぴゃ: ["pya"],
   ぴゅ: ["pyu"],
   ぴょ: ["pyo"],
+  // 拗音（fu 系）
+  ふぁ: ["fa", "fula", "fuxa"],
+  ふぃ: ["fi", "fuli", "fuxi"],
+  ふぇ: ["fe", "fule", "fuxe"],
+  ふぉ: ["fo", "fulo", "fuxo"],
+  ふゅ: ["fyu", "fulyu", "fuxyu"],
   // 小文字単独
   ぁ: ["la", "xa"],
   ぃ: ["li", "xi"],
