@@ -197,8 +197,8 @@ export const useTypingGame = (
     if (!startTime || isCleared) return;
 
     const id = setInterval(() => {
-      const r = stateRef.current;
-      if (r.isCleared) return;
+      const state = stateRef.current;
+      if (state.isCleared) return;
 
       const now = Date.now();
       // Date.now() ベースで計算することで fake timers でも正確に動作する
@@ -208,12 +208,12 @@ export const useTypingGame = (
       if (newTotal <= 0) {
         // 総制限時間切れ → ゲーム終了
         const finalAccuracy =
-          r.totalKeystrokes === 0
+          state.totalKeystrokes === 0
             ? 100
-            : Math.round(((r.totalKeystrokes - r.missCount) / r.totalKeystrokes) * 100);
-        const stars = calcStars(finalAccuracy, r.missCount);
-        r.saveResult(r.stageId, r.score, stars, finalAccuracy, r.missCount, totalTimeLimitMs, r.wordsCompleted);
-        if (r.sfxEnabled) playClear();
+            : Math.round(((state.totalKeystrokes - state.missCount) / state.totalKeystrokes) * 100);
+        const stars = calcStars(finalAccuracy, state.missCount);
+        state.saveResult(state.stageId, state.score, stars, finalAccuracy, state.missCount, totalTimeLimitMs, state.wordsCompleted);
+        if (state.sfxEnabled) playClear();
         setTotalTimeRemainingMs(0);
         setIsCleared(true);
         return;
@@ -223,10 +223,10 @@ export const useTypingGame = (
 
       if (wordTimeLimitRef.current > 0 && newWordRemaining <= 0) {
         // ワードタイムアウト → 減点して次のワードへ（secPerRomaji === 0 のモードはスキップ）
-        const newScore = Math.max(0, r.score - TIMEOUT_PENALTY);
-        const { nextLimit, newCurrent, newNext } = computeAdvance(queuePosRef.current, r.words, now);
+        const newScore = Math.max(0, state.score - TIMEOUT_PENALTY);
+        const { nextLimit, newCurrent, newNext } = computeAdvance(queuePosRef.current, state.words, now);
         stateRef.current.wordMissCount = 0;
-        if (r.sfxEnabled) playMiss();
+        if (state.sfxEnabled) playMiss();
         setScore(newScore);
         setTypedBuffer("");
         setWordTimeLimitMs(nextLimit);
@@ -252,8 +252,8 @@ export const useTypingGame = (
     if (e.ctrlKey || e.altKey || e.metaKey) return;
     if (e.key.length !== 1) return;
 
-    const r = stateRef.current;
-    if (r.isCleared) return;
+    const state = stateRef.current;
+    if (state.isCleared) return;
 
     // effects/callbacks 内での shuffledRef アクセスはルール上問題なし
     const word = shuffledRef.current[queuePosRef.current];
@@ -262,10 +262,10 @@ export const useTypingGame = (
     e.preventDefault();
 
     const key = e.key.toLowerCase();
-    const newBuffer = r.typedBuffer + key;
+    const newBuffer = state.typedBuffer + key;
 
     // 初回キーでタイマー開始
-    if (!r.startTime) {
+    if (!state.startTime) {
       const now = Date.now();
       gameStartTimeRef.current = now;
       wordStartTimeRef.current = now;
@@ -275,7 +275,7 @@ export const useTypingGame = (
 
     if (isPartialMatch(newBuffer, word.reading)) {
       setTotalKeystrokes((t) => t + 1);
-      if (r.sfxEnabled) playBlockPlace();
+      if (state.sfxEnabled) playBlockPlace();
 
       if (isExactMatch(newBuffer, word.reading)) {
         // ワード完了
@@ -283,9 +283,9 @@ export const useTypingGame = (
         stateRef.current.wordMissCount = 0;
 
         const now = Date.now();
-        const { nextLimit, newCurrent, newNext } = computeAdvance(queuePosRef.current, r.words, now);
-        setScore(r.score + wordScore);
-        setWordsCompleted(r.wordsCompleted + 1);
+        const { nextLimit, newCurrent, newNext } = computeAdvance(queuePosRef.current, state.words, now);
+        setScore(state.score + wordScore);
+        setWordsCompleted(state.wordsCompleted + 1);
         setTypedBuffer("");
         setWordTimeLimitMs(nextLimit);
         setWordTimeRemainingMs(nextLimit);
@@ -299,7 +299,7 @@ export const useTypingGame = (
       setTotalKeystrokes((t) => t + 1);
       setMissCount((m) => m + 1);
       stateRef.current.wordMissCount += 1;
-      if (r.sfxEnabled) playMiss();
+      if (state.sfxEnabled) playMiss();
     }
   }, []); // 安定したハンドラ：状態はすべて ref 経由で読む
 
