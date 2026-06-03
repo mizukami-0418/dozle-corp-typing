@@ -309,11 +309,11 @@ export const useTypingGame = (
   }, [handleKeyDown]);
 
   // ── 派生値 ──────────────────────────────────
-  const displayPattern = currentWord
-    ? (toRomaji(currentWord.reading).find((p) => p.startsWith(typedBuffer)) ??
-       toRomaji(currentWord.reading)[0] ??
-       "")
-    : "";
+  const romajiPatterns = currentWord ? toRomaji(currentWord.reading) : [];
+  const displayPattern =
+    romajiPatterns.find((p) => p.startsWith(typedBuffer)) ??
+    romajiPatterns[0] ??
+    "";
 
   const accuracy =
     totalKeystrokes === 0
