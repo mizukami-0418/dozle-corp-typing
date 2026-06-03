@@ -193,7 +193,7 @@ npm run lint    # ESLint チェック
 - [x] 12-2. `layout.tsx`：OGP・Twitter Card・title テンプレート追加 → ビルド確認 → コミット
 - [x] 12-3. `robots.ts` 作成 → ビルド確認 → コミット
 - [x] 12-4. `sitemap.ts` 作成 → ビルド確認 → コミット
-- [ ] 12-5. 各ページ `layout.tsx` 新規作成（ページ別タイトル）→ ビルド確認 → コミット
+- [x] 12-5. 各ページ `layout.tsx` 新規作成（ページ別タイトル）→ ビルド確認 → コミット
   - `stages/layout.tsx`
   - `how-to-play/layout.tsx`
   - `how-to-play/romaji/layout.tsx`
