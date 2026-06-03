@@ -200,8 +200,8 @@ npm run lint    # ESLint チェック
   - `settings/layout.tsx`
   - `about/layout.tsx`
   - `about/history/layout.tsx`
-- [ ] 12-6. `public/ogp.png` 配置 → ビルド確認 → コミット
-- [ ] **Phase 12 完了チェック：build / lint → コミット → プッシュ**
+- [x] 12-6. `public/ogp.png` 配置 → ビルド確認 → コミット
+- [x] **Phase 12 完了チェック：build / lint → コミット → プッシュ**
 
 ---
 

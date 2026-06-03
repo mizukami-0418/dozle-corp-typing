@@ -23,7 +23,7 @@ export const metadata: Metadata = {
       "ドズル社 × Minecraft をテーマにしたタイピングゲーム。チート・ノーマル・ハード・鬼畜・ドズル社モードの5難易度で遊べるファンゲームです。",
     url: "https://dozle-corp-typing.vercel.app",
     siteName: "ドズル社タイピング",
-    images: [{ url: "/ogp.png", width: 1200, height: 630 }],
+    images: [{ url: "/ogp.png", width: 1731, height: 909 }],
     locale: "ja_JP",
     type: "website",
   },
