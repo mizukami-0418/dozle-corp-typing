@@ -4,6 +4,7 @@
  */
 
 import type { CharacterKey, StageId } from "@/types";
+import { CHARACTER_KEYS } from "@/lib/characters";
 
 const KEYS = {
   BEST_SCORES: "dozle-typing:bestScores",
@@ -117,14 +118,10 @@ export const saveStarRecord = (stageId: StageId, stars: number): void => {
 // 選択キャラクター
 // ──────────────────────────────────────────
 
-const VALID_CHARACTER_KEYS: CharacterKey[] = [
-  "Dozle", "Bonjour", "Qnly", "OrafKun", "ooharaMEN",
-];
-
 /** 選択中のキャラクターを読み込む（不正値は "Dozle" にフォールバック） */
 export const loadSelectedCharacter = (): CharacterKey => {
   const val = readJson<string>(KEYS.SELECTED_CHARACTER, "Dozle");
-  return (VALID_CHARACTER_KEYS as string[]).includes(val) ? (val as CharacterKey) : "Dozle";
+  return (CHARACTER_KEYS as string[]).includes(val) ? (val as CharacterKey) : "Dozle";
 };
 
 /** 選択中のキャラクターを保存する */
