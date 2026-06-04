@@ -115,39 +115,52 @@ describe("toRomaji", () => {
       expect(toRomaji("きゅ")).toContain("kyu");
     });
 
-    it("ふぁ → fa / fula / fuxa どれも含む", () => {
+    it("ふぁ → fa と fwa どちらも含む", () => {
       const result = toRomaji("ふぁ");
       expect(result).toContain("fa");
-      expect(result).toContain("fula");
-      expect(result).toContain("fuxa");
+      expect(result).toContain("fwa");
     });
 
-    it("ふぃ → fi / fuli / fuxi どれも含む", () => {
+    it("ふぃ → fi と fwi どちらも含む", () => {
       const result = toRomaji("ふぃ");
       expect(result).toContain("fi");
-      expect(result).toContain("fuli");
-      expect(result).toContain("fuxi");
+      expect(result).toContain("fwi");
     });
 
-    it("ふぇ → fe / fule / fuxe どれも含む", () => {
+    it("ふぇ → fe と fwe どちらも含む", () => {
       const result = toRomaji("ふぇ");
       expect(result).toContain("fe");
-      expect(result).toContain("fule");
-      expect(result).toContain("fuxe");
+      expect(result).toContain("fwe");
     });
 
-    it("ふぉ → fo / fulo / fuxo どれも含む", () => {
+    it("ふぉ → fo と fwo どちらも含む", () => {
       const result = toRomaji("ふぉ");
       expect(result).toContain("fo");
-      expect(result).toContain("fulo");
-      expect(result).toContain("fuxo");
+      expect(result).toContain("fwo");
     });
 
-    it("ふゅ → fyu / fulyu / fuxyu どれも含む", () => {
-      const result = toRomaji("ふゅ");
-      expect(result).toContain("fyu");
-      expect(result).toContain("fulyu");
-      expect(result).toContain("fuxyu");
+    it("ふゅ → fyu を含む", () => {
+      expect(toRomaji("ふゅ")).toContain("fyu");
+    });
+
+    it("ふゃ → fya を含む", () => {
+      expect(toRomaji("ふゃ")).toContain("fya");
+    });
+
+    it("ふょ → fyo を含む", () => {
+      expect(toRomaji("ふょ")).toContain("fyo");
+    });
+
+    it("ふぅ → fwu を含む", () => {
+      expect(toRomaji("ふぅ")).toContain("fwu");
+    });
+
+    it("ゔぁ → va を含む", () => {
+      expect(toRomaji("ゔぁ")).toContain("va");
+    });
+
+    it("ゔ → vu を含む", () => {
+      expect(toRomaji("ゔ")).toContain("vu");
     });
   });
 

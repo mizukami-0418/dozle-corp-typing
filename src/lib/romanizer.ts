@@ -125,11 +125,20 @@ const KANA_MAP: Record<string, string[]> = {
   ぴゅ: ["pyu"],
   ぴょ: ["pyo"],
   // 拗音（fu 系）
-  ふぁ: ["fa", "fula", "fuxa"],
-  ふぃ: ["fi", "fuli", "fuxi"],
-  ふぇ: ["fe", "fule", "fuxe"],
-  ふぉ: ["fo", "fulo", "fuxo"],
-  ふゅ: ["fyu", "fulyu", "fuxyu"],
+  ふぁ: ["fa", "fwa"],
+  ふぃ: ["fi", "fwi"],
+  ふぅ: ["fwu"],
+  ふぇ: ["fe", "fwe"],
+  ふぉ: ["fo", "fwo"],
+  ふゃ: ["fya"],
+  ふゅ: ["fyu"],
+  ふょ: ["fyo"],
+  // 拗音（va 系）
+  ゔぁ: ["va"],
+  ゔぃ: ["vi"],
+  ゔ: ["vu"],
+  ゔぇ: ["ve"],
+  ゔぉ: ["vo"],
   // 小文字単独
   ぁ: ["la", "xa"],
   ぃ: ["li", "xi"],
@@ -141,7 +150,7 @@ const KANA_MAP: Record<string, string[]> = {
   ょ: ["lyo", "xyo"],
   っ: ["ltu", "xtu"],
   // 長音
-  "ー": ["-"],
+  ー: ["-"],
   // 句読点・記号
   "、": [","],
   "。": ["."],
@@ -155,7 +164,7 @@ const KANA_MAP: Record<string, string[]> = {
  * KANA_MAP のキーのうち 2 文字のものを収集する。
  */
 const TWO_CHAR_KEYS = new Set(
-  Object.keys(KANA_MAP).filter((k) => k.length === 2)
+  Object.keys(KANA_MAP).filter((k) => k.length === 2),
 );
 
 /**
