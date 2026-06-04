@@ -198,8 +198,8 @@ src/
 ├── store/game-store.ts        # Zustand ストア定義
 ├── types/index.ts             # 共通型定義
 └── __tests__/
-    ├── romanizer.test.ts      # romanizer ユニットテスト
-    └── useTypingGame.test.ts  # フックテスト
+    ├── romanizer.test.ts      # romanizer ユニットテスト（43件）
+    └── useTypingGame.test.ts  # フックテスト（14件）
 ```
 
 ---
@@ -246,10 +246,14 @@ interface GameStore {
 - 複数パターン許容（例：「し」→ `si` / `shi` どちらも正解）
 - 「ん」→ `n` / `nn` どちらも正解
 - 「っ」→ 次の子音を重ねる（例：「った」→ `tta`）
+- 「じゃ/じゅ/じょ」→ `ja/zya`（`jya` は除外）— 連続入力時のパターン爆発防止
+- ふ行拗音：`fa/fwa`（ふぁ）/ `fya`（ふゃ）/ `fyu`（ふゅ）等
+- ゔ行：`va/vi/vu/ve/vo`
 - 句読点・記号のマッピング（`reading` に使用可）：
   - `、` → `,` / `。` → `.` / `「` → `[` / `」` → `]` / `・` → `/`
   - `〜`（全角波ダッシュ）は `reading` では使用禁止。代わりに `~`（半角チルダ）を使う
 - KANA_MAP 未登録の文字（`~`・`(`・`)` 等）はフォールバックでそのまま1文字のトークンとして処理される
+- `toRomaji` はパターン数を最大 8 に制限（組み合わせ爆発防止）
 
 ---
 
