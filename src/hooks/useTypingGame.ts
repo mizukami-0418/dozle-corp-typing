@@ -51,13 +51,27 @@ const fisherYates = (arr: WordEntry[]): WordEntry[] => {
 
 /**
  * ワード完了時のスコアを算出する。
- * ミス数に応じて減点し、最低 10 点を保証する。
+ * ローマ字文字数に比例した基礎点からミス数を減点し、最低 10 点を保証する。
  *
  * @param wordMiss - そのワードでのミス数
- * @returns 獲得スコア（10〜100）
+ * @param romLen - ローマ字文字数（`countRomajiLength(word.reading)` で取得）
+ * @returns 獲得スコア（10〜romLen × 10）
  */
-const calcWordScore = (wordMiss: number): number =>
-  Math.max(10, 100 - wordMiss * 10);
+const calcWordScore = (wordMiss: number, romLen: number): number =>
+  Math.max(10, romLen * 10 - wordMiss * 10);
+
+/**
+ * ゲーム終了時の正確率ボーナス倍率を返す。
+ *
+ * @param accuracy - 正確率（0〜100）
+ * @returns 倍率（1.0〜1.3）
+ */
+const calcAccuracyBonus = (accuracy: number): number => {
+  if (accuracy >= 95) return 1.3;
+  if (accuracy >= 90) return 1.2;
+  if (accuracy >= 80) return 1.1;
+  return 1.0;
+};
 
 /**
  * ゲーム終了時の獲得スター数を算出する。
@@ -212,9 +226,11 @@ export const useTypingGame = (
             ? 100
             : Math.round(((state.totalKeystrokes - state.missCount) / state.totalKeystrokes) * 100);
         const stars = calcStars(finalAccuracy, state.missCount);
-        state.saveResult(state.stageId, state.score, stars, finalAccuracy, state.missCount, totalTimeLimitMs, state.wordsCompleted);
+        const finalScore = Math.round(state.score * calcAccuracyBonus(finalAccuracy));
+        state.saveResult(state.stageId, finalScore, stars, finalAccuracy, state.missCount, totalTimeLimitMs, state.wordsCompleted);
         if (state.sfxEnabled) playClear();
         setTotalTimeRemainingMs(0);
+        setScore(finalScore);
         setIsCleared(true);
         return;
       }
@@ -279,7 +295,8 @@ export const useTypingGame = (
 
       if (isExactMatch(newBuffer, word.reading)) {
         // ワード完了
-        const wordScore = calcWordScore(stateRef.current.wordMissCount);
+        const romLen = countRomajiLength(word.reading);
+        const wordScore = calcWordScore(stateRef.current.wordMissCount, romLen);
         stateRef.current.wordMissCount = 0;
 
         const now = Date.now();
