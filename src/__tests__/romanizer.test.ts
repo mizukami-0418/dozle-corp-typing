@@ -107,6 +107,10 @@ describe("toRomaji", () => {
       expect(result).toContain("ja");
     });
 
+    it("じゃじゃ → jaja を含む（パターン上限で切り捨てられない）", () => {
+      expect(toRomaji("じゃじゃ")).toContain("jaja");
+    });
+
     it("きゅ → kyu", () => {
       expect(toRomaji("きゅ")).toContain("kyu");
     });

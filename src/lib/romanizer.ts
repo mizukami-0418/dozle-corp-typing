@@ -112,10 +112,10 @@ const KANA_MAP: Record<string, string[]> = {
   ぎゃ: ["gya"],
   ぎゅ: ["gyu"],
   ぎょ: ["gyo"],
-  // 拗音（zi/ji 系）
-  じゃ: ["zya", "ja", "jya"],
-  じゅ: ["zyu", "ju", "jyu"],
-  じょ: ["zyo", "jo", "jyo"],
+  // 拗音（zi/ji 系）— jya/jyu/jyo は組み合わせ爆発防止のため除外
+  じゃ: ["ja", "zya"],
+  じゅ: ["ju", "zyu"],
+  じょ: ["jo", "zyo"],
   // 拗音（bi 系）
   びゃ: ["bya"],
   びゅ: ["byu"],
