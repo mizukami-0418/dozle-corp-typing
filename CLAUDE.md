@@ -84,10 +84,12 @@
 - キャラクターは常時アイドルアニメーション（y軸上下 Framer Motion）
 - 画面遷移：`PageTransition`（opacity + y フェードイン、layout.tsx でラップ）
 
-### 3-6. スコア・進捗保存
+### 3-6. スコア仕様
 
-- **ローカルストレージ**を使用（サーバー不要）
-- 保存内容：ベストスコア・クリア済みステージ・獲得スター数
+- **ワードスコア**：`Math.max(10, romLen * 10 - wordMiss * 10)`（ローマ字文字数ベース）
+- **正確率ボーナス**：ゲーム終了時に累計スコアへ乗算（95%以上→×1.3 / 90%以上→×1.2 / 80%以上→×1.1 / それ未満→×1.0）
+- **タイムアウト減点**：`TIMEOUT_PENALTY`（`difficulty.ts` で定義）
+- **進捗保存**：ローカルストレージ（ベストスコア・クリア済みステージ・獲得スター数）
 
 ---
 
@@ -130,18 +132,17 @@
   - ⚙️ 設定 → `/settings`
   - 🦍 ドズル社とは？ → `/about`
 - バージョン表示（v1.0.0）の下に開発者メッセージカード
-  - `✉ 開発者からのメッセージ(ドズル社応援隊)` ラベル + 本文
 - 背景：Minecraftスタイル（空・草・土）
 
 ### 5-3. ステージ選択画面
 
 - ドズル社ロゴ + 「UNOFFICIAL FAN GAME」サブロゴ
 - キャラクター選択（5人・メンバーカラーで表示）
-- ステージカード一覧（2×2グリッド・難易度ごとに色分け・ロックなし）
+- ステージカード一覧（2×2グリッド・難易度ごとに色分け・ロックなし）、ドズル社モードは全幅で下部に表示
 - ベストスコア表示
 - 背景：Minecraftスタイル（空・草・土）
 
-### 5-5. ゲーム画面
+### 5-4. ゲーム画面
 
 - HUD：スコア / 総残り時間カウントダウン / ワード別タイマーバー / 正確率 / ミス数
 - 選択キャラ表示（アイドルアニメーション）
@@ -151,7 +152,7 @@
 - タイムアップ時オーバーレイ（TIME UP! テキスト・ワード完了数・スター表示）
 - 背景：Minecraftスタイル
 
-### 5-6. リザルト画面
+### 5-5. リザルト画面
 
 - TIME UP! バッジ
 - キャラのお祝いアニメーション
@@ -163,29 +164,18 @@
 
 ---
 
-## 6. 推奨ディレクトリ構成
+## 6. ディレクトリ構成
 
 ```
 src/
 ├── app/
 │   ├── page.tsx               # トップメニュー画面
-│   ├── stages/
-│   │   └── page.tsx           # ステージ選択画面
-│   ├── game/
-│   │   └── [stage]/
-│   │       └── page.tsx       # ゲーム画面
-│   ├── result/
-│   │   └── page.tsx           # リザルト画面
-│   ├── how-to-play/
-│   │   ├── page.tsx           # 遊び方
-│   │   └── romaji/
-│   │       └── page.tsx       # ローマ字対応一覧表
-│   ├── settings/
-│   │   └── page.tsx           # 設定（BGM/SFX トグル・データリセット）
-│   └── about/
-│       ├── page.tsx           # ドズル社とは？（概要・あゆみ・メンバー・公式リンク）
-│       └── history/
-│           └── page.tsx       # ドズル社の歴史と変遷（詳細タイムライン）
+│   ├── stages/page.tsx        # ステージ選択画面
+│   ├── game/[stage]/page.tsx  # ゲーム画面
+│   ├── result/page.tsx        # リザルト画面
+│   ├── how-to-play/           # 遊び方 + romaji/ サブページ
+│   ├── settings/page.tsx      # 設定（BGM/SFX トグル・データリセット）
+│   └── about/                 # ドズル社とは？ + history/ サブページ
 ├── components/
 │   ├── TypingArea/            # タイピング入力エリア
 │   ├── Character/             # キャラクターコンポーネント（アニメーション含む）
@@ -193,9 +183,7 @@ src/
 │   ├── HUD/                   # スコア・進捗表示
 │   ├── MinecraftBg/           # Minecraftスタイル背景
 │   ├── PageTransition.tsx     # ページ遷移アニメーションラッパー
-│   └── effects/               # エフェクトコンポーネント群
-│       ├── ParticleEffect.tsx # ワード正解時パーティクル
-│       └── CelebrationEffect.tsx # クリア時コンフェッティ
+│   └── effects/               # ParticleEffect / CelebrationEffect
 ├── lib/
 │   ├── words.ts               # ステージ別ワードデータ
 │   ├── romanizer.ts           # ひらがな → ローマ字変換ロジック
@@ -206,14 +194,12 @@ src/
 │   └── bgm.ts                 # Web Audio API BGM（難易度別メロディ・ループ再生）
 ├── hooks/
 │   ├── useTypingGame.ts       # ゲームロジック（カスタムフック）
-│   └── useBgm.ts              # BGM 再生フック（difficulty + active フラグ）
-├── store/
-│   └── game-store.ts          # Zustand ストア定義
-├── types/
-│   └── index.ts               # 共通型定義
+│   └── useBgm.ts              # BGM 再生フック
+├── store/game-store.ts        # Zustand ストア定義
+├── types/index.ts             # 共通型定義
 └── __tests__/
-    ├── romanizer.test.ts      # romanizer ユニットテスト（32件）
-    └── useTypingGame.test.ts  # フックテスト（14件）
+    ├── romanizer.test.ts      # romanizer ユニットテスト
+    └── useTypingGame.test.ts  # フックテスト
 ```
 
 ---
@@ -224,32 +210,22 @@ src/
 
 ```ts
 interface GameStore {
-  // キャラ選択
   selectedCharacter: CharacterKey;
   setCharacter: (key: CharacterKey) => void;
 
-  // ゲーム中の状態（GameState 型）
-  gameState: GameState;
-  setGameState: (state: Partial<GameState>) => void;
-  resetGameState: (stageId: StageId) => void;
-
-  // リザルトデータ（タイムアップ時にセット → リザルト画面で参照）
   resultData: ResultData | undefined;
   setResultData: (data: ResultData) => void;
 
-  // サウンド設定（BGM と SFX を独立して管理）
   sfxEnabled: boolean;    // タイピング効果音（旧 soundEnabled キーを継続使用）
   toggleSfx: () => void;
-  bgmEnabled: boolean;    // ゲーム中 BGM
+  bgmEnabled: boolean;
   toggleBgm: () => void;
 
-  // ローカルストレージと同期
   bestScores: Record<string, number>;
   clearedStages: StageId[];
   starRecords: Record<string, number>;
   loadProgress: () => void;
 
-  // タイムアップ時の一括保存（ベストスコア・スター・resultData を更新）
   saveResult: (
     stageId: StageId,
     score: number,
@@ -266,20 +242,14 @@ interface GameStore {
 
 ## 8. ローマ字変換ロジック（romanizer.ts）
 
-### 対応方針
-
 - 清音・濁音・半濁音・拗音をすべてカバー
 - 複数パターン許容（例：「し」→ `si` / `shi` どちらも正解）
 - 「ん」→ `n` / `nn` どちらも正解
 - 「っ」→ 次の子音を重ねる（例：「った」→ `tta`）
 - 句読点・記号のマッピング（`reading` に使用可）：
-  - `、` → `,`
-  - `。` → `.`
-  - `「` → `[`
-  - `」` → `]`
-  - `・` → `/`（日本語キーボードの `/` キーに対応）
+  - `、` → `,` / `。` → `.` / `「` → `[` / `」` → `]` / `・` → `/`
   - `〜`（全角波ダッシュ）は `reading` では使用禁止。代わりに `~`（半角チルダ）を使う
-- KANA_MAP 未登録の文字（`~`・`(`・`)` 等）はトークナイザーのフォールバックでそのまま1文字のトークンとして処理される（プレイヤーが対応キーを直接入力）
+- KANA_MAP 未登録の文字（`~`・`(`・`)` 等）はフォールバックでそのまま1文字のトークンとして処理される
 
 ---
 
@@ -314,8 +284,6 @@ interface GameStore {
 
 **ローマ字入力欄のフォントサイズ（`getRomajiStyle` in `TypingArea.tsx`）**
 
-`displayPattern`（実際に入力するローマ字）の文字数で切り替える：
-
 | ローマ字文字数 | フォントサイズ | letterSpacing |
 | -------------- | -------------- | ------------- |
 | ≤ 20           | 2.0rem         | 0.18em        |
@@ -332,8 +300,7 @@ interface GameStore {
 
 ## 10. デプロイ
 
-- **Vercel** にデプロイ
-- GitHub リポジトリと連携し、`git push` で自動デプロイ
+- **Vercel** にデプロイ（GitHub 連携・`git push` で自動デプロイ）
 - 無料プランで運用可能（サーバーサイド処理なし）
 
 ### 開発環境
@@ -360,90 +327,17 @@ interface GameStore {
 | ファイル名（それ以外）       | kebab-case                   | `romanizer.ts`, `game-store.ts` |
 | 型エクスポート               | `~Key` / `~Type` / `~Config` | `CharacterKey`, `StageConfig`   |
 
----
+### 型・構造ルール
 
-### ① `any` を禁止、`unknown` を使う
-
-型安全性を守るため `any` は原則禁止。型が不明な場合は `unknown` を使い、型ガードで絞り込む。
-
-```ts
-// ❌
-const data: any = fetchData();
-
-// ✅
-const data: unknown = fetchData();
-```
-
-### ② `type` と `interface` の使い分けを統一する
-
-- オブジェクト型 → `interface`（拡張しやすいため）
-- ユニオン型・関数型 → `type`
-
-```ts
-// オブジェクト型は interface
-interface Stage {
-  id: string;
-  name: string;
-  difficulty: Difficulty;
-}
-
-// ユニオン型・関数型は type
-type Difficulty = "cheat" | "normal" | "hard" | "kichiku";
-type RomajiConverter = (kana: string) => string;
-```
-
-### ④ Props は `interface` で明示定義する
-
-コンポーネントの Props はインラインで書かず、必ず `interface` として定義する。
-
-```ts
-// ❌
-const StageCard = ({ stage }: { stage: Stage }) => { ... };
-
-// ✅
-interface StageCardProps {
-  stage: Stage;
-  bestScore?: number;
-  onSelect: (id: string) => void;
-}
-
-export const StageCard = ({ stage, bestScore, onSelect }: StageCardProps) => { ... };
-```
-
-### ⑤ `export default` より named export を使う
-
-named export は IDE でのリネームやインポート追跡がしやすい。
-
-```ts
-// ❌
-export default function StageCard() { ... }
-
-// ✅
-export const StageCard = () => { ... };
-```
-
-### ⑥ `null` を使わず `undefined` に統一する
-
-JavaScriptでは `typeof null` が `"object"` を返すという言語仕様上のバグが存在する。`null` と `undefined` が混在するとチェックが複雑になるため、`undefined` に統一する。
-
-```ts
-// ❌ null と undefined が混在
-const selectedStage: Stage | null = null;
-
-// ✅ undefined に統一
-const selectedStage: Stage | undefined = undefined;
-
-// オプショナルチェーンも undefined を返すので相性がいい
-const name = user?.profile?.name ?? "未設定";
-```
-
-> **例外**：`document.getElementById()` など DOM API が返す `null` はそのまま扱ってよい。
-
----
+- **① `any` 禁止**：型不明の場合は `unknown` を使い、型ガードで絞り込む
+- **② `type` と `interface` の使い分け**：オブジェクト型 → `interface`、ユニオン型・関数型 → `type`
+- **③ Props は `interface` で明示定義**：コンポーネントの Props はインラインで書かず必ず `interface` として定義する
+- **④ named export を使う**：`export default` は避ける（IDE でのリネーム・インポート追跡のため）
+- **⑤ `null` 禁止・`undefined` に統一**：DOM API が返す `null` のみ例外
 
 ### コメント規約
 
-ユーザー設定に従い、すべてのファイルに **Google スタイルの docstring** とインラインコメントを記載する。
+すべてのファイルに **Google スタイルの docstring** とインラインコメントを記載する。
 
 ```ts
 /**
@@ -453,64 +347,18 @@ const name = user?.profile?.name ?? "未設定";
  * @returns ローマ字文字列の候補リスト（複数パターン対応）
  * @example
  * toRomaji('ねこ') // => ['neko']
- * toRomaji('ん')   // => ['n', 'nn']
  */
 export const toRomaji = (kana: string): string[] => { ... };
 ```
 
 ---
 
-## 12. 実装済み機能まとめ
-
-| フェーズ | 内容                                                   | 状態 |
-| -------- | ------------------------------------------------------ | ---- |
-| Phase 1  | 型定義・ワードデータ・romanizer・storage・Zustand      | 完了 |
-| Phase 2  | `useTypingGame` フック                                 | 完了 |
-| Phase 3  | 共通コンポーネント（Character / StageCard / TypingArea / HUD / MinecraftBg） | 完了 |
-| Phase 4  | 3画面実装（ステージ選択 / ゲーム / リザルト）          | 完了 |
-| Phase 5  | アニメーション・エフェクト（ParticleEffect / CelebrationEffect / PageTransition） | 完了 |
-| Phase 6  | テスト・品質（romanizer 32件 / useTypingGame 14件）    | 完了 |
-| Phase 7  | トップメニュー画面・難易度構成変更・追加画面（遊び方 / 設定 / ドズル社とは？）実装 | 完了 |
-| Phase 8  | 時間制ゲームモード（総制限時間・ワードタイムアウト・ループ出題・スコア再設計） | 完了 |
-| Phase 9  | ドズル社モード（文字数制限なし・ワード制限時間なし・180 秒・197 ワード） | 完了 |
-| Phase 10 | UI 調整（フッター・ステージ名バッジ・UNOFFICIAL 変更・開発者メッセージ）  | 完了 |
-
-### Phase 9 主な実装内容
-
-- `Difficulty` / `StageId` に `"dozle"` を追加
-- `DOZLE_WORDS`（197 ワード）を `words.ts` に独立エクスポートし、`STAGES` に `dozle` ステージとして追加
-- `difficulty.ts`：`dozle: { totalSec: 180, secPerRomaji: 0 }` — `secPerRomaji: 0` をワード制限なしのセンチネルとして使用
-- `useTypingGame`：`wordTimeLimitRef.current > 0` のときのみタイムアウト処理を実行
-- `HUD`：`wordTimeLimitMs === 0` のとき WORD TIMER バーを非表示・∞ 表示に切替
-- `bgm.ts`：`dozle` 用トラックを追加（95 BPM・G メジャーペンタトニック・明るいお祭り風）
-- ステージ選択画面：通常 4 ステージを 2×2 グリッド、ドズル社モードを全幅の特別カードとして下部に表示
-
-### Phase 7 主な実装内容
-
-- `/how-to-play`：4カード構成（基本ルール・入力のコツ・難易度一覧・スコア）+ ローマ字一覧サブページ
-- `/settings`：BGM / SFX 独立トグル・データリセット機能
-  - サウンド設定を `soundEnabled` 単一から `sfxEnabled`（旧キー継承）+ `bgmEnabled` に分離
-  - BGM は `src/lib/bgm.ts` で Web Audio API による難易度別メロディをループ生成、`useBgm` フックで制御
-- `/about`：ドズル社紹介・あゆみ（3時代概要）・メンバー一覧（公式サイトへ外部リンク）・公式 YouTube リンク
-  - メンバーリンク先：`https://www.dozle.jp/members/{slug}/`（新タブで開く）
-  - 「詳しいあゆみ」→ `/about/history` へリンク
-- `/about/history`：3時代の詳細タイムライン（各時代を色分けカード＋縦線で表示）
-
-### Phase 10 主な実装内容
-
-- `MinecraftBg`：土ブロック列にフッター（著作権表示）を追加
-- `game/[stage]/page.tsx`：ステージ名を難易度カラーの丸ピル型バッジに変更・TypingArea 上部へ移動
-- ドズル社モードのテーマカラーをゴールド（`#FFD700`）→ ピンク（`#FF69B4`）に変更
-  - 変更箇所：`StageCard.tsx` / `game/[stage]/page.tsx` / `how-to-play/page.tsx`
-- 「OFFICIAL FAN GAME」→「UNOFFICIAL FAN GAME」に修正（`page.tsx` / `stages/page.tsx`）
-- トップページに開発者メッセージカードを追加（バージョン表示の下）
-
-## 13. 今後の実装予定
+## 12. 今後の実装予定
 
 - **キャラクター画像**：仮絵文字から実画像へ差し替え
-- **スコア数値調整**：TIMEOUT_PENALTY・ワードスコアはプレイテスト後に要チューニング
+- **スター判定の見直し**：正確率のみに一本化を検討中
 
-## 14. 今後の拡張候補（現時点では対象外）
+## 13. 今後の拡張候補（現時点では対象外）
 
 - オンラインランキング（DB連携が必要）
 - タイムアタックモード
