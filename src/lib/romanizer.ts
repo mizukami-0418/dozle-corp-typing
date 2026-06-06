@@ -340,3 +340,147 @@ export const countRomajiLength = (reading: string): number => {
   if (patterns.length === 0) return reading.length;
   return Math.min(...patterns.map((p) => p.length));
 };
+
+// ── Matcher ───────────────────────────────────────────────────────────────
+
+/**
+ * 逐次マッチングの状態。
+ * 1キー入力のたびに advance() で新しい状態に遷移する。
+ */
+export interface MatcherState {
+  tokens: KanaToken[];
+  tokenIndex: number;
+  /** 現在トークン内で入力済みの文字列 */
+  typed: string;
+  /** 現在トークンの生き残り候補 */
+  liveCandidates: string[];
+  /** 確定済みのローマ字（表示用） */
+  committedRomaji: string;
+}
+
+/**
+ * advance() の戻り値。
+ * - ok: 入力を受理（ゲーム続行）
+ * - complete: 全トークン消費（ワード完了）
+ * - miss: 不正解（状態変化なし）
+ */
+export type AdvanceResult =
+  | { status: "ok"; next: MatcherState }
+  | { status: "complete"; next: MatcherState }
+  | { status: "miss" };
+
+/**
+ * ひらがな文字列からマッチャーの初期状態を生成する。
+ *
+ * @param kana - ひらがな・ASCII 混在文字列
+ * @returns 初期 MatcherState
+ */
+export const createMatcher = (kana: string): MatcherState => {
+  const tokens = tokenizeKana(kana);
+  return {
+    tokens,
+    tokenIndex: 0,
+    typed: "",
+    liveCandidates: tokens[0]?.candidates ?? [],
+    committedRomaji: "",
+  };
+};
+
+/**
+ * トークンを確定し、次のトークンへ遷移した結果を返す内部ヘルパー。
+ */
+const advanceToken = (
+  tokens: KanaToken[],
+  completedIndex: number,
+  newCommittedRomaji: string,
+): AdvanceResult => {
+  const nextIndex = completedIndex + 1;
+  if (nextIndex >= tokens.length) {
+    return {
+      status: "complete",
+      next: {
+        tokens,
+        tokenIndex: nextIndex,
+        typed: "",
+        liveCandidates: [],
+        committedRomaji: newCommittedRomaji,
+      },
+    };
+  }
+  return {
+    status: "ok",
+    next: {
+      tokens,
+      tokenIndex: nextIndex,
+      typed: "",
+      liveCandidates: tokens[nextIndex].candidates,
+      committedRomaji: newCommittedRomaji,
+    },
+  };
+};
+
+/**
+ * 1キー入力を受け取り、マッチャーの状態を進める。
+ *
+ * 「ん」の auto-commit: typed が既に exact match の状態で候補が全滅した場合、
+ * typed でトークンを確定し、入力キーを次のトークンで再試行する。
+ * これにより「んか」の `n` → `k` の入力で `n` が自動確定される。
+ *
+ * @param state - 現在の MatcherState
+ * @param key - 入力された1文字（小文字）
+ * @returns AdvanceResult
+ */
+export const advance = (state: MatcherState, key: string): AdvanceResult => {
+  const { tokens, tokenIndex, typed, liveCandidates, committedRomaji } = state;
+  const newTyped = typed + key;
+
+  const survivors = liveCandidates.filter((c) => c.startsWith(newTyped));
+
+  if (survivors.length > 0) {
+    const hasExact = survivors.some((c) => c === newTyped);
+    const hasLonger = survivors.some((c) => c.length > newTyped.length);
+
+    // 完全一致のみ残った → トークン確定
+    if (hasExact && !hasLonger) {
+      return advanceToken(tokens, tokenIndex, committedRomaji + newTyped);
+    }
+
+    // まだ候補が残っている（例：n で ん/nn どちらも生存中）
+    return {
+      status: "ok",
+      next: { ...state, typed: newTyped, liveCandidates: survivors },
+    };
+  }
+
+  // 候補が全滅。typed が既に exact match なら auto-commit して次トークンで再試行
+  // （例：「んか」で n 入力済みのあとに k → n で ん を確定し k を か で受理）
+  if (liveCandidates.some((c) => c === typed)) {
+    const nextIndex = tokenIndex + 1;
+    if (nextIndex >= tokens.length) return { status: "miss" };
+
+    const nextSurvivors = tokens[nextIndex].candidates.filter((c) =>
+      c.startsWith(key),
+    );
+    if (nextSurvivors.length === 0) return { status: "miss" };
+
+    const newCommitted = committedRomaji + typed;
+    const nextHasExact = nextSurvivors.some((c) => c === key);
+    const nextHasLonger = nextSurvivors.some((c) => c.length > key.length);
+
+    if (nextHasExact && !nextHasLonger) {
+      return advanceToken(tokens, nextIndex, newCommitted + key);
+    }
+    return {
+      status: "ok",
+      next: {
+        tokens,
+        tokenIndex: nextIndex,
+        typed: key,
+        liveCandidates: nextSurvivors,
+        committedRomaji: newCommitted,
+      },
+    };
+  }
+
+  return { status: "miss" };
+};

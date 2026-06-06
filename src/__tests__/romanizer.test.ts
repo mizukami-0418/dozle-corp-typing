@@ -4,7 +4,15 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { toRomaji, isPartialMatch, isExactMatch, tokenizeKana } from "@/lib/romanizer";
+import {
+  toRomaji,
+  isPartialMatch,
+  isExactMatch,
+  tokenizeKana,
+  createMatcher,
+  advance,
+  type MatcherState,
+} from "@/lib/romanizer";
 
 // ── toRomaji ──────────────────────────────────────────────────────────────
 
@@ -344,5 +352,136 @@ describe("isExactMatch", () => {
   it("「ん」単独 → n でも nn でも true", () => {
     expect(isExactMatch("n", "ん")).toBe(true);
     expect(isExactMatch("nn", "ん")).toBe(true);
+  });
+});
+
+// ── createMatcher / advance ───────────────────────────────────────────────
+
+/** advance の戻り値から next を取り出すヘルパー（miss は例外） */
+const nextOf = (r: ReturnType<typeof advance>): MatcherState => {
+  if (r.status === "miss") throw new Error("unexpected miss");
+  return r.next;
+};
+
+describe("createMatcher", () => {
+  it("初期状態が正しく設定される（ねこ）", () => {
+    const state = createMatcher("ねこ");
+    expect(state.tokenIndex).toBe(0);
+    expect(state.typed).toBe("");
+    expect(state.liveCandidates).toEqual(["ne"]);
+    expect(state.committedRomaji).toBe("");
+    expect(state.tokens).toHaveLength(2);
+  });
+});
+
+describe("advance", () => {
+  describe("通常入力", () => {
+    it("正解キー → status: ok、typed が進む", () => {
+      const state = createMatcher("ねこ");
+      const result = advance(state, "n");
+      expect(result.status).toBe("ok");
+      expect(nextOf(result).typed).toBe("n");
+    });
+
+    it("トークン完了 → 次のトークンへ遷移", () => {
+      const state = createMatcher("ねこ");
+      const after_ne = nextOf(advance(nextOf(advance(state, "n")), "e"));
+      expect(after_ne.tokenIndex).toBe(1);
+      expect(after_ne.typed).toBe("");
+      expect(after_ne.liveCandidates).toEqual(["ko"]);
+      expect(after_ne.committedRomaji).toBe("ne");
+    });
+
+    it("全トークン完了 → status: complete", () => {
+      const state = createMatcher("ね");
+      const result = advance(nextOf(advance(state, "n")), "e");
+      expect(result.status).toBe("complete");
+    });
+
+    it("不正解キー → status: miss", () => {
+      const state = createMatcher("ねこ");
+      expect(advance(state, "x").status).toBe("miss");
+    });
+  });
+
+  describe("複数パターン枝刈り", () => {
+    it("し + s → si と shi どちらも生き残る", () => {
+      const result = advance(createMatcher("し"), "s");
+      expect(result.status).toBe("ok");
+      expect(nextOf(result).liveCandidates).toContain("si");
+      expect(nextOf(result).liveCandidates).toContain("shi");
+    });
+
+    it("し + s + h → shi のみ残る", () => {
+      const s1 = nextOf(advance(createMatcher("し"), "s"));
+      const result = advance(s1, "h");
+      expect(result.status).toBe("ok");
+      expect(nextOf(result).liveCandidates).toEqual(["shi"]);
+    });
+
+    it("し + s + i → complete（si パターンで完了）", () => {
+      const s1 = nextOf(advance(createMatcher("し"), "s"));
+      expect(advance(s1, "i").status).toBe("complete");
+    });
+  });
+
+  describe("「っ」の処理", () => {
+    it("っか → k で っ 完了・次トークン（か）へ", () => {
+      const result = advance(createMatcher("っか"), "k");
+      expect(result.status).toBe("ok");
+      const next = nextOf(result);
+      expect(next.tokenIndex).toBe(1);
+      expect(next.committedRomaji).toBe("k");
+    });
+
+    it("っか → k + k + a で complete（kka）", () => {
+      let state = createMatcher("っか");
+      state = nextOf(advance(state, "k")); // っ complete
+      state = nextOf(advance(state, "k")); // ka 途中
+      expect(advance(state, "a").status).toBe("complete");
+    });
+  });
+
+  describe("「ん」の処理", () => {
+    it("んか → n 単打では確定しない（nn もまだ生き残り）", () => {
+      const result = advance(createMatcher("んか"), "n");
+      expect(result.status).toBe("ok");
+      const next = nextOf(result);
+      expect(next.tokenIndex).toBe(0); // まだ ん トークン
+      expect(next.liveCandidates).toContain("n");
+      expect(next.liveCandidates).toContain("nn");
+    });
+
+    it("んか → n + k で auto-commit（n で ん 確定・k は か へ）", () => {
+      const s1 = nextOf(advance(createMatcher("んか"), "n"));
+      const result = advance(s1, "k");
+      expect(result.status).toBe("ok");
+      const next = nextOf(result);
+      expect(next.tokenIndex).toBe(1);
+      expect(next.committedRomaji).toBe("n");
+      expect(next.typed).toBe("k");
+    });
+
+    it("んか → n + n で nn 確定・次トークン か へ", () => {
+      const s1 = nextOf(advance(createMatcher("んか"), "n"));
+      const result = advance(s1, "n");
+      expect(result.status).toBe("ok");
+      const next = nextOf(result);
+      expect(next.tokenIndex).toBe(1);
+      expect(next.committedRomaji).toBe("nn");
+    });
+
+    it("んあ → n 単打は ok だが完了しない（nn 必須）", () => {
+      const result = advance(createMatcher("んあ"), "n");
+      expect(result.status).toBe("ok");
+      expect(nextOf(result).tokenIndex).toBe(0); // まだ ん トークン
+    });
+
+    it("んあ → nn で ん 確定", () => {
+      const s1 = nextOf(advance(createMatcher("んあ"), "n"));
+      const result = advance(s1, "n");
+      expect(result.status).toBe("ok");
+      expect(nextOf(result).tokenIndex).toBe(1); // あ トークンへ
+    });
   });
 });

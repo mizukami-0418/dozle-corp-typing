@@ -234,15 +234,15 @@ npm run lint    # ESLint チェック
 
 ### Step 2 — `Matcher` を実装（`romanizer.ts` 内）
 
-- [ ] 14-4. `MatcherState` インターフェース定義
+- [x] 14-4. `MatcherState` インターフェース定義
   - `tokens`, `tokenIndex`, `typed`, `liveCandidates`, `committedRomaji`
-- [ ] 14-5. `createMatcher(kana: string): MatcherState` 実装
-- [ ] 14-6. `advance(state: MatcherState, key: string)` 実装
+- [x] 14-5. `createMatcher(kana: string): MatcherState` 実装
+- [x] 14-6. `advance(state: MatcherState, key: string)` 実装
   - `typed + key` で候補を枝刈り
   - 戻り値：`{ status: 'ok' | 'complete' | 'miss', next?: MatcherState }`
-- [ ] 14-7. `advance` のユニットテスト追加（`romanizer.test.ts`）
+- [x] 14-7. `advance` のユニットテスト追加（`romanizer.test.ts`）
   - 正解・ミス・完了・っ/ん の境界ケース
-- [ ] **Step 2 確認：`npm test` でテスト全件グリーン**
+- [x] **Step 2 確認：`npm test` でテスト全件グリーン**
 
 ### Step 3 — `useTypingGame.ts` の改修
 
