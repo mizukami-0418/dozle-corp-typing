@@ -168,6 +168,12 @@ const KANA_MAP: Record<string, string[]> = {
   "「": ["["],
   "」": ["]"],
   "・": ["/"],
+  // ん + な行 複合トークン（nni / nnni どちらも許容）
+  "んな": ["nna", "nnna"],
+  "んに": ["nni", "nnni"],
+  "んぬ": ["nnu", "nnnu"],
+  "んね": ["nne", "nnne"],
+  "んの": ["nno", "nnno"],
 };
 
 /**
@@ -225,14 +231,16 @@ export const tokenizeKana = (kana: string): KanaToken[] => {
       continue;
     }
 
-    // 「ん」の特殊処理：次が母音や「な行」の場合は nn を強制
+    // 「ん」: ん+な行 は複合トークン化して nni/nnni 両方許容、それ以外は n/nn 両方許容
     if (ch === "ん") {
       const next = kana[i + 1];
-      if (next && /[あいうえおなにぬねのa-n]/.test(next)) {
-        tokens.push({ kana: ch, candidates: ["nn"] });
-      } else {
-        tokens.push({ kana: ch, candidates: ["n", "nn"] });
+      const twoChar = next ? ch + next : "";
+      if (twoChar && KANA_MAP[twoChar]) {
+        tokens.push({ kana: twoChar, candidates: KANA_MAP[twoChar] });
+        i += 2;
+        continue;
       }
+      tokens.push({ kana: ch, candidates: ["n", "nn"] });
       i++;
       continue;
     }

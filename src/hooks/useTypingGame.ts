@@ -20,6 +20,7 @@ import { DIFFICULTY_CONFIG, TIMEOUT_PENALTY } from "@/lib/difficulty";
 export interface UseTypingGameReturn {
   currentWord: WordEntry | undefined;
   nextWord: WordEntry | undefined;
+  matcherState: MatcherState;
   typedBuffer: string;
   displayPattern: string;
   score: number;
@@ -345,6 +346,7 @@ export const useTypingGame = (
   return {
     currentWord,
     nextWord,
+    matcherState,
     typedBuffer,
     displayPattern,
     score,

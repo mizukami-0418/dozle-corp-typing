@@ -8,12 +8,12 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { WordEntry } from "@/types";
+import type { MatcherState } from "@/lib/romanizer";
 
 interface TypingAreaProps {
   currentWord: WordEntry | undefined;
   nextWord: WordEntry | undefined;
-  typedBuffer: string;
-  displayPattern: string;
+  matcherState: MatcherState;
   accuracy: number;
   isStarted: boolean;
 }
@@ -51,26 +51,35 @@ const getKanaClass = (len: number): string => {
  *
  * @param currentWord - 現在入力中のワード
  * @param nextWord - 次に出題されるワード（プレビュー表示用）
- * @param typedBuffer - ユーザーが入力済みのローマ字文字列
- * @param displayPattern - 正解ローマ字パターン（色分け表示の基準）
+ * @param matcherState - 逐次マッチャーの状態（色分け計算に使用）
  * @param accuracy - 正確率（0〜100）
  * @param isStarted - ゲーム開始済みフラグ（false のとき「キーを押してスタート」を表示）
  */
 export const TypingArea = ({
   currentWord,
   nextWord,
-  typedBuffer,
-  displayPattern,
+  matcherState,
   accuracy,
   isStarted,
 }: TypingAreaProps) => {
   if (!currentWord) return null;
 
-  const typedPart = displayPattern.slice(0, typedBuffer.length);
-  const currentChar = displayPattern[typedBuffer.length] ?? "";
-  const remainingPart = displayPattern.slice(typedBuffer.length + 1);
+  // 確定済みトークン + 現在トークンの入力途中 = 緑（打ち済み）
+  const typedPart = matcherState.committedRomaji + matcherState.typed;
+  // 現在トークンの先頭候補のうち、まだ打っていない部分
+  const currentCandidate = matcherState.liveCandidates[0] ?? "";
+  // 現在入力すべき次の1文字（カーソル位置）
+  const currentChar = currentCandidate[matcherState.typed.length] ?? "";
+  // 現在トークンの残り + 未来トークンの先頭候補 = グレー（未入力）
+  const remainingPart =
+    currentCandidate.slice(matcherState.typed.length + 1) +
+    matcherState.tokens
+      .slice(matcherState.tokenIndex + 1)
+      .map((t) => t.candidates[0])
+      .join("");
 
-  const romajiStyle = getRomajiStyle(displayPattern.length);
+  const fullPattern = typedPart + currentChar + remainingPart;
+  const romajiStyle = getRomajiStyle(fullPattern.length);
   const kanaClass = getKanaClass(currentWord.display.length);
 
   return (

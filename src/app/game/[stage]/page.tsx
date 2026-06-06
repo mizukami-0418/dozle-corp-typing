@@ -29,8 +29,7 @@ export default function GamePage() {
   const {
     currentWord,
     nextWord,
-    typedBuffer,
-    displayPattern,
+    matcherState,
     score,
     missCount,
     accuracy,
@@ -167,8 +166,7 @@ export default function GamePage() {
             <TypingArea
               currentWord={currentWord}
               nextWord={nextWord}
-              typedBuffer={typedBuffer}
-              displayPattern={displayPattern}
+              matcherState={matcherState}
               accuracy={accuracy}
               isStarted={isStarted}
             />

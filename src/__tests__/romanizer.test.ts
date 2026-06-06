@@ -70,11 +70,10 @@ describe("toRomaji", () => {
       expect(result.some((p) => p === "nka" || p === "nnka")).toBe(true);
     });
 
-    it("ん + 母音（あ）→ nn を強制（nna のみ）", () => {
+    it("ん + 母音（あ）→ na と nna どちらも含む", () => {
       const result = toRomaji("んあ");
-      // 母音の前は nn のみ
       expect(result).toContain("nna");
-      expect(result).not.toContain("na");
+      expect(result).toContain("na");
     });
   });
 
@@ -266,16 +265,48 @@ describe("tokenizeKana", () => {
       expect(result[0].candidates).toContain("nn");
     });
 
-    it("ん + 母音（んあ）→ candidates が ['nn'] のみ（n 単打を禁止）", () => {
+    it("ん + 母音（んあ）→ candidates は ['n', 'nn']（常に両方許容）", () => {
       const result = tokenizeKana("んあ");
       expect(result[0].kana).toBe("ん");
-      expect(result[0].candidates).toEqual(["nn"]);
+      expect(result[0].candidates).toContain("n");
+      expect(result[0].candidates).toContain("nn");
     });
 
     it("ん 語末（後続なし）→ n と nn どちらも含む", () => {
       const [token] = tokenizeKana("ん");
       expect(token.candidates).toContain("n");
       expect(token.candidates).toContain("nn");
+    });
+
+    it("ん + な行（んな）→ 複合トークン kana='んな', candidates=['nna','nnna']", () => {
+      const result = tokenizeKana("んな");
+      expect(result).toHaveLength(1);
+      expect(result[0].kana).toBe("んな");
+      expect(result[0].candidates).toEqual(["nna", "nnna"]);
+    });
+
+    it("ん + な行（んに）→ 複合トークン kana='んに', candidates=['nni','nnni']", () => {
+      const result = tokenizeKana("んに");
+      expect(result).toHaveLength(1);
+      expect(result[0].kana).toBe("んに");
+      expect(result[0].candidates).toEqual(["nni", "nnni"]);
+    });
+
+    it("ん + な行（んの）→ 複合トークン kana='んの', candidates=['nno','nnno']", () => {
+      const result = tokenizeKana("んの");
+      expect(result).toHaveLength(1);
+      expect(result[0].kana).toBe("んの");
+      expect(result[0].candidates).toEqual(["nno", "nnno"]);
+    });
+
+    it("きんにくきんにく → んに が複合トークン化される", () => {
+      const result = tokenizeKana("きんにくきんにく");
+      const nniTokens = result.filter((t) => t.kana === "んに");
+      expect(nniTokens).toHaveLength(2);
+      nniTokens.forEach((t) => {
+        expect(t.candidates).toContain("nni");
+        expect(t.candidates).toContain("nnni");
+      });
     });
   });
 
@@ -471,10 +502,16 @@ describe("advance", () => {
       expect(next.committedRomaji).toBe("nn");
     });
 
-    it("んあ → n 単打は ok だが完了しない（nn 必須）", () => {
+    it("んあ → n 単打は ok（まだ ん トークン）", () => {
       const result = advance(createMatcher("んあ"), "n");
       expect(result.status).toBe("ok");
       expect(nextOf(result).tokenIndex).toBe(0); // まだ ん トークン
+    });
+
+    it("んあ → n + a で auto-commit して complete（n 単打 → a で ん確定 + あ確定）", () => {
+      const s1 = nextOf(advance(createMatcher("んあ"), "n"));
+      const result = advance(s1, "a");
+      expect(result.status).toBe("complete");
     });
 
     it("んあ → nn で ん 確定", () => {
@@ -495,6 +532,29 @@ describe("advance", () => {
       state = nextOf(advance(state, "k"));
       state = nextOf(advance(state, "a"));
       expect(advance(state, "n").status).toBe("complete");
+    });
+
+    it("んに → nni で complete（複合トークン・短縮入力）", () => {
+      let state = createMatcher("んに");
+      state = nextOf(advance(state, "n"));
+      state = nextOf(advance(state, "n"));
+      expect(advance(state, "i").status).toBe("complete");
+    });
+
+    it("んに → nnni で complete（複合トークン・長縮入力）", () => {
+      let state = createMatcher("んに");
+      state = nextOf(advance(state, "n"));
+      state = nextOf(advance(state, "n"));
+      state = nextOf(advance(state, "n"));
+      expect(advance(state, "i").status).toBe("complete");
+    });
+
+    it("きんにく → k+i+n+n+i+k+u で complete", () => {
+      let state = createMatcher("きんにく");
+      for (const key of ["k", "i", "n", "n", "i", "k"]) {
+        state = nextOf(advance(state, key));
+      }
+      expect(advance(state, "u").status).toBe("complete");
     });
   });
 });
