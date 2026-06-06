@@ -3,6 +3,17 @@
  * 複数入力パターンを許容し、IME を使わずにローマ字入力できるようにする。
  */
 
+/**
+ * ひらがな1トークン（1〜2文字）とそのローマ字候補の対。
+ * Phase 14 の逐次マッチング（Matcher）で使用する。
+ */
+export interface KanaToken {
+  /** このトークンが対応するひらがな（通常1文字、拗音は2文字） */
+  kana: string;
+  /** このトークンで受け入れ可能なローマ字候補 */
+  candidates: string[];
+}
+
 /** 1音節のひらがな → 受け入れ可能なローマ字パターンのマッピング */
 const KANA_MAP: Record<string, string[]> = {
   // 清音
@@ -168,16 +179,19 @@ const TWO_CHAR_KEYS = new Set(
 );
 
 /**
- * ひらがな文字列を解析し、各音節ごとのローマ字パターン配列を返す。
+ * ひらがな文字列をトークン列に分解する。
+ * 各トークンはひらがな（1〜2文字）とローマ字候補の対。
+ * 拗音は2文字で1トークン、「っ」は次トークンの先頭子音を候補として持つ。
  *
  * @param kana - ひらがな文字列（ASCII 文字が混在してもよい）
- * @returns 音節ごとのローマ字候補配列のリスト
+ * @returns KanaToken の配列
  * @example
- * tokenize('ねこ') // => [['ne'], ['ko']]
- * tokenize('しゃ') // => [['sya', 'sha']]
+ * tokenizeKana('ねこ') // => [{kana:'ね', candidates:['ne']}, {kana:'こ', candidates:['ko']}]
+ * tokenizeKana('しゃ') // => [{kana:'しゃ', candidates:['sya','sha']}]
+ * tokenizeKana('った') // => [{kana:'っ', candidates:['t']}, {kana:'た', candidates:['ta']}]
  */
-const tokenize = (kana: string): string[][] => {
-  const tokens: string[][] = [];
+export const tokenizeKana = (kana: string): KanaToken[] => {
+  const tokens: KanaToken[] = [];
   let i = 0;
 
   while (i < kana.length) {
@@ -185,13 +199,12 @@ const tokenize = (kana: string): string[][] => {
 
     // ASCII 文字はそのまま1文字として扱う
     if (/[a-zA-Z0-9 !?.,\-]/.test(ch)) {
-      tokens.push([ch.toLowerCase()]);
+      tokens.push({ kana: ch, candidates: [ch.toLowerCase()] });
       i++;
       continue;
     }
 
-    // 「っ」の特殊処理：次音節の先頭子音のみを push（次音節は通常通り処理させる）
-    // 例: "っか" → ["k"] を push し、続けて "か" → ["ka"] を push → 結合で "kka"
+    // 「っ」の特殊処理：次音節の先頭子音のみを候補として生成
     if (ch === "っ") {
       const next2 = kana.slice(i + 1, i + 3);
       const next1 = kana[i + 1];
@@ -199,27 +212,26 @@ const tokenize = (kana: string): string[][] => {
       if (next2 && TWO_CHAR_KEYS.has(next2)) {
         const nextPatterns = KANA_MAP[next2] ?? [];
         const firstConsonants = [...new Set(nextPatterns.map((p) => p[0]))];
-        tokens.push(firstConsonants.length > 0 ? firstConsonants : ["l", "x"]);
+        tokens.push({ kana: ch, candidates: firstConsonants.length > 0 ? firstConsonants : ["l", "x"] });
       } else if (next1 && KANA_MAP[next1]) {
         const nextPatterns = KANA_MAP[next1];
         const firstConsonants = [...new Set(nextPatterns.map((p) => p[0]))];
-        tokens.push(firstConsonants.length > 0 ? firstConsonants : ["l", "x"]);
+        tokens.push({ kana: ch, candidates: firstConsonants.length > 0 ? firstConsonants : ["l", "x"] });
       } else {
         // 後続音なし（語末の「っ」など）
-        tokens.push(["ltu", "xtu"]);
+        tokens.push({ kana: ch, candidates: ["ltu", "xtu"] });
       }
       i++;
       continue;
     }
 
-    // 「ん」の特殊処理：n / nn どちらも正解
+    // 「ん」の特殊処理：次が母音や「な行」の場合は nn を強制
     if (ch === "ん") {
       const next = kana[i + 1];
-      // 次が母音や「な行」の場合は nn を要求（n だと次音節の一部になるため）
       if (next && /[あいうえおなにぬねのa-n]/.test(next)) {
-        tokens.push(["nn"]);
+        tokens.push({ kana: ch, candidates: ["nn"] });
       } else {
-        tokens.push(["n", "nn"]);
+        tokens.push({ kana: ch, candidates: ["n", "nn"] });
       }
       i++;
       continue;
@@ -228,25 +240,35 @@ const tokenize = (kana: string): string[][] => {
     // 2文字拗音（先読み）
     const twoChar = kana.slice(i, i + 2);
     if (TWO_CHAR_KEYS.has(twoChar)) {
-      tokens.push(KANA_MAP[twoChar]);
+      tokens.push({ kana: twoChar, candidates: KANA_MAP[twoChar] });
       i += 2;
       continue;
     }
 
     // 1文字ひらがな
     if (KANA_MAP[ch]) {
-      tokens.push(KANA_MAP[ch]);
+      tokens.push({ kana: ch, candidates: KANA_MAP[ch] });
       i++;
       continue;
     }
 
     // 未対応文字はそのまま（スペースなど）
-    tokens.push([ch]);
+    tokens.push({ kana: ch, candidates: [ch] });
     i++;
   }
 
   return tokens;
 };
+
+/**
+ * ひらがな文字列を解析し、各音節ごとのローマ字パターン配列を返す。
+ * 内部的に tokenizeKana に委譲する。
+ *
+ * @param kana - ひらがな文字列（ASCII 文字が混在してもよい）
+ * @returns 音節ごとのローマ字候補配列のリスト
+ */
+const tokenize = (kana: string): string[][] =>
+  tokenizeKana(kana).map((t) => t.candidates);
 
 /**
  * ひらがな文字列をローマ字パターンのリストに変換する。

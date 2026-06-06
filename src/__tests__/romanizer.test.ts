@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { toRomaji, isPartialMatch, isExactMatch } from "@/lib/romanizer";
+import { toRomaji, isPartialMatch, isExactMatch, tokenizeKana } from "@/lib/romanizer";
 
 // ── toRomaji ──────────────────────────────────────────────────────────────
 
@@ -180,6 +180,113 @@ describe("toRomaji", () => {
   describe("空文字", () => {
     it("空文字 → 空配列", () => {
       expect(toRomaji("")).toEqual([]);
+    });
+  });
+});
+
+// ── tokenizeKana ──────────────────────────────────────────────────────────
+
+describe("tokenizeKana", () => {
+  describe("通常清音", () => {
+    it("ねこ → 2トークン、kana と candidates が正しい", () => {
+      const result = tokenizeKana("ねこ");
+      expect(result).toHaveLength(2);
+      expect(result[0]).toEqual({ kana: "ね", candidates: ["ne"] });
+      expect(result[1]).toEqual({ kana: "こ", candidates: ["ko"] });
+    });
+
+    it("複数パターン：し → candidates に si と shi を含む", () => {
+      const [token] = tokenizeKana("し");
+      expect(token.kana).toBe("し");
+      expect(token.candidates).toContain("si");
+      expect(token.candidates).toContain("shi");
+    });
+  });
+
+  describe("拗音", () => {
+    it("しゃ → 1トークン、kana が 2文字で candidates に sya と sha を含む", () => {
+      const result = tokenizeKana("しゃ");
+      expect(result).toHaveLength(1);
+      expect(result[0].kana).toBe("しゃ");
+      expect(result[0].candidates).toContain("sya");
+      expect(result[0].candidates).toContain("sha");
+    });
+
+    it("にっき → っ の前後でトークン境界が正しく分かれる", () => {
+      const result = tokenizeKana("にっき");
+      expect(result).toHaveLength(3);
+      expect(result[0].kana).toBe("に");
+      expect(result[1].kana).toBe("っ");
+      expect(result[2].kana).toBe("き");
+    });
+  });
+
+  describe("「っ」の処理", () => {
+    it("っ + 清音（った）→ っ の candidates が ['t']", () => {
+      const result = tokenizeKana("った");
+      expect(result).toHaveLength(2);
+      expect(result[0].kana).toBe("っ");
+      expect(result[0].candidates).toEqual(["t"]);
+      expect(result[1].candidates).toContain("ta");
+    });
+
+    it("っ + 拗音（っきゃ）→ っ の candidates が ['k']", () => {
+      const result = tokenizeKana("っきゃ");
+      expect(result).toHaveLength(2);
+      expect(result[0].kana).toBe("っ");
+      expect(result[0].candidates).toEqual(["k"]);
+      expect(result[1].kana).toBe("きゃ");
+    });
+
+    it("っ + 複数パターン子音（っし）→ candidates が ['s']（si/shi 共通先頭）", () => {
+      const result = tokenizeKana("っし");
+      expect(result[0].candidates).toEqual(["s"]);
+    });
+
+    it("っ 語末（後続なし）→ candidates が ['ltu', 'xtu']", () => {
+      const [token] = tokenizeKana("っ");
+      expect(token.kana).toBe("っ");
+      expect(token.candidates).toEqual(["ltu", "xtu"]);
+    });
+  });
+
+  describe("「ん」の処理", () => {
+    it("ん + 子音（んか）→ n と nn どちらも candidates に含む", () => {
+      const result = tokenizeKana("んか");
+      expect(result[0].kana).toBe("ん");
+      expect(result[0].candidates).toContain("n");
+      expect(result[0].candidates).toContain("nn");
+    });
+
+    it("ん + 母音（んあ）→ candidates が ['nn'] のみ（n 単打を禁止）", () => {
+      const result = tokenizeKana("んあ");
+      expect(result[0].kana).toBe("ん");
+      expect(result[0].candidates).toEqual(["nn"]);
+    });
+
+    it("ん 語末（後続なし）→ n と nn どちらも含む", () => {
+      const [token] = tokenizeKana("ん");
+      expect(token.candidates).toContain("n");
+      expect(token.candidates).toContain("nn");
+    });
+  });
+
+  describe("記号・ASCII 混在", () => {
+    it("ASCII 文字（大文字）→ 小文字化して kana はそのまま保持", () => {
+      const [token] = tokenizeKana("A");
+      expect(token.kana).toBe("A");
+      expect(token.candidates).toEqual(["a"]);
+    });
+
+    it("句読点（、）→ {kana:'、', candidates:[',']}", () => {
+      const [token] = tokenizeKana("、");
+      expect(token).toEqual({ kana: "、", candidates: [","] });
+    });
+  });
+
+  describe("空文字", () => {
+    it("空文字 → []", () => {
+      expect(tokenizeKana("")).toEqual([]);
     });
   });
 });

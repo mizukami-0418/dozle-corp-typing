@@ -217,6 +217,57 @@ npm run lint    # ESLint チェック
 
 ---
 
+## Phase 14: 文字単位の逐次マッチングに正誤判定を再構築
+
+全パターン事前生成方式（最大8パターン上限あり）を廃止し、1文字ずつリアルタイムに照合する方式に変更する。
+
+### Step 1 — `romanizer.ts` にトークン分解 API を追加
+
+- [x] 14-1. `KanaToken` インターフェース定義（`kana: string`, `candidates: string[]`）
+- [x] 14-2. `tokenizeKana(kana: string): KanaToken[]` 実装
+  - 拗音（きゃ等）は2文字で1トークン
+  - 「っ」は次トークンの先頭子音を参照して候補生成（`tt`/`kk` 等）
+  - 「ん」は次トークンの先頭が母音/n なら `nn` 必須、それ以外は `n` も可
+- [x] 14-3. `tokenizeKana` のユニットテスト追加（`romanizer.test.ts`）
+  - 通常清音・拗音・っ・ん・記号の境界ケース
+- [x] **Step 1 確認：`npm test` でテスト全件グリーン**
+
+### Step 2 — `Matcher` を実装（`romanizer.ts` 内）
+
+- [ ] 14-4. `MatcherState` インターフェース定義
+  - `tokens`, `tokenIndex`, `typed`, `liveCandidates`, `committedRomaji`
+- [ ] 14-5. `createMatcher(kana: string): MatcherState` 実装
+- [ ] 14-6. `advance(state: MatcherState, key: string)` 実装
+  - `typed + key` で候補を枝刈り
+  - 戻り値：`{ status: 'ok' | 'complete' | 'miss', next?: MatcherState }`
+- [ ] 14-7. `advance` のユニットテスト追加（`romanizer.test.ts`）
+  - 正解・ミス・完了・っ/ん の境界ケース
+- [ ] **Step 2 確認：`npm test` でテスト全件グリーン**
+
+### Step 3 — `useTypingGame.ts` の改修
+
+- [ ] 14-8. `romajiPatterns` / `patternIdx` を `MatcherState` に置き換え
+- [ ] 14-9. キー入力処理を `advance()` ベースに書き換え
+- [ ] 14-10. 8パターン上限ハック（`toRomaji` の `MAX_PATTERNS` 制限）を削除
+- [ ] 14-11. `useTypingGame.test.ts` を新しい状態構造に合わせて更新
+- [ ] **Step 3 確認：`npm test` でテスト全件グリーン**
+
+### Step 4 — `TypingArea.tsx` の表示ロジック修正
+
+- [ ] 14-12. 色分け表示（打ち済み・現在・未入力）を `MatcherState` から計算するよう変更
+  - `committedRomaji` → 打ち済み（緑）
+  - `liveCandidates[0]` の残り → 現在カーソル以降（白/グレー）
+- [ ] **Step 4 確認：`npm run dev` + ブラウザで打鍵確認（っ/ん/拗音の境界ケース重点確認）**
+
+### Step 5〜7 — テスト・ビルド・デプロイ
+
+- [ ] 14-13. `npm test` 全件グリーン確認
+- [ ] 14-14. `npm run build` 型エラー・ビルドエラーなし確認
+- [ ] 14-15. `npm run lint` ESLint エラーなし確認
+- [ ] **Phase 14 完了チェック：build / lint / test → コミット → プッシュ → Vercel 自動デプロイ確認**
+
+---
+
 ## メモ
 
 - **スコア調整**：TIMEOUT_PENALTY=30・ワードスコア最大100点の数値はプレイテスト後に調整予定
