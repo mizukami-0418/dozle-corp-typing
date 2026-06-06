@@ -438,8 +438,10 @@ export const advance = (state: MatcherState, key: string): AdvanceResult => {
     const hasExact = survivors.some((c) => c === newTyped);
     const hasLonger = survivors.some((c) => c.length > newTyped.length);
 
-    // 完全一致のみ残った → トークン確定
-    if (hasExact && !hasLonger) {
+    // 完全一致のみ残った、または語末トークンで完全一致 → トークン確定
+    // 語末の「ん」は nn を待たず n 単打で完了させる
+    const isLastToken = tokenIndex === tokens.length - 1;
+    if (hasExact && (!hasLonger || isLastToken)) {
       return advanceToken(tokens, tokenIndex, committedRomaji + newTyped);
     }
 

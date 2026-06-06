@@ -483,5 +483,18 @@ describe("advance", () => {
       expect(result.status).toBe("ok");
       expect(nextOf(result).tokenIndex).toBe(1); // あ トークンへ
     });
+
+    it("語末の ん → n 単打で complete（nn を待たない）", () => {
+      expect(advance(createMatcher("ん"), "n").status).toBe("complete");
+    });
+
+    it("語末の ん → みかん の最後の n で complete", () => {
+      let state = createMatcher("みかん");
+      state = nextOf(advance(state, "m"));
+      state = nextOf(advance(state, "i"));
+      state = nextOf(advance(state, "k"));
+      state = nextOf(advance(state, "a"));
+      expect(advance(state, "n").status).toBe("complete");
+    });
   });
 });
