@@ -285,7 +285,7 @@ export const toRomaji = (kana: string): string[] => {
   const tokens = tokenize(kana);
   if (tokens.length === 0) return [];
 
-  // 各トークンの候補を組み合わせて生成（最大 4 パターン）
+  // 各トークンの候補を組み合わせて生成
   let results = tokens[0];
   for (let i = 1; i < tokens.length; i++) {
     const next = tokens[i];
@@ -293,9 +293,7 @@ export const toRomaji = (kana: string): string[] => {
     for (const r of results) {
       for (const n of next) {
         combined.push(r + n);
-        if (combined.length >= 8) break;
       }
-      if (combined.length >= 8) break;
     }
     results = combined;
   }

@@ -12,7 +12,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import type { WordEntry, StageId } from "@/types";
-import { toRomaji, isPartialMatch, isExactMatch, countRomajiLength } from "@/lib/romanizer";
+import { createMatcher, advance, countRomajiLength, type MatcherState } from "@/lib/romanizer";
 import { playBlockPlace, playMiss, playClear } from "@/lib/sound";
 import { useGameStore } from "@/store/game-store";
 import { DIFFICULTY_CONFIG, TIMEOUT_PENALTY } from "@/lib/difficulty";
@@ -114,7 +114,9 @@ export const useTypingGame = (
     ? Math.round(countRomajiLength(initialQueue[0].reading) * config.secPerRomaji * 1000)
     : 0;
 
-  const [typedBuffer, setTypedBuffer] = useState("");
+  const [matcherState, setMatcherState] = useState<MatcherState>(() =>
+    createMatcher(initialQueue[0]?.reading ?? "")
+  );
   const [score, setScore] = useState(0);
   const [missCount, setMissCount] = useState(0);
   const [totalKeystrokes, setTotalKeystrokes] = useState(0);
@@ -145,7 +147,7 @@ export const useTypingGame = (
    * useCallback / setInterval の deps を空にして再登録を防ぐ。
    */
   const stateRef = useRef({
-    typedBuffer,
+    matcherState,
     score,
     missCount,
     totalKeystrokes,
@@ -161,7 +163,7 @@ export const useTypingGame = (
   });
 
   useEffect(() => {
-    stateRef.current.typedBuffer = typedBuffer;
+    stateRef.current.matcherState = matcherState;
     stateRef.current.score = score;
     stateRef.current.missCount = missCount;
     stateRef.current.totalKeystrokes = totalKeystrokes;
@@ -244,7 +246,7 @@ export const useTypingGame = (
         stateRef.current.wordMissCount = 0;
         if (state.sfxEnabled) playMiss();
         setScore(newScore);
-        setTypedBuffer("");
+        setMatcherState(createMatcher(newCurrent?.reading ?? ""));
         setWordTimeLimitMs(nextLimit);
         setWordTimeRemainingMs(nextLimit);
         setCurrentWord(newCurrent);
@@ -278,7 +280,6 @@ export const useTypingGame = (
     e.preventDefault();
 
     const key = e.key.toLowerCase();
-    const newBuffer = state.typedBuffer + key;
 
     // 初回キーでタイマー開始
     if (!state.startTime) {
@@ -289,34 +290,33 @@ export const useTypingGame = (
       setStartTime(now);
     }
 
-    if (isPartialMatch(newBuffer, word.reading)) {
-      setTotalKeystrokes((t) => t + 1);
-      if (state.sfxEnabled) playBlockPlace();
+    const result = advance(state.matcherState, key);
+    setTotalKeystrokes((t) => t + 1);
 
-      if (isExactMatch(newBuffer, word.reading)) {
-        // ワード完了
-        const romLen = countRomajiLength(word.reading);
-        const wordScore = calcWordScore(stateRef.current.wordMissCount, romLen);
-        stateRef.current.wordMissCount = 0;
-
-        const now = Date.now();
-        const { nextLimit, newCurrent, newNext } = computeAdvance(queuePosRef.current, state.words, now);
-        setScore(state.score + wordScore);
-        setWordsCompleted(state.wordsCompleted + 1);
-        setTypedBuffer("");
-        setWordTimeLimitMs(nextLimit);
-        setWordTimeRemainingMs(nextLimit);
-        setCurrentWord(newCurrent);
-        setNextWord(newNext);
-      } else {
-        setTypedBuffer(newBuffer);
-      }
-    } else {
-      // ミス
-      setTotalKeystrokes((t) => t + 1);
+    if (result.status === "miss") {
       setMissCount((m) => m + 1);
       stateRef.current.wordMissCount += 1;
       if (state.sfxEnabled) playMiss();
+    } else if (result.status === "complete") {
+      // ワード完了
+      if (state.sfxEnabled) playBlockPlace();
+      const romLen = countRomajiLength(word.reading);
+      const wordScore = calcWordScore(stateRef.current.wordMissCount, romLen);
+      stateRef.current.wordMissCount = 0;
+
+      const now = Date.now();
+      const { nextLimit, newCurrent, newNext } = computeAdvance(queuePosRef.current, state.words, now);
+      setScore(state.score + wordScore);
+      setWordsCompleted(state.wordsCompleted + 1);
+      setMatcherState(createMatcher(newCurrent?.reading ?? ""));
+      setWordTimeLimitMs(nextLimit);
+      setWordTimeRemainingMs(nextLimit);
+      setCurrentWord(newCurrent);
+      setNextWord(newNext);
+    } else {
+      // ok（入力受理・まだ途中）
+      if (state.sfxEnabled) playBlockPlace();
+      setMatcherState(result.next);
     }
   }, []); // 安定したハンドラ：状態はすべて ref 経由で読む
 
@@ -326,11 +326,16 @@ export const useTypingGame = (
   }, [handleKeyDown]);
 
   // ── 派生値 ──────────────────────────────────
-  const romajiPatterns = currentWord ? toRomaji(currentWord.reading) : [];
+  // committedRomaji（確定済み）+ typed（現在トークンの入力途中）= 入力済み全体
+  const typedBuffer = matcherState.committedRomaji + matcherState.typed;
+  // 表示用パターン：確定済み + 現在トークンの先頭候補 + 残りトークンの先頭候補
   const displayPattern =
-    romajiPatterns.find((p) => p.startsWith(typedBuffer)) ??
-    romajiPatterns[0] ??
-    "";
+    matcherState.committedRomaji +
+    (matcherState.liveCandidates[0] ?? "") +
+    matcherState.tokens
+      .slice(matcherState.tokenIndex + 1)
+      .map((t) => t.candidates[0])
+      .join("");
 
   const accuracy =
     totalKeystrokes === 0

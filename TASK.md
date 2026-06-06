@@ -246,11 +246,11 @@ npm run lint    # ESLint チェック
 
 ### Step 3 — `useTypingGame.ts` の改修
 
-- [ ] 14-8. `romajiPatterns` / `patternIdx` を `MatcherState` に置き換え
-- [ ] 14-9. キー入力処理を `advance()` ベースに書き換え
-- [ ] 14-10. 8パターン上限ハック（`toRomaji` の `MAX_PATTERNS` 制限）を削除
-- [ ] 14-11. `useTypingGame.test.ts` を新しい状態構造に合わせて更新
-- [ ] **Step 3 確認：`npm test` でテスト全件グリーン**
+- [x] 14-8. `romajiPatterns` / `patternIdx` を `MatcherState` に置き換え
+- [x] 14-9. キー入力処理を `advance()` ベースに書き換え
+- [x] 14-10. 8パターン上限ハック（`toRomaji` の `MAX_PATTERNS` 制限）を削除
+- [x] 14-11. `useTypingGame.test.ts` を新しい状態構造に合わせて更新
+- [x] **Step 3 確認：`npm test` でテスト全件グリーン**
 
 ### Step 4 — `TypingArea.tsx` の表示ロジック修正
 
