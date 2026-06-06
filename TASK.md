@@ -205,6 +205,18 @@ npm run lint    # ESLint チェック
 
 ---
 
+---
+
+## Phase 13: スター判定の見直し
+
+- [x] 13-1. `calcStars` を正確率のみの単軸に変更（`useTypingGame.ts`）
+  - 変更前：`accuracy >= 90 && missCount <= 3` → ★3 / `accuracy >= 75 && missCount <= 10` → ★2
+  - 変更後：`accuracy >= 90` → ★3 / `accuracy >= 75` → ★2 / それ未満 → ★1
+  - 関数シグネチャから `missCount` 引数を削除
+- [x] **Phase 13 完了チェック：build / lint → コミット → プッシュ**
+
+---
+
 ## メモ
 
 - **スコア調整**：TIMEOUT_PENALTY=30・ワードスコア最大100点の数値はプレイテスト後に調整予定

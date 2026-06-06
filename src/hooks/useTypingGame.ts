@@ -75,14 +75,14 @@ const calcAccuracyBonus = (accuracy: number): number => {
 
 /**
  * ゲーム終了時の獲得スター数を算出する。
+ * 正確率のみを基準とする（90%以上→3、75%以上→2、それ未満→1）。
  *
  * @param accuracy - 正確率（0〜100）
- * @param missCount - 総ミス数
  * @returns スター数（1〜3）
  */
-const calcStars = (accuracy: number, missCount: number): number => {
-  if (accuracy >= 90 && missCount <= 3) return 3;
-  if (accuracy >= 75 && missCount <= 10) return 2;
+const calcStars = (accuracy: number): number => {
+  if (accuracy >= 90) return 3;
+  if (accuracy >= 75) return 2;
   return 1;
 };
 
@@ -225,7 +225,7 @@ export const useTypingGame = (
           state.totalKeystrokes === 0
             ? 100
             : Math.round(((state.totalKeystrokes - state.missCount) / state.totalKeystrokes) * 100);
-        const stars = calcStars(finalAccuracy, state.missCount);
+        const stars = calcStars(finalAccuracy);
         const finalScore = Math.round(state.score * calcAccuracyBonus(finalAccuracy));
         state.saveResult(state.stageId, finalScore, stars, finalAccuracy, state.missCount, totalTimeLimitMs, state.wordsCompleted);
         if (state.sfxEnabled) playClear();
