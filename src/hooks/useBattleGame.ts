@@ -45,6 +45,7 @@ export interface UseBattleGameReturn {
   phase: BattlePhase;
   missCount: number;
   wordsCompleted: number;
+  accuracy: number;
   isStarted: boolean;
 }
 
@@ -113,6 +114,7 @@ export const useBattleGame = (stageId: BattleStageId): UseBattleGameReturn => {
   const [phase, setPhase] = useState<BattlePhase>("playing");
   const [missCount, setMissCount] = useState(0);
   const [wordsCompleted, setWordsCompleted] = useState(0);
+  const [totalKeystrokes, setTotalKeystrokes] = useState(0);
   const [startTime, setStartTime] = useState<number | undefined>();
 
   // ── Refs（レンダーに不要 or effects/callbacks 内での最新値読み取り用） ────────
@@ -302,6 +304,7 @@ export const useBattleGame = (stageId: BattleStageId): UseBattleGameReturn => {
     }
 
     const result = advance(s.matcherState, key);
+    setTotalKeystrokes((t) => t + 1);
 
     if (result.status === "miss") {
       // タイプミス → プレイヤー -1pt
@@ -349,6 +352,11 @@ export const useBattleGame = (stageId: BattleStageId): UseBattleGameReturn => {
   }, [handleKeyDown]);
 
   // ── 派生値 ─────────────────────────────────────────────────────────────────
+  const accuracy =
+    totalKeystrokes === 0
+      ? 100
+      : Math.round(((totalKeystrokes - missCount) / totalKeystrokes) * 100);
+
   const typedBuffer = matcherState.committedRomaji + matcherState.typed;
   const displayPattern =
     matcherState.committedRomaji +
@@ -373,6 +381,7 @@ export const useBattleGame = (stageId: BattleStageId): UseBattleGameReturn => {
     phase,
     missCount,
     wordsCompleted,
+    accuracy,
     isStarted: startTime !== undefined,
   };
 };

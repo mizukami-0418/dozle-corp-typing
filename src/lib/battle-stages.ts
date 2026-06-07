@@ -121,6 +121,16 @@ export const BATTLE_STAGES: BattleStageConfig[] = [
   },
 ];
 
+/** バトルステージのテーマカラー */
+export const BATTLE_STAGE_COLORS: Record<BattleStageId, string> = {
+  "zombie":          "#4CAF50",
+  "drowned":         "#0097A7",
+  "wither-skeleton": "#FF6F00",
+  "shulker":         "#7B1FA2",
+  "ender-dragon":    "#4A148C",
+  "dozle-battle":    "#FF69B4",
+};
+
 /** バトルステージの解放順序（Stage 1 は常時解放、以降は順番クリアで解放） */
 export const BATTLE_STAGE_ORDER: BattleStageId[] = [
   "zombie",
