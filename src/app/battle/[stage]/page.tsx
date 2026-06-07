@@ -8,6 +8,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import { MinecraftBg } from "@/components/MinecraftBg";
 import { TypingArea } from "@/components/TypingArea";
 import { HeartBar } from "@/components/HeartBar";
@@ -53,6 +54,12 @@ export default function BattleGamePage() {
     accuracy,
     isStarted,
   } = useBattleGame(stageId);
+
+  // 撃破オーバーレイ画像エラー（モンスター切替時にリセット）
+  const [defeatImgError, setDefeatImgError] = useState(false);
+  useEffect(() => {
+    setTimeout(() => setDefeatImgError(false), 0);
+  }, [monsterIndex]);
 
   // ワード正解時にパーティクルを発火（game/[stage]/page.tsx と同パターン）
   const [correctCount, setCorrectCount] = useState(0);
@@ -264,7 +271,21 @@ export default function BattleGamePage() {
               transition={{ type: "spring", stiffness: 300, damping: 15 }}
               className="text-center"
             >
-              <div className="text-7xl mb-3">{currentMonster.emoji}</div>
+              <div className="mb-3 flex justify-center">
+                {!defeatImgError ? (
+                  <Image
+                    src={`/images/monsters/${currentMonster.id}.png`}
+                    alt={currentMonster.name}
+                    width={120}
+                    height={120}
+                    className="object-contain"
+                    style={{ imageRendering: "pixelated" }}
+                    onError={() => setDefeatImgError(true)}
+                  />
+                ) : (
+                  <span className="text-7xl leading-none">{currentMonster.emoji}</span>
+                )}
+              </div>
               <motion.div
                 animate={{ rotate: [-2, 2, -2] }}
                 transition={{ duration: 0.4, repeat: Infinity }}
