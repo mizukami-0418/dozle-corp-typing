@@ -28,10 +28,28 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
-      url: `${base}/how-to-play/romaji`,
+      url: `${base}/how-to-play/normal-mode`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.7,
+    },
+    {
+      url: `${base}/how-to-play/battle-mode`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: `${base}/how-to-play/input-tips`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: `${base}/how-to-play/romaji`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6,
     },
     {
       url: `${base}/settings`,

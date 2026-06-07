@@ -274,24 +274,24 @@ npm run lint    # ESLint チェック
 
 ### Step 1 — データ・型定義
 
-- [ ] 15-1. `src/types/index.ts` にバトルモード用型を追加
+- [x] 15-1. `src/types/index.ts` にバトルモード用型を追加
   - `BattleStageId`（`"zombie" | "drowned" | "wither-skeleton" | "shulker" | "ender-dragon" | "dozle-battle"`）
   - `BattleMonster`（`id`, `name`, `emoji`, `maxHp`）
   - `BattleStageConfig`（`id`, `name`, `minChars`, `maxChars`, `secPerRomaji`, `monsters`）
-- [ ] 15-2. `src/lib/battle-stages.ts` 作成
+- [x] 15-2. `src/lib/battle-stages.ts` 作成
   - 6ステージ分のモンスターデータ定義（CLAUDE.md 3-7 参照）
   - ステージ設定（文字数範囲・時間係数・HP設定）
   - `getBattleWords(stageId, allWords)` 関数（ひらがな文字数でフィルタしてランダム返却）
   - `getBattleStageById(id)` 関数
-- [ ] 15-3. `src/store/game-store.ts` にバトル進捗を追加
+- [x] 15-3. `src/store/game-store.ts` にバトル進捗を追加
   - `clearedBattleStages: string[]`
   - `saveBattleClear(stageId: string): void`
   - localStorage 読み書き対応
-- [ ] **Step 1 確認：`npm run build` 型エラーなし**
+- [x] **Step 1 確認：`npm run build` 型エラーなし**
 
 ### Step 2 — バトルゲームロジック
 
-- [ ] 15-4. `src/hooks/useBattleGame.ts` 実装
+- [x] 15-4. `src/hooks/useBattleGame.ts` 実装
   - プレイヤーHP管理（初期20pt・❤️10個・半ハート1pt単位）
   - モンスターHP管理（通常30/40/50・ボス40/50/70）
   - ワード出題（文字数フィルタ済みランダム・`createMatcher` で逐次マッチング）
@@ -302,43 +302,43 @@ npm run lint    # ESLint チェック
   - ステージクリア → `saveBattleClear` 呼び出し
   - プレイヤーHP0 → ゲームオーバー
   - ワード別タイマー（`ローマ字文字数 × secPerRomaji`）
-- [ ] **Step 2 確認：`npm run build` 型エラーなし**
+- [x] **Step 2 確認：`npm run build` 型エラーなし**
 
 ### Step 3 — UIコンポーネント
 
-- [ ] 15-5. `src/components/HeartBar/HeartBar.tsx` 実装
+- [x] 15-5. `src/components/HeartBar/HeartBar.tsx` 実装
   - ハート10個を横並びで表示
   - 現在HPに応じて ❤️（満）/ 🖤（空）を切り替え
   - 半ハート（奇数pt）は半分赤の表示
   - ダメージ時のアニメーション（Framer Motion）
-- [ ] 15-6. `src/components/MonsterCard/MonsterCard.tsx` 実装
+- [x] 15-6. `src/components/MonsterCard/MonsterCard.tsx` 実装
   - モンスター絵文字（約160×160px）
   - モンスター名表示
   - HPバー（赤・残りHP/最大HPで幅変化）
   - 撃破時アニメーション（フェードアウト・揺れ等）
-- [ ] **Step 3 確認：`npm run dev` でコンポーネント表示確認**
+- [x] **Step 3 確認：`npm run dev` でコンポーネント表示確認**
 
 ### Step 4 — トップメニュー更新
 
-- [ ] 15-7. `src/app/page.tsx` 更新
+- [x] 15-7. `src/app/page.tsx` 更新
   - 「ゲームスタート」→「ノーマルモード」に変更
   - 「バトルモード」ボタン追加（`/battle` へ遷移）
   - レイアウト：2×2グリッド（ノーマル・バトル・遊び方・設定）+ 全幅1（ドズル社とは？）
-- [ ] **Step 4 確認：`npm run dev` でトップメニュー表示確認**
+- [x] **Step 4 確認：`npm run dev` でトップメニュー表示確認**
 
 ### Step 5 — バトルステージ選択画面
 
-- [ ] 15-8. `src/app/battle/page.tsx` 実装
+- [x] 15-8. `src/app/battle/page.tsx` 実装
   - ステージカード縦並び（6枚）
   - 解放済み：カード通常表示・クリック可
   - 未解放：グレーアウト＋🔒アイコン
   - クリア済み：✅ バッジ表示
   - `clearedBattleStages` を store から読み込んで表示制御
-- [ ] **Step 5 確認：`npm run dev` でステージ選択表示・ロック動作確認**
+- [x] **Step 5 確認：`npm run dev` でステージ選択表示・ロック動作確認**
 
 ### Step 6 — バトルゲーム画面
 
-- [ ] 15-9. `src/app/battle/[stage]/page.tsx` 実装
+- [x] 15-9. `src/app/battle/[stage]/page.tsx` 実装
   - ステージ名バッジ・何体目か表示（例：2/5）
   - `MonsterCard`（モンスター絵文字・名前・HPバー）
   - `HeartBar`（プレイヤーHP）
@@ -348,18 +348,18 @@ npm run lint    # ESLint チェック
   - ゲームオーバーオーバーレイ（GAME OVER テキスト・前ステージ名・戻るボタン）
   - ステージクリアオーバーレイ（STAGE CLEAR テキスト・次ステージへボタン）
   - `ParticleEffect` をモンスター撃破時にトリガー
-- [ ] **Step 6 確認：`npm run dev` で全ステージ通して動作確認**
+- [x] **Step 6 確認：`npm run dev` で全ステージ通して動作確認**
   - HP増減・ゲームオーバー・ステージクリア・次ステージ解放
 
 ### Step 7 — テスト・ビルド・デプロイ
 
-- [ ] 15-10. `npm run build` 型エラー・ビルドエラーなし確認
-- [ ] 15-11. `npm run lint` ESLint エラーなし確認
-- [ ] 15-12. 全ステージ動作確認（ブラウザ手動テスト）
+- [x] 15-10. `npm run build` 型エラー・ビルドエラーなし確認
+- [x] 15-11. `npm run lint` ESLint エラーなし確認
+- [x] 15-12. 全ステージ動作確認（ブラウザ手動テスト）
   - STAGE 1〜5・EXTRA 各ステージでゲームオーバー・クリアを確認
   - ステージ解放ロックの動作確認
   - localStorage への進捗保存・ページリロード後の保持確認
-- [ ] **Phase 15 完了チェック：build / lint → コミット → プッシュ → Vercel 自動デプロイ確認**
+- [x] **Phase 15 完了チェック：build / lint → コミット → プッシュ → Vercel 自動デプロイ確認**
 
 ---
 

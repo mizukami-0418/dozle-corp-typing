@@ -203,9 +203,9 @@ const YOUON_ROWS: YouonRow[] = [
   { base: "ぎ", ya: "gya", yu: "gyu", yo: "gyo" },
   {
     base: "じ",
-    ya: "zya / ja / jya",
-    yu: "zyu / ju / jyu",
-    yo: "zyo / jo / jyo",
+    ya: "zya / ja",
+    yu: "zyu / ju",
+    yo: "zyo / jo",
   },
   { base: "び", ya: "bya", yu: "byu", yo: "byo" },
   { base: "ぴ", ya: "pya", yu: "pyu", yo: "pyo" },
