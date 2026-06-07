@@ -7,8 +7,8 @@
  */
 
 import { useEffect } from "react";
-import type { Difficulty } from "@/types";
-import { playBgm } from "@/lib/bgm";
+import type { BattleStageId, Difficulty } from "@/types";
+import { playBattleBgm, playBgm } from "@/lib/bgm";
 
 /**
  * @param difficulty - 再生する難易度トラック
@@ -20,4 +20,16 @@ export const useBgm = (difficulty: Difficulty, active: boolean): void => {
     const stop = playBgm(difficulty);
     return stop;
   }, [active, difficulty]);
+};
+
+/**
+ * @param stageId - バトルステージ識別子
+ * @param active  - true のとき BGM を再生する
+ */
+export const useBattleBgm = (stageId: BattleStageId, active: boolean): void => {
+  useEffect(() => {
+    if (!active) return;
+    const stop = playBattleBgm(stageId);
+    return stop;
+  }, [active, stageId]);
 };

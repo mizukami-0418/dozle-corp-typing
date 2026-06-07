@@ -15,6 +15,7 @@ import { HeartBar } from "@/components/HeartBar";
 import { MonsterCard } from "@/components/MonsterCard";
 import { ParticleEffect } from "@/components/effects";
 import { useBattleGame } from "@/hooks/useBattleGame";
+import { useBattleBgm } from "@/hooks/useBgm";
 import { useGameStore } from "@/store/game-store";
 import { CHARACTER_CONFIGS } from "@/lib/characters";
 import {
@@ -27,7 +28,7 @@ import type { BattleStageId } from "@/types";
 export default function BattleGamePage() {
   const params = useParams<{ stage: string }>();
   const router = useRouter();
-  const { selectedCharacter, loadProgress } = useGameStore();
+  const { selectedCharacter, loadProgress, bgmEnabled } = useGameStore();
 
   const stageId = params.stage as BattleStageId;
   const stage = getBattleStageById(stageId);
@@ -54,6 +55,11 @@ export default function BattleGamePage() {
     accuracy,
     isStarted,
   } = useBattleGame(stageId);
+
+  useBattleBgm(
+    stageId,
+    isStarted && phase !== "stage-clear" && phase !== "game-over" && bgmEnabled,
+  );
 
   // 撃破オーバーレイ画像エラー（モンスター切替時にリセット）
   const [defeatImgError, setDefeatImgError] = useState(false);
