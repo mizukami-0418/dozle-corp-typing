@@ -8,35 +8,20 @@ interface MenuButton {
   label: string;
   emoji: string;
   href: string;
-  color: string;
 }
 
-const MENU_BUTTONS: MenuButton[] = [
-  {
-    label: "ゲームスタート",
-    emoji: "⚔️",
-    href: "/stages",
-    color: "#5a8a3c",
-  },
-  {
-    label: "遊び方",
-    emoji: "📖",
-    href: "/how-to-play",
-    color: "#0097A7",
-  },
-  {
-    label: "設定",
-    emoji: "⚙️",
-    href: "/settings",
-    color: "#7B1FA2",
-  },
-  {
-    label: "ドズル社とは？",
-    emoji: "🦍",
-    href: "/about",
-    color: "#E53935",
-  },
+/** 2×2 グリッドに並べる4ボタン */
+const GRID_BUTTONS: MenuButton[] = [
+  { label: "ノーマルモード", emoji: "⏱️", href: "/stages"      },
+  { label: "バトルモード",   emoji: "⚔️", href: "/battle"      },
+  { label: "遊び方",         emoji: "📖", href: "/how-to-play" },
+  { label: "設定",           emoji: "⚙️", href: "/settings"    },
 ];
+
+/** 全幅で下部に表示する1ボタン */
+const FULL_BUTTON: MenuButton = {
+  label: "ドズル社とは？", emoji: "🦍", href: "/about",
+};
 
 export default function TopPage() {
   const router = useRouter();
@@ -71,38 +56,66 @@ export default function TopPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.4 }}
-          className="flex flex-col gap-4 w-full max-w-xs"
+          className="w-full max-w-sm flex flex-col gap-4"
         >
-          {MENU_BUTTONS.map((btn, i) => (
-            <motion.button
-              key={btn.href}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 + i * 0.1 }}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={() => router.push(btn.href)}
-              className="relative w-full py-4 font-black text-lg text-white tracking-wide"
-              style={{
-                backgroundColor: "#6b7280",
-                boxShadow:
-                  "inset -4px -4px 0 #374151, inset 4px 4px 0 #9ca3af, 0 4px 0 #000",
-                border: "2px solid #000",
-                fontFamily: "var(--font-zen-maru-gothic)",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.backgroundColor =
-                  "#9ca3af";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.backgroundColor =
-                  "#6b7280";
-              }}
-            >
-              <span className="mr-2">{btn.emoji}</span>
-              {btn.label}
-            </motion.button>
-          ))}
+          {/* 2×2 グリッド */}
+          <div className="grid grid-cols-2 gap-3">
+            {GRID_BUTTONS.map((btn, i) => (
+              <motion.button
+                key={btn.href}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 + i * 0.08 }}
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.96 }}
+                onClick={() => router.push(btn.href)}
+                className="relative w-full py-5 font-black text-base text-white tracking-wide"
+                style={{
+                  backgroundColor: "#6b7280",
+                  boxShadow:
+                    "inset -4px -4px 0 #374151, inset 4px 4px 0 #9ca3af, 0 4px 0 #000",
+                  border: "2px solid #000",
+                  fontFamily: "var(--font-zen-maru-gothic)",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#9ca3af";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#6b7280";
+                }}
+              >
+                <div className="text-2xl mb-1">{btn.emoji}</div>
+                {btn.label}
+              </motion.button>
+            ))}
+          </div>
+
+          {/* 全幅ボタン（ドズル社とは？） */}
+          <motion.button
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.62 }}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => router.push(FULL_BUTTON.href)}
+            className="relative w-full py-4 font-black text-lg text-white tracking-wide"
+            style={{
+              backgroundColor: "#6b7280",
+              boxShadow:
+                "inset -4px -4px 0 #374151, inset 4px 4px 0 #9ca3af, 0 4px 0 #000",
+              border: "2px solid #000",
+              fontFamily: "var(--font-zen-maru-gothic)",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#9ca3af";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#6b7280";
+            }}
+          >
+            <span className="mr-2">{FULL_BUTTON.emoji}</span>
+            {FULL_BUTTON.label}
+          </motion.button>
         </motion.div>
 
         {/* バージョン表示 */}
