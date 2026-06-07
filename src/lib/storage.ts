@@ -14,6 +14,7 @@ const KEYS = {
   // 旧 soundEnabled キーをそのまま SFX 用として継続使用（既存データを維持）
   SFX_ENABLED: "dozle-typing:soundEnabled",
   BGM_ENABLED: "dozle-typing:bgmEnabled",
+  CLEARED_BATTLE_STAGES: "dozle-typing:clearedBattleStages",
 } as const;
 
 const isBrowser = typeof window !== "undefined";
@@ -149,4 +150,21 @@ export const loadBgmEnabled = (): boolean =>
 /** BGM の有効フラグを保存する */
 export const saveBgmEnabled = (enabled: boolean): void => {
   writeJson(KEYS.BGM_ENABLED, enabled);
+};
+
+// ──────────────────────────────────────────
+// バトルモード クリア済みステージ
+// ──────────────────────────────────────────
+
+/** クリア済みバトルステージIDリストを読み込む */
+export const loadClearedBattleStages = (): string[] =>
+  readJson<string[]>(KEYS.CLEARED_BATTLE_STAGES, []);
+
+/** バトルステージをクリア済みとして記録する */
+export const markBattleStageCleared = (stageId: string): void => {
+  const cleared = loadClearedBattleStages();
+  if (!cleared.includes(stageId)) {
+    cleared.push(stageId);
+    writeJson(KEYS.CLEARED_BATTLE_STAGES, cleared);
+  }
 };
