@@ -2,9 +2,11 @@
 
 /**
  * バトルモード モンスター表示コンポーネント。
- * モンスター絵文字・名前・HP バーを表示する。
+ * モンスター画像（PNG）を優先表示し、未配置の場合は絵文字にフォールバックする。
  */
 
+import { useState } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import type { BattleMonster } from "@/types";
 
@@ -27,6 +29,9 @@ export const MonsterCard = ({ monster, currentHp, accentColor }: MonsterCardProp
   const hpColor =
     hpRatio > 0.5 ? "#ef4444" : hpRatio > 0.25 ? "#f97316" : "#dc2626";
 
+  // 画像ロード失敗時に emoji へフォールバック
+  const [imgError, setImgError] = useState(false);
+
   return (
     <div className="flex flex-col items-center gap-3">
       {/* ボスバッジ */}
@@ -41,14 +46,26 @@ export const MonsterCard = ({ monster, currentHp, accentColor }: MonsterCardProp
         </motion.div>
       )}
 
-      {/* モンスター絵文字 */}
+      {/* モンスター画像 / 絵文字フォールバック */}
       <motion.div
         animate={{ y: [0, -6, 0] }}
         transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-        className="text-[160px] leading-none select-none"
+        className="select-none"
         style={{ filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.6))" }}
       >
-        {monster.emoji}
+        {!imgError ? (
+          <Image
+            src={`/images/monsters/${monster.id}.png`}
+            alt={monster.name}
+            width={160}
+            height={160}
+            className="object-contain"
+            style={{ imageRendering: "pixelated" }}
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <span className="text-[160px] leading-none">{monster.emoji}</span>
+        )}
       </motion.div>
 
       {/* モンスター名 */}
