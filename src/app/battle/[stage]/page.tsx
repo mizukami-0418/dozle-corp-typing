@@ -103,7 +103,7 @@ export default function BattleGamePage() {
   if (!stage) {
     return (
       <MinecraftBg>
-        <div className="min-h-screen flex items-center justify-center flex-col gap-4">
+        <div className="flex-1 flex items-center justify-center flex-col gap-4">
           <p className="text-white text-xl font-bold">
             ステージが見つかりません
           </p>
@@ -137,7 +137,7 @@ export default function BattleGamePage() {
       {/* パーティクルエフェクト */}
       <ParticleEffect trigger={correctCount} accentColor={accentColor} />
 
-      <div className="min-h-screen flex flex-col">
+      <div className="flex-1 flex flex-col">
         {/* ── トップバー ── */}
         <div
           className="flex items-center justify-between px-4 py-3 border-b border-white/10"

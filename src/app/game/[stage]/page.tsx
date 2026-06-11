@@ -102,7 +102,7 @@ export default function GamePage() {
   if (!stage) {
     return (
       <MinecraftBg>
-        <div className="min-h-screen flex items-center justify-center flex-col gap-4">
+        <div className="flex-1 flex items-center justify-center flex-col gap-4">
           <p className="text-white text-xl font-bold">
             ステージが見つかりません
           </p>
@@ -125,7 +125,7 @@ export default function GamePage() {
       {/* タイムアップコンフェッティ */}
       <CelebrationEffect active={isCleared} />
 
-      <div className="min-h-screen flex flex-col">
+      <div className="flex-1 flex flex-col">
         {/* HUD */}
         <HUD
           score={score}

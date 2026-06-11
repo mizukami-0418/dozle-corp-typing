@@ -28,7 +28,7 @@ export default function TopPage() {
 
   return (
     <MinecraftBg>
-      <div className="min-h-screen flex flex-col items-center justify-center px-4 gap-10">
+      <div className="flex-1 flex flex-col items-center justify-center px-4 gap-10">
         {/* タイトル */}
         <motion.div
           initial={{ opacity: 0, y: -24 }}

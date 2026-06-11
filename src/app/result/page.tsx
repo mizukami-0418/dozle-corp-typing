@@ -42,7 +42,7 @@ export default function ResultPage() {
 
   return (
     <MinecraftBg>
-      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8 gap-6">
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-8 gap-6">
         {/* TIME UP バッジ */}
         <motion.div
           initial={{ scale: 0, opacity: 0 }}

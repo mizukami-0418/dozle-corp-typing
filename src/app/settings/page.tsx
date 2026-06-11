@@ -86,7 +86,7 @@ export default function SettingsPage() {
 
   return (
     <MinecraftBg>
-      <div className="min-h-screen flex flex-col items-center px-4 py-12 gap-6">
+      <div className="flex-1 flex flex-col items-center px-4 py-12 gap-6">
 
         {/* タイトル */}
         <motion.div

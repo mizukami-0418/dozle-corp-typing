@@ -27,7 +27,7 @@ export default function StagesPage() {
 
   return (
     <MinecraftBg>
-      <div className="min-h-screen flex flex-col items-center px-4 py-8 gap-8">
+      <div className="flex-1 flex flex-col items-center px-4 py-8 gap-8">
         {/* ロゴ */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
