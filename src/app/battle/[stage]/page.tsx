@@ -54,6 +54,7 @@ export default function BattleGamePage() {
     wordsCompleted,
     accuracy,
     isStarted,
+    reset,
   } = useBattleGame(stageId);
 
   useBattleBgm(
@@ -346,7 +347,7 @@ export default function BattleGamePage() {
               </p>
               <div className="flex gap-3 mt-2">
                 <button
-                  onClick={() => router.push(`/battle/${stageId}`)}
+                  onClick={reset}
                   className="px-6 py-3 rounded-xl font-black text-white transition"
                   style={{
                     backgroundColor: "#ef4444",

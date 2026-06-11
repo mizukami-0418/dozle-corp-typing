@@ -47,6 +47,7 @@ export interface UseBattleGameReturn {
   wordsCompleted: number;
   accuracy: number;
   isStarted: boolean;
+  reset: () => void;
 }
 
 /** プレイヤー初期HP（ハート10個 = 半ハート20個分） */
@@ -351,6 +352,41 @@ export const useBattleGame = (stageId: BattleStageId): UseBattleGameReturn => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
+  // ── ゲームリセット ───────────────────────────────────────────────────────────
+  /**
+   * ゲーム状態を初期値に戻す。「もう一度！」ボタンから呼ぶ。
+   * 同一ページに留まったままワード・HP・フェーズをすべてリセットする。
+   */
+  const reset = useCallback(() => {
+    const newWords = fisherYates([...stateRef.current.words]);
+    shuffledRef.current = newWords;
+    queuePosRef.current = 0;
+    wordStartTimeRef.current = 0;
+
+    const firstW = newWords[0];
+    const firstM = stateRef.current.stage?.monsters[0];
+    const s = stateRef.current.stage;
+    const limit =
+      firstW && s && s.secPerRomaji > 0
+        ? Math.round(countRomajiLength(firstW.reading) * s.secPerRomaji * 1000)
+        : 0;
+
+    wordTimeLimitRef.current = limit;
+
+    setMatcherState(createMatcher(firstW?.reading ?? ""));
+    setCurrentWord(firstW);
+    setWordTimeLimitMs(limit);
+    setWordTimeRemainingMs(limit);
+    setMonsterIndex(0);
+    setMonsterHp(firstM?.maxHp ?? 0);
+    setPlayerHp(PLAYER_INITIAL_HP);
+    setPhase("playing");
+    setMissCount(0);
+    setWordsCompleted(0);
+    setTotalKeystrokes(0);
+    setStartTime(undefined);
+  }, []); // stateRef.current 経由で読むため deps は空
+
   // ── 派生値 ─────────────────────────────────────────────────────────────────
   const accuracy =
     totalKeystrokes === 0
@@ -383,5 +419,6 @@ export const useBattleGame = (stageId: BattleStageId): UseBattleGameReturn => {
     wordsCompleted,
     accuracy,
     isStarted: startTime !== undefined,
+    reset,
   };
 };
