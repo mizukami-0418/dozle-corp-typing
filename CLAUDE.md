@@ -149,7 +149,17 @@
 
 - サイズ：256×256px（PNG・背景透過）
 - 表示サイズ：約160×160px（CSS）
-- 当面は絵文字で代用、後日実画像に差し替え予定
+- 配置先：`public/images/monsters/{id}.png`
+- 画像がない場合は絵文字フォールバックが表示される
+
+| ステージ | ファイル名 | 実装済み |
+| --- | --- | --- |
+| STAGE 1 | `zombie.png` / `zombie-villager.png` / `spider.png` / `creeper.png` / `skeleton.png` | ✅ |
+| STAGE 2 | `drowned.png` / `witch.png` / `pillager.png` / `stray.png` / `ravager.png` | |
+| STAGE 3 | `piglin.png` / `ghast.png` / `hoglin.png` / `blaze.png` / `wither-skeleton.png` | |
+| STAGE 4 | `shulker.png` / `enderman.png` / `phantom.png` / `evoker.png` / `vindicator.png` | |
+| STAGE 5 | `piglin-brute.png` / `elder-guardian.png` / `warden.png` / `wither.png` / `ender-dragon.png` | |
+| EXTRA | `bonjour.png` / `oraf.png` / `dozle.png` / `oohara-men.png` / `qnly.png` | |
 
 ---
 
