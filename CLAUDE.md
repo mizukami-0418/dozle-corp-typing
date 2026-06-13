@@ -155,10 +155,10 @@
 | ステージ | ファイル名 | 実装済み |
 | --- | --- | --- |
 | STAGE 1 | `zombie.png` / `zombie-villager.png` / `spider.png` / `creeper.png` / `skeleton.png` | ✅ |
-| STAGE 2 | `drowned.png` / `witch.png` / `pillager.png` / `stray.png` / `ravager.png` | |
-| STAGE 3 | `piglin.png` / `ghast.png` / `hoglin.png` / `blaze.png` / `wither-skeleton.png` | |
-| STAGE 4 | `shulker.png` / `enderman.png` / `phantom.png` / `evoker.png` / `vindicator.png` | |
-| STAGE 5 | `piglin-brute.png` / `elder-guardian.png` / `warden.png` / `wither.png` / `ender-dragon.png` | |
+| STAGE 2 | `drowned.png` / `witch.png` / `pillager.png` / `stray.png` / `ravager.png` | ✅ |
+| STAGE 3 | `piglin.png` / `ghast.png` / `hoglin.png` / `blaze.png` / `wither-skeleton.png` | ✅ |
+| STAGE 4 | `shulker.png` / `enderman.png` / `phantom.png` / `evoker.png` / `vindicator.png` | ✅ |
+| STAGE 5 | `piglin-brute.png` / `elder-guardian.png` / `warden.png` / `wither.png` / `ender-dragon.png` | ✅ |
 | EXTRA | `bonjour.png` / `oraf.png` / `dozle.png` / `oohara-men.png` / `qnly.png` | |
 
 ---
