@@ -28,7 +28,7 @@ export const BATTLE_STAGES: BattleStageConfig[] = [
     name: "STAGE 1",
     theme: "ゾンビ（初級）",
     setting: "草原・村の夜",
-    secPerRomaji: 1.3,
+    secPerRomaji: 1.1,
     kanaLengthMin: 1,
     kanaLengthMax: 4,
     monsters: [
@@ -74,7 +74,7 @@ export const BATTLE_STAGES: BattleStageConfig[] = [
     name: "STAGE 2",
     theme: "ドラウンド（中級）",
     setting: "海・川",
-    secPerRomaji: 1.1,
+    secPerRomaji: 0.9,
     kanaLengthMin: 4,
     kanaLengthMax: 6,
     monsters: [
@@ -120,7 +120,7 @@ export const BATTLE_STAGES: BattleStageConfig[] = [
     name: "STAGE 3",
     theme: "ウィザスケ（上級）",
     setting: "ネザー要塞",
-    secPerRomaji: 0.9,
+    secPerRomaji: 0.7,
     kanaLengthMin: 6,
     kanaLengthMax: 8,
     monsters: [
@@ -166,7 +166,7 @@ export const BATTLE_STAGES: BattleStageConfig[] = [
     name: "STAGE 4",
     theme: "シュルカー（超上級）",
     setting: "エンドシティ",
-    secPerRomaji: 0.7,
+    secPerRomaji: 0.55,
     kanaLengthMin: 8,
     kanaLengthMax: 10,
     monsters: [
@@ -212,7 +212,7 @@ export const BATTLE_STAGES: BattleStageConfig[] = [
     name: "STAGE 5",
     theme: "エンドラ（BOSS）",
     setting: "ジ・エンド",
-    secPerRomaji: 0.6,
+    secPerRomaji: 0.45,
     kanaLengthMin: 10,
     kanaLengthMax: 12,
     monsters: [
@@ -258,7 +258,7 @@ export const BATTLE_STAGES: BattleStageConfig[] = [
     name: "EXTRA",
     theme: "ドズル社",
     setting: "ドズル社HQ",
-    secPerRomaji: 0.5,
+    secPerRomaji: 0.35,
     kanaLengthMin: 12,
     kanaLengthMax: 15,
     monsters: [
