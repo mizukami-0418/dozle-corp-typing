@@ -3,7 +3,7 @@
  * サーバーサイドレンダリング時は何もしない（typeof window チェック）。
  */
 
-import type { CharacterKey, StageId } from "@/types";
+import type { CharacterKey, StageId, BattleTimeRecord, BattleTimeRecords } from "@/types";
 import { CHARACTER_KEYS } from "@/lib/characters";
 
 const KEYS = {
@@ -15,6 +15,7 @@ const KEYS = {
   SFX_ENABLED: "dozle-typing:soundEnabled",
   BGM_ENABLED: "dozle-typing:bgmEnabled",
   CLEARED_BATTLE_STAGES: "dozle-typing:clearedBattleStages",
+  BATTLE_TIME_RECORDS: "battleTimeRecords",
 } as const;
 
 const isBrowser = typeof window !== "undefined";
@@ -168,3 +169,34 @@ export const markBattleStageCleared = (stageId: string): void => {
     writeJson(KEYS.CLEARED_BATTLE_STAGES, cleared);
   }
 };
+
+// ──────────────────────────────────────────
+// バトルモード クリアタイム記録
+// ──────────────────────────────────────────
+
+/** ステージ別クリアタイム記録をすべて読み込む */
+export const loadBattleTimeRecords = (): BattleTimeRecords =>
+  readJson<BattleTimeRecords>(KEYS.BATTLE_TIME_RECORDS, {});
+
+/**
+ * クリアタイムを追加保存する（タイム昇順・最大5件）。
+ *
+ * @param stageId - バトルステージID
+ * @param timeMs - クリアタイム（ミリ秒）
+ */
+export const saveBattleTimeRecord = (stageId: string, timeMs: number): void => {
+  const records = loadBattleTimeRecords();
+  const entry: BattleTimeRecord = { timeMs, date: new Date().toISOString() };
+  const stageRecords = [...(records[stageId] ?? []), entry];
+  stageRecords.sort((a, b) => a.timeMs - b.timeMs);
+  records[stageId] = stageRecords.slice(0, 5);
+  writeJson(KEYS.BATTLE_TIME_RECORDS, records);
+};
+
+/**
+ * ステージのベストタイム（1位）を返す。記録なしは undefined。
+ *
+ * @param stageId - バトルステージID
+ */
+export const getBestBattleTime = (stageId: string): number | undefined =>
+  loadBattleTimeRecords()[stageId]?.[0]?.timeMs;

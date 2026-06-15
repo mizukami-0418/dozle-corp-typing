@@ -358,6 +358,77 @@ describe("useBattleGame", () => {
   });
 
   // ────────────────────────────────────────────────────────────────────────
+  describe("クリアタイム計測（Phase 16）", () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it("初期状態では clearTimeMs は undefined", () => {
+      const { result } = renderHook(() => useBattleGame(STAGE_ID));
+      expect(result.current.clearTimeMs).toBeUndefined();
+    });
+
+    it("ステージクリア時に clearTimeMs が数値（ms）になる", () => {
+      const { result } = renderHook(() => useBattleGame(STAGE_ID));
+
+      for (let i = 0; i < 5; i++) {
+        defeatMonster();
+      }
+
+      expect(result.current.phase).toBe("stage-clear");
+      expect(result.current.clearTimeMs).toBeTypeOf("number");
+      expect(result.current.clearTimeMs).toBeGreaterThan(0);
+    });
+
+    it("ゲームオーバー時は clearTimeMs が undefined のまま", () => {
+      const { result } = renderHook(() => useBattleGame(STAGE_ID));
+
+      for (let i = 0; i < 20; i++) typeKey("x");
+
+      expect(result.current.phase).toBe("game-over");
+      expect(result.current.clearTimeMs).toBeUndefined();
+    });
+
+    it("reset 後は clearTimeMs が undefined に戻る", () => {
+      const { result } = renderHook(() => useBattleGame(STAGE_ID));
+
+      for (let i = 0; i < 5; i++) {
+        defeatMonster();
+      }
+      expect(result.current.clearTimeMs).toBeTypeOf("number");
+
+      act(() => {
+        result.current.reset();
+      });
+
+      expect(result.current.clearTimeMs).toBeUndefined();
+    });
+
+    it("クリアタイムは初回キー入力からクリアまでの経過時間に近い値になる", () => {
+      const { result } = renderHook(() => useBattleGame(STAGE_ID));
+
+      // 1体目撃破（ここで初回キー入力 → startTime がセット）
+      defeatMonster();
+
+      // 2000ms 経過させる（ねこ=4s / いぬ=3s の制限内なのでタイムアウトしない）
+      act(() => vi.advanceTimersByTime(2_000));
+
+      // 残り4体撃破
+      for (let i = 0; i < 4; i++) {
+        defeatMonster();
+      }
+
+      expect(result.current.phase).toBe("stage-clear");
+      // startTime〜クリアまで: 1600ms(1体目移行) + 2000ms + 1600ms×3(2〜4体目移行) = 8400ms 以上
+      expect(result.current.clearTimeMs).toBeGreaterThanOrEqual(2_000);
+    });
+  });
+
+  // ────────────────────────────────────────────────────────────────────────
   describe("修飾キー", () => {
     it("Ctrl キーは無視される", () => {
       const { result } = renderHook(() => useBattleGame(STAGE_ID));

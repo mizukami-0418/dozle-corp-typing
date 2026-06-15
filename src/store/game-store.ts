@@ -4,7 +4,7 @@
  */
 
 import { create } from "zustand";
-import type { CharacterKey, GameState, ResultData, StageId } from "@/types";
+import type { CharacterKey, GameState, ResultData, StageId, BattleTimeRecords } from "@/types";
 import {
   loadBestScores,
   loadClearedStages,
@@ -20,6 +20,8 @@ import {
   saveBgmEnabled,
   loadClearedBattleStages,
   markBattleStageCleared,
+  loadBattleTimeRecords,
+  saveBattleTimeRecord,
 } from "@/lib/storage";
 
 interface GameStore {
@@ -62,6 +64,12 @@ interface GameStore {
   clearedBattleStages: string[];
   saveBattleClear: (stageId: string) => void;
 
+  // ──────────────────────────────────────────
+  // バトルモード クリアタイム記録
+  // ──────────────────────────────────────────
+  battleTimeRecords: BattleTimeRecords;
+  saveBattleTime: (stageId: string, timeMs: number) => void;
+
   /** ローカルストレージからすべての進捗を読み込む */
   loadProgress: () => void;
 
@@ -101,6 +109,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   clearedStages: [],
   starRecords: {},
   clearedBattleStages: [],
+  battleTimeRecords: {},
 
   setCharacter: (key) => {
     saveSelectedCharacter(key);
@@ -132,6 +141,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       clearedStages: loadClearedStages(),
       starRecords: loadStarRecords(),
       clearedBattleStages: loadClearedBattleStages(),
+      battleTimeRecords: loadBattleTimeRecords(),
     });
   },
 
@@ -141,6 +151,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (!clearedBattleStages.includes(stageId)) {
       set({ clearedBattleStages: [...clearedBattleStages, stageId] });
     }
+  },
+
+  saveBattleTime: (stageId, timeMs) => {
+    saveBattleTimeRecord(stageId, timeMs);
+    set({ battleTimeRecords: loadBattleTimeRecords() });
   },
 
   saveResult: (stageId, score, stars, accuracy, missCount, elapsedMs, wordsCompleted) => {

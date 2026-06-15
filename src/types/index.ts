@@ -102,6 +102,15 @@ export interface BattleStageConfig {
   monsters: BattleMonster[];
 }
 
+/** バトルモード クリアタイム記録（1件） */
+export interface BattleTimeRecord {
+  timeMs: number;
+  date: string;
+}
+
+/** バトルモード クリアタイム記録（ステージ別・最大5件） */
+export type BattleTimeRecords = Record<string, BattleTimeRecord[]>;
+
 /** キャラクター情報 */
 export interface CharacterConfig {
   key: CharacterKey;

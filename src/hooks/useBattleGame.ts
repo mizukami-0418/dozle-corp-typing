@@ -47,6 +47,8 @@ export interface UseBattleGameReturn {
   wordsCompleted: number;
   accuracy: number;
   isStarted: boolean;
+  /** ステージクリア時のクリアタイム（ms）。クリア前・ゲームオーバー後は undefined */
+  clearTimeMs: number | undefined;
   reset: () => void;
 }
 
@@ -117,6 +119,7 @@ export const useBattleGame = (stageId: BattleStageId): UseBattleGameReturn => {
   const [wordsCompleted, setWordsCompleted] = useState(0);
   const [totalKeystrokes, setTotalKeystrokes] = useState(0);
   const [startTime, setStartTime] = useState<number | undefined>();
+  const [clearTimeMs, setClearTimeMs] = useState<number | undefined>();
 
   // ── Refs（レンダーに不要 or effects/callbacks 内での最新値読み取り用） ────────
   const queuePosRef = useRef(0);
@@ -202,6 +205,8 @@ export const useBattleGame = (stageId: BattleStageId): UseBattleGameReturn => {
 
       if (nextMonsterIdx >= s.stage.monsters.length) {
         // 全モンスター撃破 → ステージクリア
+        const elapsed = s.startTime !== undefined ? Date.now() - s.startTime : 0;
+        setClearTimeMs(elapsed);
         s.saveBattleClear(stageId);
         if (s.sfxEnabled) playClear();
         setPhase("stage-clear");
@@ -385,6 +390,7 @@ export const useBattleGame = (stageId: BattleStageId): UseBattleGameReturn => {
     setWordsCompleted(0);
     setTotalKeystrokes(0);
     setStartTime(undefined);
+    setClearTimeMs(undefined);
   }, []); // stateRef.current 経由で読むため deps は空
 
   // ── 派生値 ─────────────────────────────────────────────────────────────────
@@ -419,6 +425,7 @@ export const useBattleGame = (stageId: BattleStageId): UseBattleGameReturn => {
     wordsCompleted,
     accuracy,
     isStarted: startTime !== undefined,
+    clearTimeMs,
     reset,
   };
 };
