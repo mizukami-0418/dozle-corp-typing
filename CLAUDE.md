@@ -161,44 +161,14 @@
 | STAGE 5 | `piglin-brute.png` / `elder-guardian.png` / `warden.png` / `wither.png` / `ender-dragon.png` | ✅ |
 | EXTRA | `bonjour.png` / `oraf.png` / `dozle.png` / `oohara-men.png` / `qnly.png` | |
 
-#### クリアタイム計測・記録機能（Phase 16）
+#### クリアタイム記録
 
-バトルスタートからステージクリアまでのタイムを計測し、ステージごとにベスト5を保存する。
-
-**計測仕様：**
-- **開始**：最初のワードが表示された瞬間（`useBattleGame` 内で `startTimeRef` にセット）
-- **終了**：5体目撃破でステージクリア確定時
-- **ゲームオーバー時**：タイムは記録しない（`startTimeRef` をリセット）
-- **表示形式**：`m:ss.xx`（例：`1:23.45`）
-
-**データ構造（localStorage）：**
-
-```ts
-interface BattleTimeRecord {
-  timeMs: number;  // クリアタイム（ミリ秒）
-  date: string;    // ISO 8601
-}
-
-// ストレージキー: "battleTimeRecords"
-type BattleTimeRecords = Record<string, BattleTimeRecord[]>; // key = BattleStageId、最大5件
-```
-
-**UI：**
-- バトルステージ選択画面の各カードに `BEST m:ss.xx` を表示（記録がある場合）
-- 「記録を見る」ボタンを押すとモーダルが開く（記録がない場合は非表示）
-- モーダル：ステージ名ヘッダー / 🥇🥈🥉＋4位・5位のランキング（タイム＋日付）/ 「閉じる」ボタン
+- バトルスタート（初回キー入力）からステージクリアまでのタイムを計測
+- ストレージキー `battleTimeRecords`：ステージ別にタイム昇順・最大5件保存
+- 表示形式：`m:ss.xx`（例：`1:23.45`）
+- ステージ選択画面の各カードに `BEST m:ss.xx` を表示、「記録を見る」でモーダル表示
 - クリアオーバーレイにも今回のクリアタイムを表示
-
-**変更ファイル：**
-
-| ファイル | 変更内容 |
-| --- | --- |
-| `src/types/index.ts` | `BattleTimeRecord` / `BattleTimeRecords` 型追加 |
-| `src/lib/storage.ts` | `loadBattleTimeRecords` / `saveBattleTimeRecord` / `getBestBattleTime` 追加 |
-| `src/store/game-store.ts` | `battleTimeRecords` 状態・`saveBattleTime` アクション追加 |
-| `src/hooks/useBattleGame.ts` | タイマー計測ロジック・クリア時タイム返却追加 |
-| `src/app/battle/[stage]/page.tsx` | クリア時タイム保存・クリアオーバーレイにタイム表示 |
-| `src/app/battle/page.tsx` | ベストタイム表示・「記録を見る」ボタン・記録モーダル追加 |
+- ゲームオーバー時はタイムを記録しない
 
 ---
 
@@ -279,6 +249,7 @@ type BattleTimeRecords = Record<string, BattleTimeRecord[]>; // key = BattleStag
 - ステージカード一覧（縦並び）
 - 未解放ステージはグレーアウト＋鍵アイコン
 - クリア済みステージはチェックマーク
+- ベストタイム表示・「記録を見る」ボタン（記録がある場合のみ）
 - 背景：Minecraftスタイル
 
 ### 5-7. バトルモード ゲーム画面
@@ -290,6 +261,7 @@ type BattleTimeRecords = Record<string, BattleTimeRecord[]>; // key = BattleStag
 - **タイマーバー**：ワード別制限時間
 - ゲームオーバーオーバーレイ（GAME OVER テキスト・前ステージ名表示）
 - 撃破オーバーレイ（モンスター討伐時エフェクト）
+- クリアオーバーレイ（クリアタイム表示）
 - 背景：Minecraftスタイル
 
 ---
@@ -335,8 +307,10 @@ src/
 ├── store/game-store.ts        # Zustand ストア定義
 ├── types/index.ts             # 共通型定義
 └── __tests__/
-    ├── romanizer.test.ts      # romanizer ユニットテスト
-    └── useTypingGame.test.ts  # フックテスト（14件）
+    ├── romanizer.test.ts      # romanizer ユニットテスト（82件）
+    ├── storage.test.ts        # storage ユニットテスト（13件）
+    ├── useBattleGame.test.ts  # バトルフックテスト（28件）
+    └── useTypingGame.test.ts  # ノーマルフックテスト（14件）
 ```
 
 ---
@@ -377,7 +351,7 @@ interface GameStore {
   clearedBattleStages: string[];
   saveBattleClear: (stageId: string) => void;
 
-  // バトルモード クリアタイム記録（Phase 16）
+  // バトルモード クリアタイム記録
   battleTimeRecords: BattleTimeRecords;
   saveBattleTime: (stageId: string, timeMs: number) => void;
 }
@@ -398,10 +372,9 @@ interface GameStore {
   - `、` → `,` / `。` → `.` / `「` → `[` / `」` → `]` / `・` → `/`
   - `〜`（全角波ダッシュ）は `reading` では使用禁止。代わりに `~`（半角チルダ）を使う
 - KANA_MAP 未登録の文字（`~`・`(`・`)` 等）はフォールバックでそのまま1文字のトークンとして処理される
-- `toRomaji` のパターン数制限は撤廃済み（逐次マッチングにより組み合わせ爆発は発生しない）
-- **ん の改善（Phase 14）**：
-  - ん + 母音（あ〜お）：candidates `["n","nn"]` で auto-commit 対応（`n` 単打 + 次母音で確定）
-  - ん + な行（な〜の）：複合トークン化（例：「んに」→ `["nni","nnni"]`）により `nni`/`nnni` 両入力を許容
+- 文字単位の逐次マッチング方式（`Matcher` / `advance`）で正誤判定を行う
+- 「ん」+ 母音：candidates `["n","nn"]` で auto-commit 対応
+- 「ん」+ な行：複合トークン化（例：「んに」→ `["nni","nnni"]`）で両入力を許容
 
 ---
 
@@ -505,14 +478,14 @@ export const toRomaji = (kana: string): string[] => { ... };
 
 ---
 
-## 12. 今後の実装予定
+## 12. 今後の実装予定・拡張候補
 
-- **バトルモード クリアタイム計測・記録**：Phase 16 で実装予定（仕様確定済み・3-7 参照）
-  - ブランチ：`feat/battle-clear-time` を切って実装 → main にマージ
+### 素材待ち
+
 - **キャラクター画像**：仮絵文字から実画像へ差し替え
-- **バトルモード EXTRAモンスター画像**：`bonjour.png` / `oraf.png` / `dozle.png` / `oohara-men.png` / `qnly.png` 未追加
+- **バトルモード EXTRA モンスター画像**：`bonjour.png` / `oraf.png` / `dozle.png` / `oohara-men.png` / `qnly.png` 未追加
 
-## 13. 今後の拡張候補（現時点では対象外）
+### 拡張候補（現時点では対象外）
 
 - オンラインランキング（DB連携が必要）
 - タイムアタックモード
