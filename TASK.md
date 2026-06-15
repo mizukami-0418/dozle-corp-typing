@@ -371,66 +371,65 @@ npm run lint    # ESLint チェック
 
 ### Step 1 — 型定義追加
 
-- [ ] 16-1. `src/types/index.ts` にタイム記録用型を追加
+- [x] 16-1. `src/types/index.ts` にタイム記録用型を追加
   - `BattleTimeRecord { timeMs: number; date: string }`
   - `BattleTimeRecords = Record<string, BattleTimeRecord[]>`
 
 ### Step 2 — ストレージ関数追加
 
-- [ ] 16-2. `src/lib/storage.ts` に以下を追加
+- [x] 16-2. `src/lib/storage.ts` に以下を追加
   - `loadBattleTimeRecords(): BattleTimeRecords` — localStorage から読み込み
   - `saveBattleTimeRecord(stageId, timeMs)` — 追加 → タイム昇順ソート → 5件超過分を切り捨て → 保存
   - `getBestBattleTime(stageId): number | undefined` — 1位タイムのみ返す
-- [ ] **Step 2 確認：`npm run build` 型エラーなし**
+- [x] **Step 2 確認：`npm run build` 型エラーなし**
 
 ### Step 3 — Zustand ストア更新
 
-- [ ] 16-3. `src/store/game-store.ts` を更新
+- [x] 16-3. `src/store/game-store.ts` を更新
   - `battleTimeRecords: BattleTimeRecords` 状態追加
   - `saveBattleTime(stageId: string, timeMs: number): void` アクション追加
   - `loadProgress()` に `battleTimeRecords` の読み込みを追加
-- [ ] **Step 3 確認：`npm run build` 型エラーなし**
+- [x] **Step 3 確認：`npm run build` 型エラーなし**
 
 ### Step 4 — useBattleGame にタイマー追加
 
-- [ ] 16-4. `src/hooks/useBattleGame.ts` を更新
-  - `startTimeRef = useRef<number | undefined>()` 追加
-  - 最初のワードセット時に `startTimeRef.current = Date.now()` をセット
-  - ステージクリア確定（5体目撃破）時に `elapsedMs = Date.now() - startTimeRef.current` を計算
-  - クリア時のコールバック or 戻り値で `elapsedMs` をページ側に渡す
-  - ゲームオーバー・リスタート時に `startTimeRef` をリセット
-- [ ] **Step 4 確認：`npm run build` 型エラーなし**
+- [x] 16-4. `src/hooks/useBattleGame.ts` を更新
+  - 既存の `startTime` state を流用（初回キー入力時にセット）
+  - ステージクリア確定（5体目撃破）時に `clearTimeMs = Date.now() - startTime` を計算
+  - `clearTimeMs` を戻り値として返す
+  - ゲームオーバー・リスタート時に `clearTimeMs` をリセット
+- [x] **Step 4 確認：`npm run build` 型エラーなし**
 
 ### Step 5 — バトルゲーム画面でタイム保存・表示
 
-- [ ] 16-5. `src/app/battle/[stage]/page.tsx` を更新
-  - クリアイベントで `saveBattleTime(stageId, elapsedMs)` を呼び出す
+- [x] 16-5. `src/app/battle/[stage]/page.tsx` を更新
+  - クリアイベントで `saveBattleTime(stageId, clearTimeMs)` を呼び出す
   - クリアオーバーレイに今回のクリアタイム（`m:ss.xx` フォーマット）を表示
-- [ ] **Step 5 確認：`npm run dev` でクリアオーバーレイのタイム表示を確認**
+- [x] **Step 5 確認：`npm run dev` でクリアオーバーレイのタイム表示を確認**
 
 ### Step 6 — バトルステージ選択画面にベストタイム＋記録モーダル
 
-- [ ] 16-6. `src/app/battle/page.tsx` を更新
+- [x] 16-6. `src/app/battle/page.tsx` を更新
   - 各ステージカードに `BEST m:ss.xx` を表示（記録がある場合のみ）
   - 「記録を見る」ボタンを追加（記録がない場合は非表示）
   - 記録モーダルコンポーネントを追加
     - ステージ名ヘッダー
     - 🥇🥈🥉＋4位・5位のランキング（タイム＋日付）
     - 「閉じる」ボタン
-- [ ] **Step 6 確認：`npm run dev` でモーダル表示・ベストタイム表示を確認**
+- [x] **Step 6 確認：`npm run dev` でモーダル表示・ベストタイム表示を確認**
 
 ### Step 7 — テスト・ビルド・マージ
 
-- [ ] 16-7. `npm test` 既存テストが壊れていないか確認
-- [ ] 16-8. `npm run build` 型エラー・ビルドエラーなし確認
-- [ ] 16-9. `npm run lint` ESLint エラーなし確認
-- [ ] 16-10. 動作確認（ブラウザ手動テスト）
+- [x] 16-7. `npm test` 既存テストが壊れていないか確認
+- [x] 16-8. `npm run build` 型エラー・ビルドエラーなし確認
+- [x] 16-9. `npm run lint` ESLint エラーなし確認
+- [x] 16-10. 動作確認（ブラウザ手動テスト）
   - 各ステージでクリア → タイムが記録されること
   - ステージ選択画面にベストタイムが表示されること
   - 記録モーダルでベスト5が正しい順で表示されること
   - ゲームオーバー時にタイムが記録されないこと
   - ページリロード後も記録が保持されること
-- [ ] **Phase 16 完了チェック：`git checkout main && git merge feat/battle-clear-time && git push`**
+- [x] **Phase 16 完了チェック：`git checkout main && git merge feat/battle-clear-time && git push`**
 
 ---
 
