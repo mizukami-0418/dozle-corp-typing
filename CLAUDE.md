@@ -161,6 +161,45 @@
 | STAGE 5 | `piglin-brute.png` / `elder-guardian.png` / `warden.png` / `wither.png` / `ender-dragon.png` | ✅ |
 | EXTRA | `bonjour.png` / `oraf.png` / `dozle.png` / `oohara-men.png` / `qnly.png` | |
 
+#### クリアタイム計測・記録機能（Phase 16）
+
+バトルスタートからステージクリアまでのタイムを計測し、ステージごとにベスト5を保存する。
+
+**計測仕様：**
+- **開始**：最初のワードが表示された瞬間（`useBattleGame` 内で `startTimeRef` にセット）
+- **終了**：5体目撃破でステージクリア確定時
+- **ゲームオーバー時**：タイムは記録しない（`startTimeRef` をリセット）
+- **表示形式**：`m:ss.xx`（例：`1:23.45`）
+
+**データ構造（localStorage）：**
+
+```ts
+interface BattleTimeRecord {
+  timeMs: number;  // クリアタイム（ミリ秒）
+  date: string;    // ISO 8601
+}
+
+// ストレージキー: "battleTimeRecords"
+type BattleTimeRecords = Record<string, BattleTimeRecord[]>; // key = BattleStageId、最大5件
+```
+
+**UI：**
+- バトルステージ選択画面の各カードに `BEST m:ss.xx` を表示（記録がある場合）
+- 「記録を見る」ボタンを押すとモーダルが開く（記録がない場合は非表示）
+- モーダル：ステージ名ヘッダー / 🥇🥈🥉＋4位・5位のランキング（タイム＋日付）/ 「閉じる」ボタン
+- クリアオーバーレイにも今回のクリアタイムを表示
+
+**変更ファイル：**
+
+| ファイル | 変更内容 |
+| --- | --- |
+| `src/types/index.ts` | `BattleTimeRecord` / `BattleTimeRecords` 型追加 |
+| `src/lib/storage.ts` | `loadBattleTimeRecords` / `saveBattleTimeRecord` / `getBestBattleTime` 追加 |
+| `src/store/game-store.ts` | `battleTimeRecords` 状態・`saveBattleTime` アクション追加 |
+| `src/hooks/useBattleGame.ts` | タイマー計測ロジック・クリア時タイム返却追加 |
+| `src/app/battle/[stage]/page.tsx` | クリア時タイム保存・クリアオーバーレイにタイム表示 |
+| `src/app/battle/page.tsx` | ベストタイム表示・「記録を見る」ボタン・記録モーダル追加 |
+
 ---
 
 ## 4. キャラクター仕様
@@ -337,6 +376,10 @@ interface GameStore {
   // バトルモード進捗
   clearedBattleStages: string[];
   saveBattleClear: (stageId: string) => void;
+
+  // バトルモード クリアタイム記録（Phase 16）
+  battleTimeRecords: BattleTimeRecords;
+  saveBattleTime: (stageId: string, timeMs: number) => void;
 }
 ```
 
@@ -464,9 +507,10 @@ export const toRomaji = (kana: string): string[] => { ... };
 
 ## 12. 今後の実装予定
 
-- **バトルモード**：実装中（仕様確定済み・3-7 参照）
+- **バトルモード クリアタイム計測・記録**：Phase 16 で実装予定（仕様確定済み・3-7 参照）
+  - ブランチ：`feat/battle-clear-time` を切って実装 → main にマージ
 - **キャラクター画像**：仮絵文字から実画像へ差し替え
-- **バトルモード モンスター画像**：256×256px PNG、当面絵文字で代用
+- **バトルモード EXTRAモンスター画像**：`bonjour.png` / `oraf.png` / `dozle.png` / `oohara-men.png` / `qnly.png` 未追加
 
 ## 13. 今後の拡張候補（現時点では対象外）
 
