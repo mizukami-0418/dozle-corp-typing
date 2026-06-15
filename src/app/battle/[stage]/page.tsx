@@ -28,7 +28,7 @@ import type { BattleStageId } from "@/types";
 export default function BattleGamePage() {
   const params = useParams<{ stage: string }>();
   const router = useRouter();
-  const { selectedCharacter, loadProgress, bgmEnabled } = useGameStore();
+  const { selectedCharacter, loadProgress, bgmEnabled, saveBattleTime } = useGameStore();
 
   const stageId = params.stage as BattleStageId;
   const stage = getBattleStageById(stageId);
@@ -54,6 +54,7 @@ export default function BattleGamePage() {
     wordsCompleted,
     accuracy,
     isStarted,
+    clearTimeMs,
     reset,
   } = useBattleGame(stageId);
 
@@ -100,6 +101,12 @@ export default function BattleGamePage() {
     return () => clearTimeout(t);
   }, [phase, router]);
 
+  // クリアタイムを localStorage に保存（クリア確定時に1回だけ）
+  useEffect(() => {
+    if (phase !== "stage-clear" || clearTimeMs === undefined) return;
+    saveBattleTime(stageId, clearTimeMs);
+  }, [phase, clearTimeMs, stageId, saveBattleTime]);
+
   // ステージ未発見
   if (!stage) {
     return (
@@ -122,6 +129,14 @@ export default function BattleGamePage() {
   // 次ステージ（stage-clear 後の遷移先）
   const stageIdx = BATTLE_STAGE_ORDER.indexOf(stageId);
   const nextStageId = BATTLE_STAGE_ORDER[stageIdx + 1] as BattleStageId | undefined;
+
+  /** クリアタイムを m:ss.xx 形式にフォーマットする */
+  const formatClearTime = (ms: number): string => {
+    const m = Math.floor(ms / 60000);
+    const s = Math.floor((ms % 60000) / 1000);
+    const cs = Math.floor((ms % 1000) / 10);
+    return `${m}:${s.toString().padStart(2, "0")}.${cs.toString().padStart(2, "0")}`;
+  };
 
   // ワードタイマーの割合（0〜1）
   const wordTimerRatio =
@@ -403,6 +418,18 @@ export default function BattleGamePage() {
               <p className="text-white/80 font-bold">
                 {stage.name} クリア！
               </p>
+              {clearTimeMs !== undefined && (
+                <p
+                  className="text-2xl font-black"
+                  style={{
+                    color: "var(--color-brand-gold)",
+                    fontFamily: "monospace",
+                    textShadow: "1px 1px 0 #000",
+                  }}
+                >
+                  ⏱ {formatClearTime(clearTimeMs)}
+                </p>
+              )}
               <div className="flex justify-center gap-1 mb-1">
                 {stage.monsters.map((_, i) => (
                   <motion.span
