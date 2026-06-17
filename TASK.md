@@ -453,6 +453,43 @@ npm run lint    # ESLint チェック
 
 ---
 
+---
+
+## Phase 18: SEO 強化
+
+### Step 1 — 独自ドメイン取得・Vercel 設定
+
+- [ ] 18-1. ドメインを購入（お名前.com / Cloudflare Registrar 等）
+- [ ] 18-2. Vercel プロジェクトにドメインを追加（プロジェクト設定 → Domains）
+- [ ] 18-3. DNS レコードを設定（Vercel 指定の A レコード / CNAME）
+- [ ] 18-4. `src/app/layout.tsx` の `metadataBase` を独自ドメインの URL に変更
+- [ ] 18-5. `src/app/sitemap.ts` の `base` URL を独自ドメインに変更
+- [ ] 18-6. ビルド確認 → コミット → プッシュ → Vercel 自動デプロイ確認
+
+### Step 2 — Google Search Console 登録・サイトマップ送信
+
+- [ ] 18-7. Google Search Console にアクセスしてプロパティを追加（独自ドメインで登録）
+- [ ] 18-8. 所有権確認（HTMLメタタグ方式）→ `layout.tsx` に verification タグを追加
+- [ ] 18-9. コミット → プッシュ → Search Console で「確認」ボタンを押す
+- [ ] 18-10. サイトマップを送信（`sitemap.xml`）
+
+### Step 3 — Server Component 化（SEO コンテンツ強化）
+
+静的コンテンツページの `"use client"` を除去し、SSR でHTMLを返すよう変更する。
+ゲーム画面・ステージ選択などインタラクティブなページは対象外。
+
+- [ ] 18-11. `/about/page.tsx` を Server Component 化
+- [ ] 18-12. `/about/history/page.tsx` を Server Component 化
+- [ ] 18-13. `/how-to-play/page.tsx` を Server Component 化
+- [ ] 18-14. `/how-to-play/normal-mode/page.tsx` を Server Component 化
+- [ ] 18-15. `/how-to-play/battle-mode/page.tsx` を Server Component 化
+- [ ] 18-16. `/how-to-play/input-tips/page.tsx` を Server Component 化
+- [ ] 18-17. `/how-to-play/romaji/page.tsx` を Server Component 化
+- [ ] 18-18. ビルド・lint・動作確認 → コミット → プッシュ
+- [ ] **Phase 18 完了チェック：build / lint → コミット → プッシュ → Vercel 自動デプロイ確認**
+
+---
+
 ## メモ
 
 - **スコア調整**：TIMEOUT_PENALTY=30・ワードスコア最大100点の数値はプレイテスト後に調整予定
