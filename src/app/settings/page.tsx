@@ -5,13 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { MinecraftBg } from "@/components/MinecraftBg";
 import { useGameStore } from "@/store/game-store";
-
-/** リセット対象のローカルストレージキー（サウンド・キャラ選択は除外） */
-const PROGRESS_KEYS = [
-  "dozle-typing:bestScores",
-  "dozle-typing:clearedStages",
-  "dozle-typing:starRecords",
-] as const;
+import { resetProgress } from "@/lib/storage";
 
 /** カードのフェードインアニメーション */
 const cardVariants = {
@@ -75,9 +69,9 @@ export default function SettingsPage() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [resetDone, setResetDone] = useState(false);
 
-  /** ベストスコア・スター・クリア記録を全削除して Zustand ストアと同期 */
+  /** ノーマル・バトル両モードの進捗を全削除して Zustand ストアと同期 */
   const handleReset = () => {
-    PROGRESS_KEYS.forEach((key) => localStorage.removeItem(key));
+    resetProgress();
     loadProgress();
     setShowConfirm(false);
     setResetDone(true);

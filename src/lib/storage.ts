@@ -200,3 +200,22 @@ export const saveBattleTimeRecord = (stageId: string, timeMs: number): void => {
  */
 export const getBestBattleTime = (stageId: string): number | undefined =>
   loadBattleTimeRecords()[stageId]?.[0]?.timeMs;
+
+// ──────────────────────────────────────────
+// 全進捗リセット
+// ──────────────────────────────────────────
+
+/**
+ * ゲーム進捗をすべて削除する（サウンド設定・キャラ選択は対象外）。
+ * ノーマルモード・バトルモード両方の記録を消去する。
+ */
+export const resetProgress = (): void => {
+  if (!isBrowser) return;
+  [
+    KEYS.BEST_SCORES,
+    KEYS.CLEARED_STAGES,
+    KEYS.STAR_RECORDS,
+    KEYS.CLEARED_BATTLE_STAGES,
+    KEYS.BATTLE_TIME_RECORDS,
+  ].forEach((key) => localStorage.removeItem(key));
+};

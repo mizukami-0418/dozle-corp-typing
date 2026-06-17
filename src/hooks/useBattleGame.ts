@@ -367,6 +367,8 @@ export const useBattleGame = (stageId: BattleStageId): UseBattleGameReturn => {
     shuffledRef.current = newWords;
     queuePosRef.current = 0;
     wordStartTimeRef.current = 0;
+    // setState は非同期のため、即時キー入力に備えて ref を先に同期リセットする
+    stateRef.current.startTime = undefined;
 
     const firstW = newWords[0];
     const firstM = stateRef.current.stage?.monsters[0];

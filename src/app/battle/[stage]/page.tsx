@@ -66,7 +66,8 @@ export default function BattleGamePage() {
   // 撃破オーバーレイ画像エラー（モンスター切替時にリセット）
   const [defeatImgError, setDefeatImgError] = useState(false);
   useEffect(() => {
-    setTimeout(() => setDefeatImgError(false), 0);
+    const t = setTimeout(() => setDefeatImgError(false), 0);
+    return () => clearTimeout(t);
   }, [monsterIndex]);
 
   // ワード正解時にパーティクルを発火（game/[stage]/page.tsx と同パターン）
@@ -76,7 +77,8 @@ export default function BattleGamePage() {
     const prev = prevWordsCompletedRef.current;
     prevWordsCompletedRef.current = wordsCompleted;
     if (wordsCompleted > prev) {
-      setTimeout(() => setCorrectCount((n) => n + 1), 0);
+      const t = setTimeout(() => setCorrectCount((n) => n + 1), 0);
+      return () => clearTimeout(t);
     }
   }, [wordsCompleted]);
 

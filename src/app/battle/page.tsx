@@ -36,7 +36,7 @@ const RANK_ICONS = ["🥇", "🥈", "🥉", "4位", "5位"];
 export default function BattlePage() {
   const router = useRouter();
   const { clearedBattleStages, battleTimeRecords, loadProgress } = useGameStore();
-  const [recordsModalStageId, setRecordsModalStageId] = useState<string | null>(null);
+  const [recordsModalStageId, setRecordsModalStageId] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     loadProgress();
@@ -220,7 +220,7 @@ export default function BattlePage() {
 
         {/* 記録モーダル */}
         <AnimatePresence>
-          {recordsModalStageId !== null && (() => {
+          {recordsModalStageId !== undefined && (() => {
             const modalStage = BATTLE_STAGES.find((s) => s.id === recordsModalStageId);
             const modalRecords: BattleTimeRecord[] = battleTimeRecords[recordsModalStageId] ?? [];
             const modalColor = BATTLE_STAGE_COLORS[recordsModalStageId as BattleStageId] ?? "#FFD700";
@@ -231,7 +231,7 @@ export default function BattlePage() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4"
-                onClick={() => setRecordsModalStageId(null)}
+                onClick={() => setRecordsModalStageId(undefined)}
               >
                 <motion.div
                   initial={{ scale: 0.85, opacity: 0 }}
@@ -299,7 +299,7 @@ export default function BattlePage() {
 
                   {/* 閉じるボタン */}
                   <button
-                    onClick={() => setRecordsModalStageId(null)}
+                    onClick={() => setRecordsModalStageId(undefined)}
                     className="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold transition"
                   >
                     閉じる
