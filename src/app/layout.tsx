@@ -10,7 +10,7 @@ const zenMaruGothic = Zen_Maru_Gothic({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://dozle-corp-typing.vercel.app"),
+  metadataBase: new URL("https://dozle-corp-typing.toamoku.net"),
   title: {
     default: "ドズル社タイピング",
     template: "%s | ドズル社タイピング",
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     title: "ドズル社タイピング",
     description:
       "ドズル社 × Minecraft をテーマにしたタイピングゲーム。チート・ノーマル・ハード・鬼畜・ドズル社モードの5難易度で遊べるファンゲームです。",
-    url: "https://dozle-corp-typing.vercel.app",
+    url: "https://dozle-corp-typing.toamoku.net",
     siteName: "ドズル社タイピング",
     images: [{ url: "/ogp.png", width: 1731, height: 909 }],
     locale: "ja_JP",

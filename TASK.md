@@ -459,11 +459,11 @@ npm run lint    # ESLint チェック
 
 ### Step 1 — 独自ドメイン取得・Vercel 設定
 
-- [ ] 18-1. ドメインを購入（お名前.com / Cloudflare Registrar 等）
-- [ ] 18-2. Vercel プロジェクトにドメインを追加（プロジェクト設定 → Domains）
-- [ ] 18-3. DNS レコードを設定（Vercel 指定の A レコード / CNAME）
-- [ ] 18-4. `src/app/layout.tsx` の `metadataBase` を独自ドメインの URL に変更
-- [ ] 18-5. `src/app/sitemap.ts` の `base` URL を独自ドメインに変更
+- [x] 18-1. ドメインを購入（お名前.com / Cloudflare Registrar 等）
+- [x] 18-2. Vercel プロジェクトにドメインを追加（プロジェクト設定 → Domains）
+- [x] 18-3. DNS レコードを設定（Vercel 指定の A レコード / CNAME）
+- [x] 18-4. `src/app/layout.tsx` の `metadataBase` を独自ドメインの URL に変更
+- [x] 18-5. `src/app/sitemap.ts` の `base` URL を独自ドメインに変更
 - [ ] 18-6. ビルド確認 → コミット → プッシュ → Vercel 自動デプロイ確認
 
 ### Step 2 — Google Search Console 登録・サイトマップ送信

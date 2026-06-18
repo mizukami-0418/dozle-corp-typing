@@ -6,7 +6,7 @@ import type { MetadataRoute } from "next";
  * @returns サイトマップのURL定義リスト
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://dozle-corp-typing.vercel.app";
+  const base = "https://dozle-corp-typing.toamoku.net";
 
   return [
     {
