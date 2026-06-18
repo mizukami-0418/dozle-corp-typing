@@ -34,6 +34,9 @@ export const metadata: Metadata = {
       "ドズル社 × Minecraft をテーマにしたタイピングゲーム。チート・ノーマル・ハード・鬼畜・ドズル社モードの5難易度で遊べるファンゲームです。",
     images: ["/ogp.png"],
   },
+  verification: {
+    google: "NHfpC96Bv8cxlmgcKw3eL9DtBt2nkGFVXKq8bQpcQAI",
+  },
 };
 
 export default function RootLayout({
