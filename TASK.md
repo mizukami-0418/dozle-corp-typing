@@ -473,20 +473,14 @@ npm run lint    # ESLint チェック
 - [x] 18-9. コミット → プッシュ → Search Console で「確認」ボタンを押す
 - [x] 18-10. サイトマップを送信（`sitemap.xml`）
 
-### Step 3 — Server Component 化（SEO コンテンツ強化）
+### Step 3 — Server Component 化（見送り）
 
-静的コンテンツページの `"use client"` を除去し、SSR でHTMLを返すよう変更する。
-ゲーム画面・ステージ選択などインタラクティブなページは対象外。
+各ページで Framer Motion（`motion.*`）を全面的に使用しているため、Server Component 化には
+ページごとにアニメーション部分を Client Component に切り出す作業が必要になる。
+Next.js App Router では `"use client"` でも SSR されクローラーにHTMLが届くため、
+SEO 上の実害はないと判断し、現状維持とする。
 
-- [ ] 18-11. `/about/page.tsx` を Server Component 化
-- [ ] 18-12. `/about/history/page.tsx` を Server Component 化
-- [ ] 18-13. `/how-to-play/page.tsx` を Server Component 化
-- [ ] 18-14. `/how-to-play/normal-mode/page.tsx` を Server Component 化
-- [ ] 18-15. `/how-to-play/battle-mode/page.tsx` を Server Component 化
-- [ ] 18-16. `/how-to-play/input-tips/page.tsx` を Server Component 化
-- [ ] 18-17. `/how-to-play/romaji/page.tsx` を Server Component 化
-- [ ] 18-18. ビルド・lint・動作確認 → コミット → プッシュ
-- [ ] **Phase 18 完了チェック：build / lint → コミット → プッシュ → Vercel 自動デプロイ確認**
+- [x] **Phase 18 完了チェック**
 
 ---
 
