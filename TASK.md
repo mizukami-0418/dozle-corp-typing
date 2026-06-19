@@ -484,6 +484,30 @@ SEO 上の実害はないと判断し、現状維持とする。
 
 ---
 
+## Phase 19: 品質・UX 改善
+
+### A. 完了済み
+
+- [x] 19-A-1. 404 ページ実装（`src/app/not-found.tsx`）— Minecraft スタイルデザイン
+- [x] 19-B-1. セキュリティヘッダー設定（`next.config.ts`）— X-Frame-Options / X-Content-Type-Options / Referrer-Policy / Permissions-Policy
+
+### B. 未着手
+
+- [ ] 19-C-1. PWA 対応（`public/manifest.webmanifest` 作成）
+  - アイコン設定（`icon.jpg` を流用）
+  - `layout.tsx` に `<link rel="manifest">` を追加
+- [ ] 19-D-1. `viewport` メタタグを `metadata` から分離（`layout.tsx`）
+  - Next.js 14+ 推奨：`export const viewport: Viewport = { ... }` を別 export に
+- [ ] 19-E-1. ページ別 OGP 設定
+  - `/about/layout.tsx`・`/how-to-play/layout.tsx` 等に `openGraph.images` を個別指定
+- [ ] 19-F-1. アクセス解析導入（Google Analytics 等）
+  - `layout.tsx` に GA タグを追加
+  - プライバシーポリシーページの作成も検討
+- [ ] 19-G-1. ローディング表示（`loading.tsx`）
+  - ページ遷移中のスケルトン or スピナー表示
+
+---
+
 ## メモ
 
 - **スコア調整**：TIMEOUT_PENALTY=30・ワードスコア最大100点の数値はプレイテスト後に調整予定
